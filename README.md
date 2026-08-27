@@ -17,3 +17,17 @@ The primary objective of HaritAyan is to promote sustainable agricultural practi
 | **Module 3: Real-Time APMC Mandi Engine** | Live agricultural market dashboard showing commodity prices across major APMC markets in Vadodara District with Gujarati language support. |
 | **Module 4: Operations Admin Panel** | Centralized administration dashboard for managing mandi rates, heatwave alerts, and AI system monitoring. |
 
+## 🌿 Why "Harit Ayan"?
+
+**Harit Ayan** is derived from two Sanskrit-rooted words:
+
+- **Harit (हरित)** represents green, greenery, vegetation, and environmental sustainability.
+- **Ayan (अयन)** represents a path, journey, or movement towards a destination.
+
+Together, **Harit Ayan** represents a **"Journey Towards a Greener Future."**
+
+The name reflects the project's larger vision of connecting environmental intelligence, sustainable urban planning, agriculture, artificial intelligence, and data-driven governance into a single ecosystem.
+
+Rather than addressing only one problem, Harit Ayan aims to create a continuous digital pathway from **understanding environmental conditions → taking informed action → measuring impact → improving decisions**.
+
+> 🌱 **Harit Ayan — A Journey Towards a Greener, Smarter Future.**
