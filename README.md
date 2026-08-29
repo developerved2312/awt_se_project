@@ -30,4 +30,4 @@ The name reflects the project's larger vision of connecting environmental intell
 
 Rather than addressing only one problem, Harit Ayan aims to create a continuous digital pathway from **understanding environmental conditions → taking informed action → measuring impact → improving decisions**.
 
-> 🌱 **Harit Ayan — A Journey Towards a Greener, Smarter Future.**
+> 🌱 **Harit Ayan — A Journey Towards a Greener, #Smarter Future.**
