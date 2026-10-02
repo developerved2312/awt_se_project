@@ -31,3 +31,33 @@ The name reflects the project's larger vision of connecting environmental intell
 Rather than addressing only one problem, Harit Ayan aims to create a continuous digital pathway from **understanding environmental conditions → taking informed action → measuring impact → improving decisions**.
 
 > 🌱 **Harit Ayan — A Journey Towards a Greener, #Smarter Future.**
+>
+
+# Project Architechture
+
+flowchart TD
+
+    A["🌱 HARITAYAN<br/>Smart Agriculture Platform"]
+
+    B["🖥️ FRONTEND<br/>React + Vite"]
+
+    C["⚙️ BACKEND<br/>Node.js + Express.js<br/>REST API"]
+
+    D["🤖 AI SERVICES<br/>Gemini Vision<br/>Plant & Disease Detection<br/>Recommendations"]
+
+    E["🌦️ EXTERNAL DATA SERVICES<br/>Weather API<br/>APMC / Mandi Data<br/>Maps & Geospatial Data"]
+
+    F["🔐 AUTH & ADMIN<br/>JWT Authentication<br/>Authorization<br/>Admin Operations"]
+
+    G["🍃 MONGODB ATLAS<br/>Users • Plants • Scans<br/>Mandi Rates • Heatmap Data<br/>Alerts • Recommendations"]
+
+    A --> B
+    B --> C
+
+    C --> D
+    C --> E
+    C --> F
+
+    D --> G
+    E --> G
+    F --> G
