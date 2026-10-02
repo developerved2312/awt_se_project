@@ -52,18 +52,5 @@ flowchart TD
 
     G["🍃 MONGODB ATLAS<br/>Users • Plants • Scans<br/>Mandi Rates • Heatmap Data<br/>Alerts • Recommendations"]
 
-    A --> B
-    B --> C
 
-    C --> D
-    C --> E
-    C --> F
-
-    D --> G
-    E --> G
-    F --> G
-```
-
-    D --> G
-    E --> G
     F --> G
