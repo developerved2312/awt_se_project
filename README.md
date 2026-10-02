@@ -33,11 +33,12 @@ Rather than addressing only one problem, Harit Ayan aims to create a continuous 
 > 🌱 **Harit Ayan — A Journey Towards a Greener, #Smarter Future.**
 >
 
-# Project Architechture
+##  System Architecture
 
+```mermaid
 flowchart TD
 
-    A["🌱 HARITAYAN<br/>Smart Agriculture Platform"]
+    A["🌱 HARITAYAN<br/><b>Smart Agriculture Platform</b>"]
 
     B["🖥️ FRONTEND<br/>React + Vite"]
 
@@ -57,6 +58,11 @@ flowchart TD
     C --> D
     C --> E
     C --> F
+
+    D --> G
+    E --> G
+    F --> G
+```
 
     D --> G
     E --> G
