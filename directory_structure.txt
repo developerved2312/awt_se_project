@@ -1,0 +1,80 @@
+HaritAyan/
+│
+├── README.md
+├── .gitignore
+├── .env.example
+├── package.json
+├── directory_structure.txt
+│
+├── frontend/
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── index.html
+│   │
+│   ├── public/
+│   │   ├── images/
+│   │   │   ├── hero-banner.jpg
+│   │   │   ├── leaf-scanner.jpg
+│   │   │   └── vadodara-heatmap.jpg
+│   │   ├── icons/
+│   │   └── favicon.svg
+│   │
+│   └── src/
+│       ├── assets/
+│       │   ├── images/
+│       │   ├── icons/
+│       │   └── logos/
+│       │
+│       ├── components/
+│       │   ├── Navbar.jsx
+│       │   ├── Footer.jsx
+│       │   ├── LanguageSelector.jsx
+│       │   └── AlertCard.jsx
+│       │
+│       ├── pages/
+│       │   └── Home.jsx
+│       │
+│       ├── services/
+│       │   └── translationService.js
+│       │
+│       ├── utils/
+│       │   ├── constants.js
+│       │   └── formatters.js
+│       │
+│       ├── App.jsx
+│       ├── main.jsx
+│       └── index.css
+│
+│
+├── backend/
+│   │
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   └── uploads/
+│   │
+│   └── tests/
+│
+│
+├── ai/
+│   ├── gemini/
+│   ├── recommendations/
+│   └── vision/
+│
+│
+├── data/
+│   ├── processed/
+│   ├── raw/
+│   └── sample/
+│
+│
+├── scripts/
+│
+├── docs/
+│
+└── deployment/

@@ -1,0 +1,266 @@
+/* ==========================================================================
+   HaritAyan Design System - Light Green & Dry Leaf Theme
+   Natural, Organic, Earthy & Botanical Palette
+   ========================================================================== */
+
+:root {
+  /* Warm Earth & Botanical Light Canvas */
+  --bg-canvas: #fbf9f5;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f3efe6;
+  --bg-tint-green: #eef6f0;
+  --bg-tint-leaf: #fcf5eb;
+
+  /* Fresh Plant Greens */
+  --green-deep: #1b4332;
+  --green-primary: #2d6a4f;
+  --green-medium: #40916c;
+  --green-light: #52b788;
+  --green-soft: #74c69d;
+  --green-wash: #d8f3dc;
+
+  /* Dry Leaf & Earth Tones */
+  --dry-leaf: #c47335;
+  --dry-leaf-dark: #9e5320;
+  --dry-leaf-soft: #faeee2;
+  --dry-leaf-border: rgba(196, 115, 53, 0.25);
+  --earth-ochre: #d4a373;
+  --earth-clay: #8c532d;
+  --olive-sage: #606c38;
+  --olive-wash: #f0f3e8;
+
+  /* Typography Colors */
+  --text-title: #1a2a22;
+  --text-body: #37473f;
+  --text-muted: #64756c;
+  --text-invert: #ffffff;
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(45, 106, 79, 0.12);
+  --border-medium: rgba(45, 106, 79, 0.22);
+  --border-leaf: rgba(196, 115, 53, 0.22);
+
+  --shadow-sm: 0 1px 4px rgba(35, 45, 40, 0.04);
+  --shadow-md: 0 4px 16px rgba(35, 45, 40, 0.06), 0 1px 3px rgba(35, 45, 40, 0.04);
+  --shadow-lg: 0 12px 32px rgba(35, 45, 40, 0.08), 0 2px 6px rgba(35, 45, 40, 0.04);
+
+  /* Fonts */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Noto Sans Gujarati', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-gujarati: 'Noto Sans Gujarati', sans-serif;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --transition: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-canvas);
+  color: var(--text-body);
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle 800px at 15% 10%, rgba(216, 243, 220, 0.45), transparent 70%),
+    radial-gradient(circle 700px at 85% 20%, rgba(250, 238, 226, 0.55), transparent 70%),
+    radial-gradient(circle 900px at 50% 85%, rgba(238, 246, 240, 0.5), transparent 70%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-title);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+p {
+  color: var(--text-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd8cf;
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green-medium);
+}
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: var(--bg-tint-green);
+  color: var(--green-deep);
+  border: 1px solid var(--border-medium);
+}
+
+.badge-leaf {
+  background: var(--dry-leaf-soft);
+  color: var(--dry-leaf-dark);
+  border-color: var(--dry-leaf-border);
+}
+
+.badge-olive {
+  background: var(--olive-wash);
+  color: var(--olive-sage);
+  border-color: rgba(96, 108, 56, 0.25);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--green-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.25);
+  border: 1px solid var(--green-deep);
+}
+
+.btn-primary:hover {
+  background: var(--green-deep);
+  box-shadow: 0 6px 18px rgba(45, 106, 79, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-title);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-tint-green);
+  border-color: var(--green-primary);
+  color: var(--green-deep);
+  transform: translateY(-2px);
+}
+
+.btn-leaf {
+  background: var(--dry-leaf-soft);
+  color: var(--dry-leaf-dark);
+  border: 1px solid var(--dry-leaf-border);
+}
+
+.btn-leaf:hover {
+  background: #f7e2cf;
+  transform: translateY(-2px);
+}
+
+/* Natural Organic Cards */
+.organic-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition);
+}
+
+.organic-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-4, .grid-3, .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

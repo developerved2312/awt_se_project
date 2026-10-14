@@ -1,0 +1,24 @@
+{
+  "name": "haritayan",
+  "version": "1.0.0",
+  "description": "HaritAyan - AI-Powered Smart Agriculture, Urban Heat Mitigation, and Mandi Intelligence for Vadodara",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "npm --prefix backend run dev"
+  },
+  "keywords": [
+    "agriculture",
+    "urban-heat-island",
+    "vadodara",
+    "apmc-mandi",
+    "gemini-ai",
+    "react",
+    "smart-farming"
+  ],
+  "author": "HaritAyan Team",
+  "license": "MIT"
+}
