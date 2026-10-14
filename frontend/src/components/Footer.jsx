@@ -131,6 +131,17 @@ export const Footer = ({ currentLang = 'en' }) => {
                   • Operations & Early Warning Panel
                 </button>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('faq-section')}
+                  style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
+                >
+                  • General FAQs & Support
+                </button>
+              </li>
             </ul>
           </div>
 

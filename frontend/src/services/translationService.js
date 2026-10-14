@@ -76,6 +76,33 @@ export const translations = {
       step4: 'Optimize Decisions',
       step4Desc: 'Gemini multimodal learning continuously refining advisories and microclimate forecasts.',
     },
+    faqs: {
+      kicker: 'Frequently Asked Questions',
+      title: 'General Inquiries & Platform Guidance',
+      subtitle: 'Answers to common questions about HaritAyan, crop diagnostics, urban heat simulation, and APMC pricing.',
+      items: [
+        {
+          q: 'What is HaritAyan and who is it designed for?',
+          a: 'HaritAyan is an AI-powered smart agriculture and environmental intelligence platform tailored for Vadodara District. It is designed for farmers, urban gardeners, botanical researchers, and municipal environmental planners to monitor plant health, reduce crop loss, and mitigate urban heat islands.'
+        },
+        {
+          q: 'How does the Gemini AI Vision Scanner identify crop diseases?',
+          a: 'Users upload a photo of an affected plant leaf or crop. The Gemini multimodal vision model scans foliar patterns, chlorophyll discoloration, and fungal lesions to diagnose conditions (e.g., Cotton Leaf Curl, Tomato Early Blight) and provides scientific as well as organic remedies in English and Gujarati.'
+        },
+        {
+          q: 'How does the Urban Heat Mitigation Simulator calculate cooling in Vadodara?',
+          a: 'The simulator correlates surface temperatures with tree canopy coverage across Vadodara wards (such as Makarpura, Alkapuri, and Sayaji Baug). It simulates the empirical thermodynamic cooling effect of planting native, high-transpiration trees like Neem, Peepal, and Jamun, forecasting temperature drops up to -3.4°C.'
+        },
+        {
+          q: 'Which APMC mandis are covered for live agricultural prices?',
+          a: 'HaritAyan tracks daily commodity rates, arrival volumes, and price fluctuations across 5 major APMCs in Vadodara District: Sayajigunj, Padra, Karjan, Dabhoi, and Savli.'
+        },
+        {
+          q: 'Is the platform accessible in Gujarati?',
+          a: 'Yes! HaritAyan is bilingual by design. Every screen, commodity name, advisory, and diagnostic report can be toggled instantly between English and Gujarati (ગુજરાતી) using the top language selector.'
+        }
+      ]
+    },
     footer: {
       about: 'HaritAyan is an advanced web and AI platform engineered for Advanced Web Technologies & Software Engineering. Connecting environmental intelligence, agricultural resilience, and sustainable urban governance.',
       modules: 'Modules',
@@ -159,6 +186,33 @@ export const translations = {
       step3Desc: 'તાપમાન ઘટાડો, પાક ઉત્પાદનમાં વૃદ્ધિ અને APMC બજારમાં શ્રેષ્ઠ ભાવ પ્રાપ્તિ.',
       step4: 'નિર્ણય સુધારો',
       step4Desc: 'AI મોડલ દ્વારા સતત શીખીને ભવિષ્યના મોસમી જોખમો સામે આગોતરા પગલાં.',
+    },
+    faqs: {
+      kicker: 'સામાન્ય પ્રશ્નોત્તરી (FAQ)',
+      title: 'વારંવાર પૂછાતા પ્રશ્નો અને માર્ગદર્શન',
+      subtitle: 'હરિત અયન પ્લેટફોર્મ, પાક રોગ નિદાન, હીટવેવ કૂલિંગ અને APMC બજાર ભાવો વિશેના જવાબો.',
+      items: [
+        {
+          q: 'હરિત અયન શું છે અને તે કોના માટે બનાવવામાં આવ્યું છે?',
+          a: 'હરિત અયન એક AI-સંચાલિત સ્માર્ટ એગ્રીકલ્ચર અને પર્યાવરણીય પ્લેટફોર્મ છે જે વડોદરા જિલ્લા માટે ખાસ તૈયાર કરવામાં આવ્યું છે. તે સ્થાનિક ખેડૂતો, બાગાયતકારો, કૃષિ સંશોધકો અને મ્યુનિસિપલ આયોજકો માટે ઉપયોગી છે.'
+        },
+        {
+          q: 'જેમિની AI વિઝન સ્કેનર પાકના રોગોની ઓળખ કેવી રીતે કરે છે?',
+          a: 'ખેડૂતો પોતાના પાકના પાંદડાનો ફોટો અપલોડ કરી શકે છે. AI મોડલ પાંદડાના લક્ષણો અને નસોની તપાસ કરીને રોગનું ચોક્કસ નિદાન કરે છે અને ગુજરાતીમાં ઉપચાર સૂચવે છે.'
+        },
+        {
+          q: 'અર્બન હીટ કૂલિંગ સિમ્યુલેટર વડોદરામાં તાપમાન ઘટાડો કેવી રીતે ગણે છે?',
+          a: 'સિમ્યુલેટર વડોદરાના વિવિધ વિસ્તારોના તાપમાન અને ગ્રીન કવરનું વિશ્લેષણ કરે છે. તે લીમડો, પીપળો અને જાંબુ જેવા સ્થાનિક વૃક્ષો વાવવાથી થતા -3.4°C સુધીના તાપમાન ઘટાડાનું ગણિત દર્શાવે છે.'
+        },
+        {
+          q: 'લાઈવ બજાર ભાવ માટે વડોદરાની કઈ APMC મંડીઓ આવરી લેવામાં આવી છે?',
+          a: 'હરિત અયન વડોદરા જિલ્લાની ૫ મુખ્ય મંડીઓ સયાજીગંજ, પાદરા, કરજણ, ડભોઇ અને સાવલીના દૈનિક ભાવો અને આવક ટ્રેક કરે છે.'
+        },
+        {
+          q: 'શું આ પ્લેટફોર્મ ગુજરાતી ભાષામાં ઉપલબ્ધ છે?',
+          a: 'હા! હરિત અયન સંપૂર્ણપણે દ્વિભાષી છે. નેવિગેશનથી લઈને પાકના રોગો અને બજાર ભાવો સુધીની તમામ માહિતી ગુજરાતી અને અંગ્રેજી બંનેમાં ઉપલબ્ધ છે.'
+        }
+      ]
     },
     footer: {
       about: 'હરિત અયન એક અત્યાધુનિક વેબ અને AI પ્લેટફોર્મ છે જે વડોદરાના પર્યાવરણ, કૃષિ અને શહેરી આયોજનને બુદ્ધિશાળી ટેક્નોલોજી સાથે જોડે છે.',

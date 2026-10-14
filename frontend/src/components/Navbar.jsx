@@ -29,6 +29,7 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
     { id: 'about-section', label: currentLang === 'gu' ? 'હરિત અયન વિશે' : 'About Platform', icon: Compass },
     { id: 'modules-section', label: currentLang === 'gu' ? '૪ મુખ્ય મોડ્યુલ્સ' : 'Core Modules', icon: Layers },
     { id: 'vadodara-context', label: currentLang === 'gu' ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Focus', icon: MapPin },
+    { id: 'faq-section', label: currentLang === 'gu' ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs', icon: HelpCircle },
   ];
 
   return (

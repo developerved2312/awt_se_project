@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sprout,
   Flame,
@@ -15,11 +15,14 @@ import {
   Layers,
   MapPin,
   Users,
+  ChevronDown,
+  HelpCircle,
 } from 'lucide-react';
 import AlertCard from '../components/AlertCard';
 import { getTranslation } from '../services/translationService';
 
 export const Home = ({ currentLang = 'en' }) => {
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const t = getTranslation(currentLang);
 
   const scrollTo = (id) => {
@@ -593,6 +596,74 @@ export const Home = ({ currentLang = 'en' }) => {
                   : "Continuous learning to refine agricultural and urban advisories over time."}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          GENERAL FAQS SECTION
+          ========================================================================= */}
+      <section
+        id="faq-section"
+        style={{
+          paddingTop: '3.5rem',
+          paddingBottom: '3.5rem',
+        }}
+      >
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <div className="badge badge-leaf" style={{ marginBottom: '0.85rem' }}>
+              <HelpCircle size={14} />
+              <span>{t.faqs?.kicker || (isGu ? "સામાન્ય પ્રશ્નોત્તરી (FAQ)" : "Frequently Asked Questions")}</span>
+            </div>
+            <h2
+              style={{
+                fontSize: 'clamp(1.8rem, 3.2vw, 2.4rem)',
+                fontWeight: 800,
+                color: 'var(--text-title)',
+                marginBottom: '0.75rem',
+              }}
+            >
+              {t.faqs?.title || (isGu ? "વારંવાર પૂછાતા પ્રશ્નો અને માર્ગદર્શન" : "General Inquiries & Platform Guidance")}
+            </h2>
+            <p
+              style={{
+                fontSize: '1rem',
+                color: 'var(--text-muted)',
+                maxWidth: '680px',
+                margin: '0 auto',
+              }}
+            >
+              {t.faqs?.subtitle || (isGu ? "હરિત અયન પ્લેટફોર્મ, પાક રોગ નિદાન, હીટવેવ કૂલિંગ અને APMC બજાર ભાવો વિશેના જવાબો." : "Answers to common questions about HaritAyan, crop diagnostics, urban heat simulation, and APMC pricing.")}
+            </p>
+          </div>
+
+          <div className="faq-container">
+            {t.faqs?.items?.map((item, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div
+                  key={index}
+                  className={`faq-item ${isOpen ? 'active' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="faq-trigger"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                    id={`faq-btn-${index}`}
+                  >
+                    <span>{item.q}</span>
+                    <ChevronDown size={19} className="faq-chevron" />
+                  </button>
+                  {isOpen && (
+                    <div className="faq-body" id={`faq-answer-${index}`}>
+                      <p>{item.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
