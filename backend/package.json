@@ -1,0 +1,30 @@
+{
+  "name": "haritayan-backend",
+  "version": "1.0.0",
+  "description": "HaritAyan Backend API Service - MongoDB Atlas & Express REST API",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "haritayan",
+    "smart-agriculture",
+    "vadodara",
+    "mongodb-atlas",
+    "express",
+    "gemini-ai"
+  ],
+  "author": "HaritAyan Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
