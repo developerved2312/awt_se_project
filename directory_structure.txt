@@ -5,6 +5,7 @@ HaritAyan/
 ├── .env.example
 ├── package.json
 ├── directory_structure.txt
+├── chatlogs.txt
 │
 ├── frontend/
 │   ├── package.json

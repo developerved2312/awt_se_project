@@ -22,6 +22,25 @@ import {
   SAMPLE_CROPS,
 } from '../services/scanService';
 
+const LOADING_STAGES = [
+  {
+    en: 'Scanning foliar vein geometry & chlorophyll density...',
+    gu: 'પાનની નસો અને હરિતકણ રચનાનું સ્કેનિંગ...',
+  },
+  {
+    en: 'Detecting necrotic lesions and pathogen patterns...',
+    gu: 'કોષીય ક્ષતિ અને રોગકારક લક્ષણોની તપાસ...',
+  },
+  {
+    en: 'Gemini Multimodal Agro-Pathology AI diagnosing condition...',
+    gu: 'જેમિની AI વિઝન મોડલ દ્વારા પાક રોગ નિદાન...',
+  },
+  {
+    en: 'Formulating organic & scientific remedy dosages...',
+    gu: 'જૈવિક અને વૈજ્ઞાનિક દવાની માત્રા તૈયાર થઈ રહી છે...',
+  },
+];
+
 export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
   const isGu = currentLang === 'gu';
 
@@ -30,6 +49,8 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
   const [selectedFileName, setSelectedFileName] = useState('');
   const [cropHint, setCropHint] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [loadingStage, setLoadingStage] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(15);
   const [activeTab, setActiveTab] = useState('organic'); // 'organic' | 'chemical' | 'prevention'
   const [scanResult, setScanResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -38,6 +59,26 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
   const [cameraActive, setCameraActive] = useState(false);
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Progressive analysis with multi-stage telemetry
+  const runProgressiveAnalysis = async (actionFn) => {
+    setIsAnalyzing(true);
+    setLoadingStage(0);
+    setLoadingProgress(18);
+
+    const interval = setInterval(() => {
+      setLoadingStage((prev) => (prev + 1) % LOADING_STAGES.length);
+      setLoadingProgress((prev) => (prev < 90 ? prev + 22 : 93));
+    }, 750);
+
+    try {
+      await actionFn();
+      setLoadingProgress(100);
+    } finally {
+      clearInterval(interval);
+      setIsAnalyzing(false);
+    }
+  };
 
   // Start Camera
   const startCamera = async () => {
@@ -127,15 +168,14 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
   };
 
   // Handle One-Click Sample Trigger
-  const handleSelectSample = async (sample) => {
+  const handleSelectSample = (sample) => {
     setErrorMessage('');
     setSelectedImage(sample.image);
     setSelectedFileName(`${sample.id}_sample.jpg`);
     setCropHint(sample.cropName);
-    setIsAnalyzing(true);
     setScanResult(null);
 
-    try {
+    runProgressiveAnalysis(async () => {
       const response = await analyzePlantImage({
         imageBase64: sample.image,
         cropHint: sample.id,
@@ -146,25 +186,21 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
       } else {
         throw new Error('Invalid response structure');
       }
-    } catch (err) {
+    }).catch(() => {
       setErrorMessage(
         isGu
           ? 'વિશ્લેષણ કરવામાં મુશ્કેલી આવી. કૃપા કરીને ફરી પ્રયાસ કરો.'
           : 'Diagnostic analysis failed. Please try again.'
       );
-    } finally {
-      setIsAnalyzing(false);
-    }
+    });
   };
 
   // Run AI Analysis on Selected Image
-  const handleAnalyze = async () => {
+  const handleAnalyze = () => {
     if (!selectedImage) return;
-
-    setIsAnalyzing(true);
     setErrorMessage('');
 
-    try {
+    runProgressiveAnalysis(async () => {
       const response = await analyzePlantImage({
         imageBase64: selectedImage,
         cropHint: cropHint || 'Cotton',
@@ -175,15 +211,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
       } else {
         throw new Error('Analysis failed');
       }
-    } catch (err) {
+    }).catch(() => {
       setErrorMessage(
         isGu
           ? 'વિશ્લેષણમાં ખામી સર્જાઈ. કૃપા કરીને ફરી પ્રયાસ કરો.'
           : 'Failed to analyze leaf image. Please try again.'
       );
-    } finally {
-      setIsAnalyzing(false);
-    }
+    });
   };
 
   // Reset Scanner
@@ -403,7 +437,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               </div>
             )}
 
-            {/* Selected Image Preview */}
+            {/* Selected Image Preview with High-Tech Laser & Telemetry */}
             {selectedImage && !cameraActive && (
               <div style={{ marginBottom: '1.25rem' }}>
                 <div
@@ -411,9 +445,9 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                     position: 'relative',
                     borderRadius: 'var(--radius-md)',
                     overflow: 'hidden',
-                    border: '1px solid var(--border-medium)',
-                    background: '#f8faf9',
-                    maxHeight: '360px',
+                    border: '1.5px solid var(--border-medium)',
+                    background: '#1a2a22',
+                    maxHeight: '380px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -422,39 +456,137 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   <img
                     src={selectedImage}
                     alt="Selected leaf"
-                    style={{ width: '100%', maxHeight: '360px', objectFit: 'contain' }}
+                    style={{
+                      width: '100%',
+                      maxHeight: '380px',
+                      objectFit: 'contain',
+                      filter: isAnalyzing ? 'brightness(0.85) contrast(1.1)' : 'none',
+                      transition: 'filter 0.3s ease',
+                    }}
                   />
+
+                  {/* High-Tech Botanical Laser Scanner Overlay */}
                   {isAnalyzing && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        backgroundColor: 'rgba(27, 67, 50, 0.45)',
-                        backdropFilter: 'blur(3px)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#ffffff',
-                        gap: '0.75rem',
-                      }}
-                    >
+                    <>
+                      {/* Sweeping Laser Beam */}
+                      <div className="scan-laser-line" />
+
+                      {/* 4 Corner Targeting Reticles */}
                       <div
                         style={{
-                          width: '44px',
-                          height: '44px',
-                          border: '3px solid rgba(255,255,255,0.3)',
-                          borderTopColor: '#ffffff',
-                          borderRadius: '50%',
-                          animation: 'spin 1s linear infinite',
+                          position: 'absolute',
+                          top: 14,
+                          left: 14,
+                          width: 24,
+                          height: 24,
+                          borderTop: '3px solid var(--green-light)',
+                          borderLeft: '3px solid var(--green-light)',
+                          pointerEvents: 'none',
+                          boxShadow: '0 0 10px rgba(82,183,136,0.6)',
                         }}
                       />
-                      <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                        {isGu ? 'જેમિની AI પાંદડું તપાસી રહ્યું છે...' : 'Gemini AI Vision Analyzing Leaf...'}
-                      </span>
-                    </div>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 14,
+                          right: 14,
+                          width: 24,
+                          height: 24,
+                          borderTop: '3px solid var(--green-light)',
+                          borderRight: '3px solid var(--green-light)',
+                          pointerEvents: 'none',
+                          boxShadow: '0 0 10px rgba(82,183,136,0.6)',
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 58,
+                          left: 14,
+                          width: 24,
+                          height: 24,
+                          borderBottom: '3px solid var(--green-light)',
+                          borderLeft: '3px solid var(--green-light)',
+                          pointerEvents: 'none',
+                          boxShadow: '0 0 10px rgba(82,183,136,0.6)',
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 58,
+                          right: 14,
+                          width: 24,
+                          height: 24,
+                          borderBottom: '3px solid var(--green-light)',
+                          borderRight: '3px solid var(--green-light)',
+                          pointerEvents: 'none',
+                          boxShadow: '0 0 10px rgba(82,183,136,0.6)',
+                        }}
+                      />
+
+                      {/* Bottom Live Telemetry Overlay */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          padding: '1rem 1.25rem 0.85rem',
+                          background: 'linear-gradient(to top, rgba(20, 45, 34, 0.96) 0%, rgba(20, 45, 34, 0.78) 75%, transparent 100%)',
+                          color: '#ffffff',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.45rem',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            fontSize: '0.84rem',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Sparkles
+                              size={15}
+                              color="#52b788"
+                              style={{ animation: 'spin 2.5s linear infinite' }}
+                            />
+                            <span>{LOADING_STAGES[loadingStage][isGu ? 'gu' : 'en']}</span>
+                          </span>
+                          <span style={{ color: '#74c69d', fontFamily: 'monospace', fontSize: '0.88rem' }}>
+                            {loadingProgress}%
+                          </span>
+                        </div>
+
+                        {/* Animated Progress Track */}
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '5px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.22)',
+                            borderRadius: '4px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${loadingProgress}%`,
+                              height: '100%',
+                              backgroundColor: 'var(--green-light)',
+                              transition: 'width 0.4s ease',
+                              boxShadow: '0 0 10px #52b788',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
+
                 <div
                   style={{
                     fontSize: '0.8rem',
@@ -466,19 +598,21 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   }}
                 >
                   <span>{selectedFileName || 'leaf_image.jpg'}</span>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--green-primary)',
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {isGu ? 'બીજો ફોટો પસંદ કરો' : 'Change Image'}
-                  </button>
+                  {!isAnalyzing && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--green-primary)',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {isGu ? 'બીજો ફોટો પસંદ કરો' : 'Change Image'}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -568,6 +702,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                     value={cropHint}
                     onChange={(e) => setCropHint(e.target.value)}
                     placeholder={isGu ? 'દા.ત. કપાસ, ટામેટા, તુવેર' : 'e.g. Cotton, Tomato, Castor'}
+                    disabled={isAnalyzing}
                     style={{
                       width: '100%',
                       padding: '0.65rem 0.9rem',
@@ -592,6 +727,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                       padding: '0.85rem',
                       fontSize: '1rem',
                       boxShadow: 'var(--shadow-md)',
+                      opacity: isAnalyzing ? 0.8 : 1,
                     }}
                   >
                     <Sparkles size={18} />
@@ -611,8 +747,66 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             )}
           </div>
 
-          {/* Right Column: One-Click Test Samples OR Live Scan Result */}
-          {!scanResult ? (
+          {/* Right Column: Skeleton Shimmer (while analyzing) OR Samples OR Result Card */}
+          {isAnalyzing && !scanResult ? (
+            <div
+              className="organic-card"
+              style={{
+                padding: '2rem',
+                background: '#ffffff',
+                border: '1.5px solid var(--border-medium)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '68%' }}>
+                  <div className="skeleton-shimmer" style={{ width: '100px', height: '22px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '85%', height: '30px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '55%', height: '18px' }} />
+                </div>
+                <div
+                  className="skeleton-shimmer"
+                  style={{ width: '74px', height: '64px', borderRadius: '12px' }}
+                />
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid var(--border-subtle)',
+                  paddingTop: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.65rem',
+                }}
+              >
+                <div className="skeleton-shimmer" style={{ width: '45%', height: '18px' }} />
+                <div className="skeleton-shimmer" style={{ width: '96%', height: '14px' }} />
+                <div className="skeleton-shimmer" style={{ width: '88%', height: '14px' }} />
+                <div className="skeleton-shimmer" style={{ width: '92%', height: '14px' }} />
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid var(--border-subtle)',
+                  paddingTop: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.85rem',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.6rem' }}>
+                  <div className="skeleton-shimmer" style={{ width: '120px', height: '32px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '120px', height: '32px' }} />
+                </div>
+                <div
+                  className="skeleton-shimmer"
+                  style={{ width: '100%', height: '95px', borderRadius: '10px' }}
+                />
+              </div>
+            </div>
+          ) : !scanResult ? (
             <div
               className="organic-card"
               style={{
