@@ -17,11 +17,12 @@ import {
   Users,
   ChevronDown,
   HelpCircle,
+  Sparkles,
 } from 'lucide-react';
 import AlertCard from '../components/AlertCard';
 import { getTranslation } from '../services/translationService';
 
-export const Home = ({ currentLang = 'en' }) => {
+export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const t = getTranslation(currentLang);
 
@@ -128,6 +129,17 @@ export const Home = ({ currentLang = 'en' }) => {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
                 <button
                   type="button"
+                  onClick={onNavigateToScanner}
+                  className="btn btn-leaf"
+                  style={{ fontWeight: 700 }}
+                >
+                  <Camera size={17} />
+                  <span>{isGu ? "પાક રોગ સ્કેન કરો" : "AI Plant Scanner"}</span>
+                  <Sparkles size={15} />
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => scrollTo('modules-section')}
                   className="btn btn-primary"
                 >
@@ -216,7 +228,12 @@ export const Home = ({ currentLang = 'en' }) => {
           </div>
 
           <div className="grid-4">
-            <div className="organic-card" style={{ padding: '1.6rem' }}>
+            <div
+              className="organic-card"
+              style={{ padding: '1.6rem', cursor: 'pointer' }}
+              onClick={onNavigateToScanner}
+              title="Click to launch AI Plant Scanner"
+            >
               <div
                 style={{
                   width: '38px',
@@ -232,9 +249,14 @@ export const Home = ({ currentLang = 'en' }) => {
               >
                 <Camera size={20} />
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "રોગ ઓળખ અને નિવારણ" : "Plant Disease Detection"}
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+                  {isGu ? "રોગ ઓળખ અને નિવારણ" : "Plant Disease Detection"}
+                </h3>
+                <span style={{ color: 'var(--green-primary)', fontSize: '0.78rem', fontWeight: 700 }}>
+                  {isGu ? 'ખોલો →' : 'Launch →'}
+                </span>
+              </div>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
                   ? "પાંદડાના લક્ષણો પરથી રોગની ત્વરિત ઓળખ અને ખેડૂતો માટે યોગ્ય નિવારક પગલાંની ભલામણ."

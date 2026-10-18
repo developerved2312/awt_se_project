@@ -32,10 +32,12 @@ HaritAyan/
 │       │   └── AlertCard.jsx
 │       │
 │       ├── pages/
-│       │   └── Home.jsx
+│       │   ├── Home.jsx
+│       │   └── PlantScanner.jsx
 │       │
 │       ├── services/
-│       │   └── translationService.js
+│       │   ├── translationService.js
+│       │   └── scanService.js
 │       │
 │       ├── utils/
 │       │   ├── constants.js
@@ -47,16 +49,24 @@ HaritAyan/
 │
 │
 ├── backend/
+│   ├── package.json
+│   ├── .env.example
 │   │
 │   ├── src/
 │   │   ├── config/
+│   │   │   └── db.js
 │   │   ├── controllers/
+│   │   │   └── scanController.js
 │   │   ├── middleware/
 │   │   ├── models/
+│   │   │   └── Scan.js
 │   │   ├── routes/
+│   │   │   └── scanRoutes.js
 │   │   ├── services/
+│   │   │   └── geminiService.js
 │   │   ├── utils/
-│   │   └── uploads/
+│   │   ├── uploads/
+│   │   └── server.js
 │   │
 │   └── tests/
 │

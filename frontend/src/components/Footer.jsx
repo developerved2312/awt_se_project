@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { getTranslation } from '../services/translationService';
 
-export const Footer = ({ currentLang = 'en' }) => {
+export const Footer = ({ currentLang = 'en', onNavigate }) => {
   const t = getTranslation(currentLang);
 
   const scrollTo = (id) => {
@@ -101,7 +101,7 @@ export const Footer = ({ currentLang = 'en' }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('module-02')}
+                  onClick={() => (onNavigate ? onNavigate('scanner') : scrollTo('module-02'))}
                   style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}

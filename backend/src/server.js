@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/db.js';
+import scanRoutes from './routes/scanRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -60,6 +61,9 @@ app.get('/api', (req, res) => {
     ],
   });
 });
+
+// AI Module 02 - Plant Disease Scanner Routes
+app.use('/api/scan', scanRoutes);
 
 // Start Server
 app.listen(PORT, () => {

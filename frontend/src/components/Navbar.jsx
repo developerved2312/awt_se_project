@@ -7,29 +7,48 @@ import {
   Layers,
   MapPin,
   HelpCircle,
+  Camera,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
 
-export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
+export const Navbar = ({
+  currentLang = 'en',
+  onLanguageChange,
+  activePage = 'home',
+  onNavigate,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = getTranslation(currentLang);
 
-  const scrollTo = (id) => {
+  const handleItemClick = (item) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (item.page) {
+      if (onNavigate) onNavigate(item.page);
+    } else if (item.anchor) {
+      if (activePage !== 'home' && onNavigate) {
+        onNavigate('home');
+        setTimeout(() => {
+          const element = document.getElementById(item.anchor);
+          if (element) element.scrollIntoView({ behavior: 'smooth' });
+        }, 120);
+      } else {
+        const element = document.getElementById(item.anchor);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
     }
   };
 
   const navItems = [
-    { id: 'about-section', label: currentLang === 'gu' ? 'હરિત અયન વિશે' : 'About Platform', icon: Compass },
-    { id: 'modules-section', label: currentLang === 'gu' ? '૪ મુખ્ય મોડ્યુલ્સ' : 'Core Modules', icon: Layers },
-    { id: 'vadodara-context', label: currentLang === 'gu' ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Focus', icon: MapPin },
-    { id: 'faq-section', label: currentLang === 'gu' ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs', icon: HelpCircle },
+    { id: 'nav-home', page: 'home', label: currentLang === 'gu' ? 'મુખ્ય પૃષ્ઠ' : 'Home', icon: Compass },
+    { id: 'nav-scanner', page: 'scanner', label: currentLang === 'gu' ? 'AI વિઝન સ્કેનર' : 'AI Plant Scanner', icon: Camera },
+    { id: 'nav-modules', anchor: 'modules-section', label: currentLang === 'gu' ? '૪ મોડ્યુલ્સ' : 'Core Modules', icon: Layers },
+    { id: 'nav-vadodara', anchor: 'vadodara-context', label: currentLang === 'gu' ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Focus', icon: MapPin },
+    { id: 'nav-faq', anchor: 'faq-section', label: currentLang === 'gu' ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs', icon: HelpCircle },
   ];
 
   return (
@@ -56,7 +75,10 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
       >
         {/* Brand Logo */}
         <div
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => {
+            if (onNavigate) onNavigate('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           id="nav-brand-logo"
           style={{
             display: 'flex',
@@ -135,12 +157,13 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
         >
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = item.page && activePage === item.page;
             return (
               <button
                 key={item.id}
                 id={`nav-link-${item.id}`}
                 type="button"
-                onClick={() => scrollTo(item.id)}
+                onClick={() => handleItemClick(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -149,21 +172,25 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
                   fontSize: '0.88rem',
                   fontWeight: 600,
                   borderRadius: 'var(--radius-md)',
-                  color: 'var(--text-body)',
-                  backgroundColor: 'transparent',
-                  border: '1px solid transparent',
+                  color: isActive ? 'var(--green-deep)' : 'var(--text-body)',
+                  backgroundColor: isActive ? 'var(--bg-tint-green)' : 'transparent',
+                  border: isActive ? '1px solid var(--border-medium)' : '1px solid transparent',
                   transition: 'all 0.15s ease',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'var(--green-deep)';
-                  e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
-                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                  if (!isActive) {
+                    e.currentTarget.style.color = 'var(--green-deep)';
+                    e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
+                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--text-body)';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderColor = 'transparent';
+                  if (!isActive) {
+                    e.currentTarget.style.color = 'var(--text-body)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }
                 }}
               >
                 <Icon size={16} color="var(--green-primary)" />
@@ -181,6 +208,22 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
             gap: '0.75rem',
           }}
         >
+          {/* Quick Action Button to Scanner */}
+          <button
+            type="button"
+            id="nav-quick-scan-btn"
+            onClick={() => onNavigate && onNavigate('scanner')}
+            className="btn btn-primary desktop-only"
+            style={{
+              padding: '0.45rem 0.95rem',
+              fontSize: '0.84rem',
+              boxShadow: 'var(--shadow-sm)',
+            }}
+          >
+            <Camera size={15} />
+            <span>{currentLang === 'gu' ? 'AI સ્કેનર' : 'AI Scanner'}</span>
+          </button>
+
           <LanguageSelector currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
           {/* Mobile Menu Toggle Button */}
@@ -220,11 +263,12 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
         >
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = item.page && activePage === item.page;
             return (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => scrollTo(item.id)}
+                onClick={() => handleItemClick(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -233,8 +277,9 @@ export const Navbar = ({ currentLang = 'en', onLanguageChange }) => {
                   fontSize: '0.92rem',
                   fontWeight: 600,
                   borderRadius: 'var(--radius-md)',
-                  color: 'var(--text-title)',
-                  backgroundColor: 'var(--bg-tint-green)',
+                  color: isActive ? 'var(--green-deep)' : 'var(--text-title)',
+                  backgroundColor: isActive ? 'var(--green-wash)' : 'var(--bg-tint-green)',
+                  border: isActive ? '1px solid var(--border-medium)' : '1px solid transparent',
                   textAlign: 'left',
                 }}
               >
