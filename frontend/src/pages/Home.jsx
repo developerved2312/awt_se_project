@@ -18,6 +18,7 @@ import {
   ChevronDown,
   HelpCircle,
   Sparkles,
+  Activity,
 } from 'lucide-react';
 import AlertCard from '../components/AlertCard';
 import { getTranslation } from '../services/translationService';
@@ -48,12 +49,12 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
       >
         <div className="container">
           <AlertCard
-            title={isGu ? "IMD વડોદરા હીટવેવ સલાહકાર સક્રિય" : "IMD Vadodara Agro-Climatic Advisory"}
-            badgeText={isGu ? "વડોદરા હવામાન કેન્દ્ર" : "Vadodara Station"}
+            title={isGu ? "IMD વડોદરા હવામાન સલાહ" : "IMD Vadodara Weather Advisory"}
+            badgeText={isGu ? "વડોદરા હવામાન કેન્દ્ર" : "Vadodara Weather Station"}
             message={
               isGu
-                ? "વડોદરા સેન્ટ્રલ અને મકરપુરા વિસ્તારમાં ગરમીની તીવ્રતા વધારે હોવાથી બપોરે ૧૨ થી ૩:૩૦ દરમિયાન પિયત ટાળીને સાંજે ટપક સિંચાઈ કરવા ભલામણ છે."
-                : "Elevated microclimate thermal zones recorded across Vadodara urban pockets. Daytime irrigation between 12:00 and 15:30 should be avoided to prevent excess evaporation losses."
+                ? "વડોદરા સેન્ટ્રલ અને મકરપુરા વિસ્તારમાં ગરમી વધારે હોવાથી બપોરે ૧૨ થી ૩:૩૦ દરમિયાન પિયત ટાળીને સાંજે ટપક સિંચાઈ કરવા ભલામણ છે."
+                : "Hot daytime temperatures recorded in parts of Vadodara. It is recommended to water crops in the evening rather than during peak afternoon hours (12:00 to 15:30) to save water."
             }
           />
 
@@ -69,7 +70,7 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
             <div>
               <div className="badge badge-leaf" style={{ marginBottom: '1.25rem' }}>
                 <Leaf size={14} />
-                <span>{isGu ? "વડોદરા જિલ્લો કૃષિ અને પર્યાવરણીય પ્લેટફોર્મ" : "Smart Agriculture & Environmental Intelligence Platform"}</span>
+                <span>{isGu ? "સ્માર્ટ ખેતી અને હરિયાળું શહેર પ્લેટફોર્મ" : "Smart Agriculture & Green City Platform"}</span>
               </div>
 
               <h1
@@ -97,8 +98,8 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 }}
               >
                 {isGu
-                  ? "હરિત અયન એક AI-સંચાલિત સ્માર્ટ એગ્રીકલ્ચર અને પ્લાન્ટ મેનેજમેન્ટ પ્લેટફોર્મ છે, જે વડોદરા જિલ્લાના ખેડૂતો, બાગાયતકારો અને સંશોધકોને પાક સ્વાસ્થ્ય સુધારવા, રોગ નિવારણ, શહેરી ગરમી ઘટાડવા અને લાઈવ APMC બજાર ભાવો મેળવવામાં મદદ કરે છે."
-                  : "HaritAyan is an AI-powered smart agriculture and plant management platform developed to assist farmers, gardeners, and researchers in monitoring plant health, reducing crop losses, mitigating urban heat islands, and accessing live APMC market data across Vadodara District."}
+                  ? "હરિત અયન એક સરળ સ્માર્ટ એગ્રીકલ્ચર પ્લેટફોર્મ છે જે વડોદરાના ખેડૂતો, માળીઓ અને નાગરિકોને પાકના રોગો ઓળખવામાં, વૃક્ષોથી શહેર ઠંડુ રાખવામાં અને રોજના મંડી બજાર ભાવો જાણવામાં મદદ કરે છે."
+                  : "HaritAyan is a simple smart agriculture and green city platform created to help farmers, gardeners, and citizens check plant diseases, protect crops, cool neighborhoods with shade trees, and view live mandi rates in Vadodara."}
               </p>
 
               {/* Sanskrit Slogan Pill */}
@@ -130,31 +131,32 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 <button
                   type="button"
                   onClick={onNavigateToScanner}
-                  className="btn btn-leaf"
-                  style={{ fontWeight: 700 }}
+                  className="btn btn-primary"
+                  style={{ fontWeight: 700, padding: '0.65rem 1.25rem' }}
                 >
-                  <Camera size={17} />
-                  <span>{isGu ? "પાક રોગ સ્કેન કરો" : "AI Plant Scanner"}</span>
-                  <Sparkles size={15} />
+                  <Activity size={17} />
+                  <span>{isGu ? "પાકના રોગ તપાસો" : "Scan Plant Leaves"}</span>
+                  <ArrowRight size={15} />
                 </button>
 
                 <button
                   type="button"
                   onClick={() => scrollTo('modules-section')}
-                  className="btn btn-primary"
+                  className="btn btn-secondary"
+                  style={{ padding: '0.65rem 1.15rem' }}
                 >
                   <Layers size={17} />
-                  <span>{isGu ? "૪ મુખ્ય મોડ્યુલ્સ જુઓ" : "Explore Core Modules"}</span>
-                  <ArrowRight size={15} />
+                  <span>{isGu ? "મુખ્ય સુવિધાઓ" : "Explore Features"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => scrollTo('about-section')}
                   className="btn btn-secondary"
+                  style={{ padding: '0.65rem 1.15rem' }}
                 >
                   <Compass size={17} />
-                  <span>{isGu ? "હરિત અયન મિશન" : "What HaritAyan is All About"}</span>
+                  <span>{isGu ? "હરિત અયન વિશે" : "About HaritAyan"}</span>
                 </button>
               </div>
             </div>
@@ -215,15 +217,15 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 3rem' }}>
             <span className="badge badge-leaf" style={{ marginBottom: '0.75rem' }}>
-              {isGu ? "પ્લેટફોર્મ પરિચય અને ઉદ્દેશ" : "Platform Overview & Purpose"}
+              {isGu ? "પ્લેટફોર્મ વિશે" : "About the Platform"}
             </span>
             <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.75rem' }}>
               {isGu ? "હરિત અયન શા માટે?" : "What HaritAyan is All About"}
             </h2>
             <p style={{ fontSize: '1rem', color: 'var(--text-body)', lineHeight: 1.7 }}>
               {isGu
-                ? "હરિત અયનનો મુખ્ય ઉદ્દેશ્ય ટકાઉ કૃષિ પદ્ધતિઓને પ્રોત્સાહન આપવાનો, કાર્યક્ષમતા વધારવાનો, પાકના નુકસાનને ઘટાડવાનો અને આધુનિક કૃષિ ટેકનોલોજીને દરેક સુધી સુલભ બનાવવાનો છે."
-                : "The primary objective of HaritAyan is to promote sustainable agricultural practices, increase efficiency, reduce crop losses, and make modern agricultural and environmental technology accessible to everyone."}
+                ? "હરિત અયનનો મુખ્ય ઉદ્દેશ્ય સરળ ખેતી પદ્ધતિઓને પ્રોત્સાહન આપવાનો, પાકનું નુકસાન ઘટાડવાનો અને સામાન્ય ખેડૂતો તેમજ નાગરિકો સુધી ઉપયોગી માહિતી પહોંચાડવાનો છે."
+                : "The goal of HaritAyan is to help farmers protect crops, support tree planting to cool our city, and provide easy-to-use digital tools for everyone in Vadodara."}
             </p>
           </div>
 
@@ -251,7 +253,7 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>
-                  {isGu ? "રોગ ઓળખ અને નિવારણ" : "Plant Disease Detection"}
+                  {isGu ? "પાક રોગ ઓળખ" : "Plant Disease Check"}
                 </h3>
                 <span style={{ color: 'var(--green-primary)', fontSize: '0.78rem', fontWeight: 700 }}>
                   {isGu ? 'ખોલો →' : 'Launch →'}
@@ -259,8 +261,8 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
               </div>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
-                  ? "પાંદડાના લક્ષણો પરથી રોગની ત્વરિત ઓળખ અને ખેડૂતો માટે યોગ્ય નિવારક પગલાંની ભલામણ."
-                  : "Recognize visible symptoms of foliar diseases and receive timely scientific and organic preventive guidance."}
+                  ? "પાંદડાના ફોટા પરથી રોગની ત્વરિત ઓળખ અને ખેડૂતો માટે સરળ કુદરતી તથા યોગ્ય દવાઓના ઉપાય."
+                  : "Take a photo of sick leaves to identify crop disease and receive simple organic and spray remedies."}
               </p>
             </div>
 
@@ -281,12 +283,12 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 <Droplets size={20} />
               </div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "વ્યક્તિગત કૃષિ માર્ગદર્શન" : "Personalized Guidance"}
+                {isGu ? "ખેતી અને પાક સલાહ" : "Helpful Farm Advice"}
               </h3>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
-                  ? "પિયત વ્યવસ્થાપન, જમીનની ગુણવત્તા, ખાતર ઉપયોગ અને જીવાત નિયંત્રણ માટે સચોટ સલાહ."
-                  : "Guidance on precision irrigation, soil quality, balanced fertilizer use, and weather-based decision-making."}
+                  ? "પિયતનો યોગ્ય સમય, જમીનની સંભાળ, ખાતરનો વપરાશ અને ઋતુ આધારિત પાકની સારસંભાળ."
+                  : "Helpful advice on watering times, soil care, balanced fertilizers, and season-based crop tips."}
               </p>
             </div>
 
@@ -307,12 +309,12 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 <TreeDeciduous size={20} />
               </div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "શહેરી ગરમી ઘટાડો" : "Urban Heat Mitigation"}
+                {isGu ? "શહેરમાં વૃક્ષોથી ઠંડક" : "City Tree Cooling"}
               </h3>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
-                  ? "વડોદરાના અર્બન હીટ આઇલેન્ડ ઝોનનું વિશ્લેષણ અને વૃક્ષારોપણથી તાપમાન ઘટાડાનું સિમ્યુલેશન."
-                  : "Monitor urban heat zones in Vadodara and simulate the microclimate cooling potential of tree plantation."}
+                  ? "વડોદરાના વિસ્તારોમાં ગરમીનું પ્રમાણ અને છાંયડાવાળા વૃક્ષો વાવવાથી મળતી ઠંડક."
+                  : "See warm zones in Vadodara and discover how planting shade trees helps cool your area."}
               </p>
             </div>
 
@@ -333,12 +335,12 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 <BarChart3 size={20} />
               </div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "લાઈવ APMC બજાર ભાવ" : "Live APMC Mandi Rates"}
+                {isGu ? "રોજના APMC મંડી ભાવ" : "Daily APMC Mandi Rates"}
               </h3>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
-                  ? "વડોદરા જિલ્લાની મુખ્ય મંડીઓના દૈનિક બજાર ભાવો ગુજરાતી ભાષા સપોર્ટ સાથે."
-                  : "Real-time market intelligence across Vadodara district APMCs with Gujarati language support."}
+                  ? "વડોદરા જિલ્લાની મુખ્ય મંડીઓના રોજના પાકના ભાવો ગુજરાતી અને અંગ્રેજીમાં સરળતાથી જુઓ."
+                  : "Check daily market prices across Vadodara district APMCs with clear rates in Gujarati and English."}
               </p>
             </div>
           </div>
@@ -352,15 +354,15 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem' }}>
             <span className="badge badge-leaf" style={{ marginBottom: '0.75rem' }}>
-              {isGu ? "પ્લેટફોર્મ આર્કિટેક્ચર" : "Application Core Pillars"}
+              {isGu ? "મુખ્ય સુવિધાઓ" : "Key Features"}
             </span>
             <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.75rem' }}>
-              {isGu ? "હરિત અયનના ૪ મુખ્ય મોડ્યુલ્સ" : "Features of the Application Modules"}
+              {isGu ? "હરિત અયન દ્વારા મળતી સેવાઓ" : "What HaritAyan Helps You Do"}
             </h2>
             <p style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>
               {isGu
-                ? "હરિત અયન ૪ સુસંગત મોડ્યુલ્સ દ્વારા પર્યાવરણ અને કૃષિ ઇન્ટેલિજન્સ પૂરું પાડે છે."
-                : "HaritAyan is structured into 4 specialized modules designed to address distinct facets of agricultural and environmental monitoring."}
+                ? "હરિત અયન પાકના રોગ નિદાન, શહેરની ગરમી ઘટાડવા અને મંડી બજાર ભાવ જાણવા માટે ઉપયોગી સુવિધાઓ આપે છે."
+                : "HaritAyan brings together simple, useful tools to check crop diseases, view tree cooling benefits, and check mandi crop prices."}
             </p>
           </div>
 
@@ -369,39 +371,39 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
             <div id="module-01" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--green-primary)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge" style={{ background: 'var(--bg-tint-green)', color: 'var(--green-deep)' }}>
-                  Module 01
+                  {isGu ? "શહેરી ગરમી" : "City Heat"}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Urban Resilience
+                  {isGu ? "વૃક્ષ કૂલિંગ" : "Tree Cooling"}
                 </span>
               </div>
 
               <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
-                {isGu ? "અર્બન હીટ મિટિગેશન મેપ અને કૂલિંગ સિમ્યુલેટર" : "Urban Heat Mitigation Map & Cooling Simulator"}
+                {isGu ? "શહેરની ગરમી અને વૃક્ષારોપણ કૂલિંગ નકશો" : "City Heat & Tree Cooling Map"}
               </h3>
 
               <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
                 {isGu
-                  ? "વડોદરા શહેરના હીટ ઝોન દર્શાવતો ઇન્ટરેક્ટિવ મેપ જે વૃક્ષારોપણની તાપમાન ઘટાડા પર થતી અસરનું સિમ્યુલેશન કરે છે."
-                  : "Interactive Vadodara heat map that visualizes urban heat zones and simulates the cooling impact of tree plantation."}
+                  ? "વડોદરા શહેરના ગરમ વિસ્તારો દર્શાવતો નકશો જે વૃક્ષારોપણ કરવાથી તાપમાનમાં થતા ઘટાડાનો અંદાજ આપે છે."
+                  : "Interactive Vadodara map showing heat zones and estimating how planting shade trees can cool down neighborhoods."}
               </p>
 
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
                 <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
-                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Module Capabilities:"}
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
                 </h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--green-primary)" />
-                    <span>{isGu ? "વડોદરા વોર્ડ-સ્તરીય હીટ આઇલેન્ડ વિશ્લેષણ (મકરપુરા, અલકાપુરી, સયાજીબાગ)" : "Vadodara ward-level urban heat island microclimate analysis"}</span>
+                    <span>{isGu ? "વડોદરાના વિવિધ વિસ્તારોમાં ગરમીની તપાસ" : "Ward-level temperature checks across Vadodara"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--green-primary)" />
-                    <span>{isGu ? "દેશી વૃક્ષો (લીમડો, પીપળો, જાંબુ) દ્વારા -3.4°C તાપમાન ઘટાડા સિમ્યુલેશન" : "Empirical cooling calculation based on native tree plantation volume"}</span>
+                    <span>{isGu ? "દેશી વૃક્ષો (લીમડો, પીપળો, જાંબુ) વાવવાથી ઠંડકમાં ફાયદો" : "Cooling benefits from planting native shade trees"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--green-primary)" />
-                    <span>{isGu ? "ગ્રીન કેનોપી કવરેજ ટકાવારી અને કાર્બન શોષણ અંદાજ" : "Canopy coverage index and annual carbon sequestration metrics"}</span>
+                    <span>{isGu ? "ગ્રીન કવર અને પર્યાવરણ સુધારણા અંદાજ" : "Green cover and environmental improvement estimate"}</span>
                   </li>
                 </ul>
               </div>
@@ -411,39 +413,39 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
             <div id="module-02" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--dry-leaf)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge badge-leaf">
-                  Module 02
+                  {isGu ? "પાક રોગ" : "Crop Health"}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Multimodal AI
+                  {isGu ? "AI સ્કેનર" : "AI Scanner"}
                 </span>
               </div>
 
               <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
-                {isGu ? "જેમિની AI મલ્ટિમોડલ વિઝન સ્કેનર" : "Gemini AI Multimodal Vision Scanner"}
+                {isGu ? "જેમિની AI પાક રોગ સ્કેનર" : "Gemini AI Plant Disease Scanner"}
               </h3>
 
               <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
                 {isGu
-                  ? "AI-સંચાલિત ઇમેજ સ્કેનર જે પાકના રોગો ઓળખે છે, રોપણી સ્થળનું મૂલ્યાંકન કરે છે અને દ્વિભાષી ભલામણો આપે છે."
-                  : "AI-powered image scanner that identifies crop diseases or evaluates planting sites and provides bilingual recommendations."}
+                  ? "પાનનો ફોટો પાડીને રોગ ઓળખો અને ગુજરાતી તથા અંગ્રેજીમાં સરળ ઉપાયો મેળવો."
+                  : "Snap a photo of any crop leaf to identify diseases and get simple remedies in English and Gujarati."}
               </p>
 
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
                 <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
-                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Module Capabilities:"}
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
                 </h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--dry-leaf)" />
-                    <span>{isGu ? "કપાસ (લીફ કર્લ), ટામેટા (સુકારો), દિવેલા અને શાકભાજીના રોગ નિદાન" : "Pathogen identification for Gujarat crops (Cotton, Tomato, Castor)"}</span>
+                    <span>{isGu ? "કપાસ, ટામેટા, દિવેલા અને શાકભાજીના રોગ ઓળખવા" : "Find diseases on Cotton, Tomato, Castor, and Vegetables"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--dry-leaf)" />
-                    <span>{isGu ? "ગુજરાતી અને અંગ્રેજીમાં વૈજ્ઞાનિક અને સસ્તી દેશી દવાઓની સલાહ" : "Bilingual treatment advisories in Gujarati and English"}</span>
+                    <span>{isGu ? "ગુજરાતી અને અંગ્રેજીમાં સરળ દેશી દવાઓ અને ઉપાયો" : "Simple remedies and medicine sprays in English & Gujarati"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--dry-leaf)" />
-                    <span>{isGu ? "જમીન અને પર્યાવરણ મુજબ વૃક્ષારોપણ માટે અનુકૂળ સ્થળ મૂલ્યાંકન" : "Micro-forestry site feasibility and soil suitability assessment"}</span>
+                    <span>{isGu ? "વૃક્ષારોપણ માટે અનુકૂળ જગ્યા અને જમીનની માહિતી" : "Helpful tips on soil suitability and planting spots"}</span>
                   </li>
                 </ul>
               </div>
@@ -453,39 +455,39 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
             <div id="module-03" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--earth-ochre)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge" style={{ background: '#fdf3e7', color: 'var(--earth-clay)', borderColor: 'rgba(212, 163, 115, 0.4)' }}>
-                  Module 03
+                  {isGu ? "મંડી ભાવ" : "Mandi Rates"}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Agri Market Feed
+                  {isGu ? "લાઈવ બજાર" : "Live Market"}
                 </span>
               </div>
 
               <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
-                {isGu ? "રીયલ-ટાઇમ APMC મંડી એન્જિન" : "Real-Time APMC Mandi Engine"}
+                {isGu ? "રીયલ-ટાઇમ APMC મંડી ભાવ" : "Real-Time APMC Mandi Prices"}
               </h3>
 
               <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
                 {isGu
-                  ? "વડોદરા જિલ્લાની મુખ્ય APMC મંડીઓમાં કૃષિ ઉત્પાદનોના જીવંત ભાવો દર્શાવતું ડેશબોર્ડ ગુજરાતી ભાષા સપોર્ટ સાથે."
-                  : "Live agricultural market dashboard showing commodity prices across major APMC markets in Vadodara District with Gujarati language support."}
+                  ? "વડોદરા જિલ્લાની મુખ્ય APMC મંડીઓમાં પાકના રોજના બજાર ભાવો સરળતાથી જાણો."
+                  : "Daily agricultural crop prices from major APMC market yards across Vadodara District."}
               </p>
 
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
                 <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
-                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Module Capabilities:"}
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
                 </h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--earth-clay)" />
-                    <span>{isGu ? "સયાજીગંજ, પાદરા, કરજણ, ડભોઇ અને સાવલી APMC બજાર ભાવો" : "Coverage of Sayajigunj, Padra, Karjan, Dabhoi, and Savli APMCs"}</span>
+                    <span>{isGu ? "સયાજીગંજ, પાદરા, કરજણ, ડભોઇ અને સાવલી APMC બજાર ભાવો" : "Live prices for Sayajigunj, Padra, Karjan, Dabhoi, and Savli APMCs"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--earth-clay)" />
-                    <span>{isGu ? "કપાસ, દિવેલા, તુવેર, ઘઉં અને શાકભાજીના દૈનિક સરેરાશ ભાવો" : "Modal prices, min/max ranges, and arrival volume indicators"}</span>
+                    <span>{isGu ? "કપાસ, દિવેલા, તુવેર, ઘઉં અને શાકભાજીના રોજના સરેરાશ ભાવો" : "Daily average modal prices and market arrivals"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--earth-clay)" />
-                    <span>{isGu ? "ખેડૂતો માટે સંપૂર્ણ ગુજરાતી પારિભાષિક શબ્દાવલિ" : "Commodity trend tracking and native Gujarati terminology"}</span>
+                    <span>{isGu ? "ખેડૂતો માટે સરળ ગુજરાતીમાં ભાવની માહિતી" : "Easy-to-read market price trends in Gujarati"}</span>
                   </li>
                 </ul>
               </div>
@@ -495,39 +497,39 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
             <div id="module-04" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--olive-sage)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge badge-olive">
-                  Module 04
+                  {isGu ? "હવામાન" : "Weather"}
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  Operations & Control
+                  {isGu ? "ચેતવણી" : "Alerts"}
                 </span>
               </div>
 
               <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
-                {isGu ? "ઓપરેશન્સ એડમિન પેનલ" : "Operations Admin Panel"}
+                {isGu ? "હવામાન ચેતવણી અને સંચાલન" : "Weather Alerts & Notice Panel"}
               </h3>
 
               <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
                 {isGu
-                  ? "મંડી દરો, હીટવેવ ચેતવણીઓ અને AI સિસ્ટમ મોનિટરિંગનું સંચાલન કરવા માટેનું કેન્દ્રિય વહીવટી ડેશબોર્ડ."
-                  : "Centralized administration dashboard for managing mandi rates, heatwave alerts, and AI system monitoring."}
+                  ? "ગરમીની ચેતવણીઓ, મંડી દરો અને સિસ્ટમ મોનિટરિંગનું સંચાલન કરવા માટેનું ડેશબોર્ડ."
+                  : "Overview dashboard for viewing weather heat alerts, managing mandi rates, and checking app health."}
               </p>
 
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
                 <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
-                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Module Capabilities:"}
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
                 </h4>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--olive-sage)" />
-                    <span>{isGu ? "IMD હીટવેવ પ્રારંભિક ચેતવણી બ્રોડકાસ્ટિંગ વ્યવસ્થા" : "IMD Heatwave early warning alert dispatching"}</span>
+                    <span>{isGu ? "હીટવેવ અને વધુ ગરમીની વહેલી ચેતવણી" : "Early heatwave alerts and farming notices"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--olive-sage)" />
-                    <span>{isGu ? "મંડી દર સુધારણા અને ઓવરરાઈડ નિયંત્રણ" : "Mandi rate validation, manual adjustments, and overrides"}</span>
+                    <span>{isGu ? "મંડી દરોની નિયમિત ચકાસણી અને અપડેટ" : "Regular verification and updates for mandi rates"}</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <CheckCircle2 size={16} color="var(--olive-sage)" />
-                    <span>{isGu ? "જેમિની વિઝન AI મોડલ લેટન્સી અને સિસ્ટમ હેલ્થ મોનિટરિંગ" : "Vision AI inference throughput and latency monitoring"}</span>
+                    <span>{isGu ? "AI સ્કેનર સિસ્ટમનું સતત મોનિટરિંગ" : "Continuous checking of AI scanner performance"}</span>
                   </li>
                 </ul>
               </div>
@@ -550,72 +552,72 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 3rem' }}>
             <span className="badge badge-leaf" style={{ marginBottom: '0.75rem' }}>
-              {isGu ? "તત્વજ્ઞાન અને કાર્યપદ્ધતિ" : "Philosophy & Continuous Pathway"}
+              {isGu ? "૪ સરળ પગલાં" : "Simple 4-Step Approach"}
             </span>
             <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.75rem' }}>
-              {isGu ? "શા માટે \"હરિત અયન\"? (Harit Ayan)" : "Why \"Harit Ayan\"? (हरित अयन)"}
+              {isGu ? "શા માટે \"હરિત અયન\"? (Harit Ayan)" : "Why \"Harit Ayan\"? (हरित અયન)"}
             </h2>
             <p style={{ fontSize: '1rem', color: 'var(--text-body)', lineHeight: 1.7 }}>
               {isGu
-                ? "હરિત અયન બે સંસ્કૃત શબ્દો પરથી બનેલું છે: હરિત (હરિયાળી અને પર્યાવરણીય સ્થિરતા) અને અયન (ધ્યેય તરફ આગળ વધવાનો માર્ગ). માત્ર એક સમસ્યા ઉકેલવાને બદલે, હરિત અયન એક સતત ડિજિટલ માર્ગ બનાવે છે:"
-                : "Harit Ayan is derived from two Sanskrit-rooted words: Harit (हरित: green, greenery, vegetation, and environmental sustainability) and Ayan (अयन: a path, journey, or movement towards a destination). Together, Harit Ayan creates a continuous digital pathway:"}
+                ? "હરિત અયન બે શબ્દો પરથી બનેલું છે: હરિત (હરિયાળી અને સ્વસ્થ પ્રકૃતિ) અને અયન (આગળ વધવાનો સરળ માર્ગ). હરિત અયન આ ૪ સરળ પગલાં દ્વારા મદદ કરે છે:"
+                : "Harit Ayan comes from two words: Harit (हरित: greenery and healthy plants) and Ayan (अयन: a clear path forward). Harit Ayan guides you in 4 simple steps:"}
             </p>
           </div>
 
           <div className="grid-4">
             <div className="organic-card" style={{ padding: '1.5rem', background: '#ffffff' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--green-primary)', marginBottom: '0.4rem' }}>
-                01
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--green-primary)', marginBottom: '0.5rem' }}>
+                {isGu ? "પગલું ૧ : સ્થિતિ તપાસો" : "Step 1 : Check Conditions"}
               </div>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                {isGu ? "પરિસ્થિતિ સમજો" : "Understand Conditions"}
+                {isGu ? "વાતાવરણ જુઓ" : "See the Situation"}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 {isGu
-                  ? "સેટેલાઇટ થર્મલ મેપિંગ, સોઇલ સેન્સર અને હવામાન ડેટાનું વિશ્લેષણ."
-                  : "Satellite thermal data, microclimate mapping, and crop visual indicators."}
+                  ? "શહેરનો ગરમી નકશો, હવામાન ચેતવણી અને પાંદડાના ફોટા જુઓ."
+                  : "Check city heat maps, weather alerts, and leaf scan photos."}
               </p>
             </div>
 
             <div className="organic-card" style={{ padding: '1.5rem', background: '#ffffff' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--dry-leaf)', marginBottom: '0.4rem' }}>
-                02
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--dry-leaf)', marginBottom: '0.5rem' }}>
+                {isGu ? "પગલું ૨ : યોગ્ય પગલાં લો" : "Step 2 : Take Action"}
               </div>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                {isGu ? "માહિતગાર પગલાં લો" : "Take Informed Action"}
+                {isGu ? "સાચા ઉપાયો કરો" : "Follow Helpful Tips"}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 {isGu
-                  ? "લક્ષિત વૃક્ષારોપણ, સચોટ પિયત અને જૈવિક રોગ નિયંત્રણ."
-                  : "Targeted planting, calibrated irrigation, and bio-friendly pesticide treatments."}
+                  ? "વૃક્ષારોપણ, યોગ્ય પિયત અને કુદરતી દેશી ઉપાયો અજમાવો."
+                  : "Plant shade trees, water at the right time, and try simple remedies."}
               </p>
             </div>
 
             <div className="organic-card" style={{ padding: '1.5rem', background: '#ffffff' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--earth-clay)', marginBottom: '0.4rem' }}>
-                03
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--earth-clay)', marginBottom: '0.5rem' }}>
+                {isGu ? "પગલું ૩ : પરિણામ જુઓ" : "Step 3 : See Results"}
               </div>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                {isGu ? "અસર માપો" : "Measure Impact"}
+                {isGu ? "ફાયદો અનુભવો" : "Notice Improvements"}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 {isGu
-                  ? "તાપમાનમાં વાસ્તવિક ઘટાડો, પાક સુધારો અને મંડીમાં શ્રેષ્ઠ ભાવ પ્રાપ્તિ."
-                  : "Empirical cooling validation, crop recovery, and Mandi price realization."}
+                  ? "તાપમાનમાં ઠંડક, સ્વસ્થ પાક અને મંડીમાં સારા ભાવ મેળવો."
+                  : "Feel cooler local areas, see healthier plants, and get better crop prices."}
               </p>
             </div>
 
             <div className="organic-card" style={{ padding: '1.5rem', background: '#ffffff' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--olive-sage)', marginBottom: '0.4rem' }}>
-                04
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--olive-sage)', marginBottom: '0.5rem' }}>
+                {isGu ? "પગલું ૪ : વધુ સારો સુધારો" : "Step 4 : Grow & Improve"}
               </div>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                {isGu ? "નિર્ણય સુધારો" : "Improve Decisions"}
+                {isGu ? "હંમેશા આગળ વધો" : "Keep Improving"}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 {isGu
-                  ? "AI મોડેલના સતત શિક્ષણથી ભવિષ્યની યોજનાઓ વધુ સચોટ બનાવો."
-                  : "Continuous learning to refine agricultural and urban advisories over time."}
+                  ? "સરળ ડિજિટલ માર્ગદર્શન જે ખેતી અને શહેરને હંમેશા હરિયાળું રાખે છે."
+                  : "Simple digital guidance that helps your farming and city stay green."}
               </p>
             </div>
           </div>
@@ -646,7 +648,7 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 marginBottom: '0.75rem',
               }}
             >
-              {t.faqs?.title || (isGu ? "વારંવાર પૂછાતા પ્રશ્નો અને માર્ગદર્શન" : "General Inquiries & Platform Guidance")}
+              {t.faqs?.title || (isGu ? "સામાન્ય પ્રશ્નો અને સરળ જવાબો" : "Common Questions & Simple Answers")}
             </h2>
             <p
               style={{
@@ -656,7 +658,7 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 margin: '0 auto',
               }}
             >
-              {t.faqs?.subtitle || (isGu ? "હરિત અયન પ્લેટફોર્મ, પાક રોગ નિદાન, હીટવેવ કૂલિંગ અને APMC બજાર ભાવો વિશેના જવાબો." : "Answers to common questions about HaritAyan, crop diagnostics, urban heat simulation, and APMC pricing.")}
+              {t.faqs?.subtitle || (isGu ? "હરિત અયન, પાકના રોગની તપાસ, વૃક્ષોની ઠંડક અને મંડી ભાવો વિશેના જવાબો." : "Quick answers about using HaritAyan, checking plant diseases, city tree cooling, and mandi prices.")}
             </p>
           </div>
 

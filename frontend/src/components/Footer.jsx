@@ -5,6 +5,7 @@ import {
   ChevronUp,
   ShieldAlert,
   Leaf,
+  Compass,
 } from 'lucide-react';
 import { getTranslation } from '../services/translationService';
 
@@ -66,7 +67,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                gap: '0.55rem',
                 padding: '0.35rem 0.8rem',
                 borderRadius: 'var(--radius-full)',
                 background: 'var(--bg-surface)',
@@ -75,9 +76,15 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                 color: 'var(--text-body)',
               }}
             >
-              <span>🌿 <strong>Harit (हरित)</strong>: Greenery & Sustainability</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Leaf size={13} color="var(--green-primary)" />
+                <span><strong>Harit (हरित)</strong>: Greenery & Healthy Plants</span>
+              </span>
               <span>•</span>
-              <span>🧭 <strong>Ayan (अयन)</strong>: Forward Journey</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Compass size={13} color="var(--dry-leaf)" />
+                <span><strong>Ayan (अयन)</strong>: Simple Path Forward</span>
+              </span>
             </div>
           </div>
 
@@ -95,7 +102,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
-                  • Urban Heat Mitigation & Simulator
+                  • City Heat & Tree Cooling Map
                 </button>
               </li>
               <li>
@@ -106,7 +113,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
-                  • Gemini Multimodal Vision Scanner
+                  • Plant Disease Scanner
                 </button>
               </li>
               <li>
@@ -117,7 +124,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
-                  • Real-Time APMC Mandi Engine
+                  • Mandi Crop Prices (APMC)
                 </button>
               </li>
               <li>
@@ -128,7 +135,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
-                  • Operations & Early Warning Panel
+                  • Weather Alerts & Advisory
                 </button>
               </li>
               <li>
@@ -139,7 +146,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
-                  • General FAQs & Support
+                  • FAQs & Help
                 </button>
               </li>
             </ul>
@@ -159,10 +166,11 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
               <span>Vadodara District Coverage</span>
             </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-              Covering APMCs in Sayajigunj, Padra, Karjan, Dabhoi, and Savli. Supporting sustainable alluvial soil agriculture across Vadodara district.
+              Covering APMC mandis in Sayajigunj, Padra, Karjan, Dabhoi, and Savli. Supporting local farmers and green city initiatives across Vadodara.
             </p>
-            <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--green-primary)', fontWeight: 600 }}>
-              🌿 Central Gujarat Agro-Climatic Zone
+            <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--green-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Leaf size={13} color="var(--green-primary)" />
+              <span>Vadodara Agriculture & Urban Greening</span>
             </div>
           </div>
         </div>

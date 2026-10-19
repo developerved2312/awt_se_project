@@ -12,7 +12,7 @@ import {
   Flame,
   BarChart3,
   Shield,
-  CheckCircle2,
+  Activity,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -26,8 +26,29 @@ export const Navbar = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
   const t = getTranslation(currentLang);
   const isGu = currentLang === 'gu';
+
+  const handleMouseEnterModules = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setModuleDropdownOpen(true);
+  };
+
+  const handleMouseLeaveModules = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setModuleDropdownOpen(false);
+    }, 180);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
 
   // Close module dropdown on outside click
   useEffect(() => {
@@ -82,50 +103,46 @@ export const Navbar = ({
     }
   };
 
-  // Modules definition: Module 2 is active, other 3 are upcoming
+  // Platform modules specification (simple, clear, natural wording)
   const modulesList = [
     {
-      id: 'module-02',
+      id: 'module-plant-pathology',
       page: 'scanner',
-      num: '02',
-      title: isGu ? 'જેમિની AI વિઝન સ્કેનર' : 'Gemini AI Vision Scanner',
-      subtitle: isGu ? 'પાક રોગ નિદાન અને જૈવિક-વૈજ્ઞાનિક ઉપાયો' : 'Crop Disease Diagnostics & Organic Remedies',
-      icon: Camera,
+      title: isGu ? 'પાક રોગ સ્કેનર' : 'Plant Disease Scanner',
+      subtitle: isGu ? 'પાનનો ફોટો પાડીને રોગ અને ઉપાયો જાણો' : 'Scan leaf photo to find crop disease & remedies',
+      icon: Activity,
       status: 'active',
-      statusText: isGu ? 'સક્રિય' : 'Available',
+      statusText: isGu ? 'ઉપલબ્ધ' : 'Active',
     },
     {
-      id: 'module-01',
+      id: 'module-urban-heat',
       page: null,
       anchor: 'modules-section',
-      num: '01',
-      title: isGu ? 'અર્બન હીટ કૂલિંગ સિમ્યુલેટર' : 'Urban Heat Mitigation & Simulator',
-      subtitle: isGu ? 'વડોદરા વોર્ડ તાપમાન અને વૃક્ષારોપણ' : 'Vadodara Heat Island & Canopy Modeling',
+      title: isGu ? 'શહેરની ગરમી અને વૃક્ષારોપણ નકશો' : 'City Heat & Tree Cooling Map',
+      subtitle: isGu ? 'વડોદરાના વિસ્તારો અને વૃક્ષોથી તાપમાન ઘટાડો' : 'Vadodara heat zones and tree cooling benefits',
       icon: Flame,
       status: 'upcoming',
-      statusText: isGu ? 'ફેઝ ૧' : 'Phase 1',
+      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
     },
     {
-      id: 'module-03',
+      id: 'module-apmc-mandi',
       page: null,
       anchor: 'modules-section',
-      num: '03',
-      title: isGu ? 'લાઈવ APMC મંડી ભાવ એન્જિન' : 'Real-Time APMC Mandi Engine',
-      subtitle: isGu ? 'સયાજીગંજ, પાદરા અને કરજણ બજાર ભાવ' : 'Sayajigunj, Padra & Karjan Tickers',
+      title: isGu ? 'APMC મંડી બજાર ભાવ' : 'Mandi Crop Prices (APMC)',
+      subtitle: isGu ? 'વડોદરા જિલ્લાની મંડીઓના રોજના તાજા ભાવ' : 'Daily market prices from Vadodara district mandis',
       icon: BarChart3,
       status: 'upcoming',
-      statusText: isGu ? 'ફેઝ ૩' : 'Phase 3',
+      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
     },
     {
-      id: 'module-04',
+      id: 'module-operations',
       page: null,
       anchor: 'modules-section',
-      num: '04',
-      title: isGu ? 'ઓપરેશન્સ અને હવામાન ચેતવણી' : 'Operations & Advisory Panel',
-      subtitle: isGu ? 'IMD હીટવેવ સલાહ અને સિસ્ટમ ટેલિમેટ્રી' : 'IMD Heatwave Alerts & Control Hub',
+      title: isGu ? 'હવામાન ચેતવણી અને સલાહ' : 'Weather Alerts & Advisory',
+      subtitle: isGu ? 'ગરમીની ચેતવણી અને ખેડૂતો માટે જરૂરી સૂચનાઓ' : 'Heat alerts and useful seasonal farming tips',
       icon: Shield,
       status: 'upcoming',
-      statusText: isGu ? 'ફેઝ ૪' : 'Phase 4',
+      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
     },
   ];
 
@@ -136,10 +153,10 @@ export const Navbar = ({
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backgroundColor: 'rgba(251, 249, 245, 0.94)',
+        backgroundColor: 'rgba(251, 249, 245, 0.96)',
         backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--border-subtle)',
-        boxShadow: '0 2px 10px rgba(35, 45, 40, 0.03)',
+        boxShadow: '0 1px 6px rgba(27, 40, 32, 0.04)',
       }}
     >
       <div
@@ -148,10 +165,10 @@ export const Navbar = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '72px',
+          height: '68px',
         }}
       >
-        {/* Brand Logo */}
+        {/* Institutional Brand Identity */}
         <div
           onClick={() => {
             if (onNavigate) onNavigate('home');
@@ -161,24 +178,24 @@ export const Navbar = ({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.8rem',
+            gap: '0.75rem',
             cursor: 'pointer',
             userSelect: 'none',
           }}
         >
           <div
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, var(--green-primary) 0%, var(--green-deep) 100%)',
+              width: '38px',
+              height: '38px',
+              borderRadius: '8px',
+              background: 'linear-gradient(145deg, var(--green-primary) 0%, var(--green-deep) 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(45, 106, 79, 0.2)',
+              boxShadow: '0 2px 6px rgba(27, 67, 50, 0.18)',
             }}
           >
-            <Sprout size={22} color="#ffffff" />
+            <Sprout size={20} color="#ffffff" strokeWidth={2.2} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -186,22 +203,22 @@ export const Navbar = ({
               <span
                 style={{
                   fontFamily: 'var(--font-heading)',
-                  fontSize: '1.3rem',
+                  fontSize: '1.25rem',
                   fontWeight: 800,
                   color: 'var(--text-title)',
                   letterSpacing: '-0.02em',
                 }}
               >
-                {t.nav.brand}
+                HaritAyan
               </span>
               <span
                 style={{
-                  fontSize: '0.72rem',
+                  fontSize: '0.7rem',
                   color: 'var(--dry-leaf-dark)',
                   background: 'var(--dry-leaf-soft)',
                   border: '1px solid var(--dry-leaf-border)',
                   padding: '1px 6px',
-                  borderRadius: '4px',
+                  borderRadius: '3px',
                   fontFamily: 'var(--font-gujarati)',
                   fontWeight: 600,
                 }}
@@ -211,25 +228,25 @@ export const Navbar = ({
             </div>
             <span
               style={{
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 color: 'var(--text-muted)',
-                letterSpacing: '0.04em',
+                letterSpacing: '0.03em',
                 textTransform: 'uppercase',
                 fontWeight: 600,
               }}
             >
-              Smart Agriculture & Plant Intelligence
+              {isGu ? 'સ્માર્ટ ખેતી અને પર્યાવરણ માર્ગદર્શિકા' : 'Smart Agriculture & Green City Platform'}
             </span>
           </div>
         </div>
 
-        {/* Desktop Nav Items */}
+        {/* Desktop Navigation - Normal Navbar with Uniform Hover */}
         <nav
           id="desktop-nav-links"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.45rem',
+            gap: '0.4rem',
           }}
           className="desktop-only"
         >
@@ -237,65 +254,41 @@ export const Navbar = ({
           <button
             type="button"
             onClick={() => handleItemClick({ page: 'home' })}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              padding: '0.5rem 0.95rem',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              borderRadius: 'var(--radius-md)',
-              color: activePage === 'home' ? 'var(--green-deep)' : 'var(--text-body)',
-              backgroundColor: activePage === 'home' ? 'var(--bg-tint-green)' : 'transparent',
-              border: activePage === 'home' ? '1px solid var(--border-medium)' : '1px solid transparent',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            className={`nav-link-item ${activePage === 'home' ? 'active' : ''}`}
           >
-            <Compass size={16} color="var(--green-primary)" />
+            <Compass size={15} color="var(--green-primary)" />
             <span>{isGu ? 'મુખ્ય પૃષ્ઠ' : 'Home'}</span>
           </button>
 
-          {/* Unified "Select Module" Dropdown Menu */}
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
+          {/* Formal "Modules" Dropdown with Smooth Hover */}
+          <div
+            className="nav-dropdown-wrapper"
+            ref={dropdownRef}
+            onMouseEnter={handleMouseEnterModules}
+            onMouseLeave={handleMouseLeaveModules}
+          >
             <button
               type="button"
               id="nav-module-dropdown-btn"
               onClick={() => setModuleDropdownOpen(!moduleDropdownOpen)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 0.95rem',
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                borderRadius: 'var(--radius-md)',
-                color: activePage === 'scanner' ? 'var(--green-deep)' : 'var(--text-title)',
-                backgroundColor: activePage === 'scanner' ? 'var(--bg-tint-green)' : '#ffffff',
-                border: '1.5px solid var(--border-medium)',
-                boxShadow: 'var(--shadow-sm)',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className={`nav-link-item ${activePage === 'scanner' ? 'active' : ''} ${moduleDropdownOpen ? 'open' : ''}`}
+              aria-haspopup="true"
+              aria-expanded={moduleDropdownOpen}
             >
-              {activePage === 'scanner' ? (
-                <Camera size={16} color="var(--green-primary)" />
-              ) : (
-                <Layers size={16} color="var(--green-primary)" />
-              )}
+              <Layers size={15} color="var(--green-primary)" />
               <span>
                 {activePage === 'scanner'
                   ? isGu
-                    ? 'મોડ્યુલ ૦૨: AI વિઝન સ્કેનર'
-                    : 'Module 02: Vision Scanner'
+                    ? 'પાક સ્કેનર'
+                    : 'Plant Scanner'
                   : isGu
-                  ? 'મોડ્યુલ્સ પસંદ કરો'
-                  : 'Select Module'}
+                    ? 'મોડ્યુલ્સ'
+                    : 'Modules'}
               </span>
               <ChevronDown
-                size={15}
+                size={14}
                 style={{
-                  transition: 'transform 0.2s ease',
+                  transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                   transform: moduleDropdownOpen ? 'rotate(180deg)' : 'none',
                   color: 'var(--text-muted)',
                 }}
@@ -304,46 +297,40 @@ export const Navbar = ({
 
             {/* Dropdown Card */}
             {moduleDropdownOpen && (
-              <div className="module-dropdown-menu">
+              <div
+                className="module-dropdown-menu"
+                style={{
+                  width: '370px',
+                  border: '1px solid var(--border-medium)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: '0 10px 30px rgba(27, 40, 32, 0.1)',
+                  padding: '0.5rem',
+                }}
+              >
                 <div
                   style={{
-                    padding: '0.45rem 0.75rem 0.65rem',
+                    padding: '0.4rem 0.65rem 0.5rem',
                     borderBottom: '1px solid var(--border-subtle)',
-                    marginBottom: '0.4rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    marginBottom: '0.35rem',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.74rem',
+                      fontSize: '0.72rem',
                       fontWeight: 700,
                       textTransform: 'uppercase',
                       color: 'var(--text-muted)',
-                      letterSpacing: '0.04em',
+                      letterSpacing: '0.05em',
                     }}
                   >
-                    {isGu ? 'હરિત અયન મોડ્યુલ્સ' : 'HaritAyan Modules Grid'}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.7rem',
-                      padding: '1px 6px',
-                      borderRadius: '4px',
-                      background: 'var(--bg-tint-green)',
-                      color: 'var(--green-primary)',
-                      fontWeight: 700,
-                    }}
-                  >
-                    1 Active
+                    {isGu ? 'પ્લેટફોર્મ સેવાઓ' : 'Platform Features'}
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                   {modulesList.map((mod) => {
                     const ModIcon = mod.icon;
-                    const isActiveModule = mod.status === 'active';
+                    const isActive = mod.status === 'active';
                     const isSelected = mod.page && activePage === mod.page;
 
                     return (
@@ -353,28 +340,22 @@ export const Navbar = ({
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '0.75rem',
+                          gap: '0.7rem',
                           padding: '0.65rem 0.75rem',
                           borderRadius: 'var(--radius-sm)',
-                          backgroundColor: isSelected
-                            ? 'var(--bg-tint-green)'
-                            : 'transparent',
-                          border: isSelected
-                            ? '1px solid var(--green-light)'
-                            : '1px solid transparent',
+                          backgroundColor: isSelected ? 'var(--bg-tint-green)' : 'transparent',
+                          border: isSelected ? '1px solid var(--border-medium)' : '1px solid transparent',
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
                         }}
                         onMouseEnter={(e) => {
                           if (!isSelected) {
                             e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
-                            e.currentTarget.style.borderColor = 'var(--border-subtle)';
                           }
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected) {
                             e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.borderColor = 'transparent';
                           }
                         }}
                       >
@@ -382,20 +363,20 @@ export const Navbar = ({
                           style={{
                             width: '32px',
                             height: '32px',
-                            borderRadius: '8px',
-                            backgroundColor: isActiveModule ? 'var(--green-wash)' : 'var(--bg-subtle)',
-                            color: isActiveModule ? 'var(--green-primary)' : 'var(--text-muted)',
+                            borderRadius: '6px',
+                            backgroundColor: isActive ? 'var(--green-wash)' : '#f2efe9',
+                            color: isActive ? 'var(--green-primary)' : 'var(--text-muted)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0,
                           }}
                         >
-                          <ModIcon size={16} />
+                          <ModIcon size={16} strokeWidth={2} />
                         </div>
 
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem' }}>
                             <span
                               style={{
                                 fontSize: '0.86rem',
@@ -411,12 +392,12 @@ export const Navbar = ({
                             <span
                               style={{
                                 fontSize: '0.68rem',
-                                fontWeight: 700,
+                                fontWeight: 600,
                                 padding: '1px 5px',
                                 borderRadius: '3px',
                                 flexShrink: 0,
-                                backgroundColor: isActiveModule ? '#dcfce7' : '#f3efe6',
-                                color: isActiveModule ? '#166534' : 'var(--text-muted)',
+                                backgroundColor: isActive ? '#e8f5e9' : '#f0ece3',
+                                color: isActive ? '#1b5e20' : 'var(--text-muted)',
                               }}
                             >
                               {mod.statusText}
@@ -443,66 +424,24 @@ export const Navbar = ({
             )}
           </div>
 
-          {/* Vadodara Agro-Grid Link */}
+          {/* Regional Context Link */}
           <button
             type="button"
             onClick={() => handleItemClick({ anchor: 'vadodara-context' })}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              padding: '0.5rem 0.85rem',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              borderRadius: 'var(--radius-md)',
-              color: 'var(--text-body)',
-              backgroundColor: 'transparent',
-              border: '1px solid transparent',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--green-deep)';
-              e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-body)';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="nav-link-item"
           >
-            <MapPin size={16} color="var(--green-primary)" />
-            <span>{isGu ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Focus'}</span>
+            <MapPin size={15} color="var(--green-primary)" />
+            <span>{isGu ? 'વડોદરા ગાઇડ' : 'Vadodara Guide'}</span>
           </button>
 
           {/* FAQs Link */}
           <button
             type="button"
             onClick={() => handleItemClick({ anchor: 'faq-section' })}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              padding: '0.5rem 0.85rem',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              borderRadius: 'var(--radius-md)',
-              color: 'var(--text-body)',
-              backgroundColor: 'transparent',
-              border: '1px solid transparent',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--green-deep)';
-              e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-body)';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="nav-link-item"
           >
-            <HelpCircle size={16} color="var(--green-primary)" />
-            <span>{isGu ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs'}</span>
+            <HelpCircle size={15} color="var(--green-primary)" />
+            <span>{isGu ? 'પ્રશ્નોત્તરી અને મદદ' : 'FAQs & Help'}</span>
           </button>
         </nav>
 
@@ -524,7 +463,7 @@ export const Navbar = ({
             style={{
               display: 'none',
               padding: '6px',
-              borderRadius: '8px',
+              borderRadius: '6px',
               background: '#ffffff',
               color: 'var(--text-title)',
               border: '1px solid var(--border-medium)',
@@ -544,10 +483,10 @@ export const Navbar = ({
           style={{
             backgroundColor: '#ffffff',
             borderTop: '1px solid var(--border-subtle)',
-            padding: '1rem 1.25rem',
+            padding: '1rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.65rem',
+            gap: '0.5rem',
             boxShadow: 'var(--shadow-md)',
           }}
         >
@@ -558,32 +497,32 @@ export const Navbar = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              padding: '0.65rem 0.95rem',
-              fontSize: '0.92rem',
-              fontWeight: 700,
-              borderRadius: 'var(--radius-md)',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              borderRadius: 'var(--radius-sm)',
               color: activePage === 'home' ? 'var(--green-deep)' : 'var(--text-title)',
               backgroundColor: activePage === 'home' ? 'var(--green-wash)' : 'var(--bg-tint-green)',
               border: 'none',
               textAlign: 'left',
             }}
           >
-            <Compass size={17} color="var(--green-primary)" />
+            <Compass size={16} color="var(--green-primary)" />
             <span>{isGu ? 'મુખ્ય પૃષ્ઠ' : 'Home'}</span>
           </button>
 
-          {/* Mobile Modules Section */}
+          {/* Mobile Modules Listing */}
           <div
             style={{
-              padding: '0.5rem 0.75rem',
-              borderRadius: 'var(--radius-md)',
+              padding: '0.65rem 0.75rem',
+              borderRadius: 'var(--radius-sm)',
               background: 'var(--bg-canvas)',
               border: '1px solid var(--border-subtle)',
             }}
           >
             <span
               style={{
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 color: 'var(--text-muted)',
@@ -592,10 +531,10 @@ export const Navbar = ({
                 marginBottom: '0.45rem',
               }}
             >
-              {isGu ? 'મોડ્યુલ્સ પસંદ કરો:' : 'Select Module:'}
+              {isGu ? 'પ્લેટફોર્મ સેવાઓ:' : 'Platform Modules:'}
             </span>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {modulesList.map((mod) => {
                 const ModIcon = mod.icon;
                 const isSelected = mod.page && activePage === mod.page;
@@ -608,13 +547,13 @@ export const Navbar = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.55rem 0.75rem',
+                      padding: '0.5rem 0.65rem',
                       borderRadius: 'var(--radius-sm)',
-                      backgroundColor: isSelected ? '#dcfce7' : '#ffffff',
-                      border: isSelected ? '1px solid var(--green-light)' : '1px solid var(--border-subtle)',
+                      backgroundColor: isSelected ? '#e8f5e9' : '#ffffff',
+                      border: isSelected ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
                       textAlign: 'left',
-                      fontSize: '0.86rem',
-                      fontWeight: 700,
+                      fontSize: '0.84rem',
+                      fontWeight: 600,
                       color: 'var(--text-title)',
                     }}
                   >
@@ -625,11 +564,11 @@ export const Navbar = ({
                     <span
                       style={{
                         fontSize: '0.65rem',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         padding: '1px 5px',
                         borderRadius: '3px',
-                        backgroundColor: mod.status === 'active' ? '#bbf7d0' : '#f3efe6',
-                        color: mod.status === 'active' ? '#166534' : 'var(--text-muted)',
+                        backgroundColor: mod.status === 'active' ? '#c8e6c9' : '#f0ece3',
+                        color: mod.status === 'active' ? '#1b5e20' : 'var(--text-muted)',
                       }}
                     >
                       {mod.statusText}
@@ -647,18 +586,18 @@ export const Navbar = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              padding: '0.65rem 0.95rem',
-              fontSize: '0.92rem',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.9rem',
               fontWeight: 600,
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 'var(--radius-sm)',
               color: 'var(--text-title)',
               backgroundColor: 'var(--bg-tint-green)',
               border: 'none',
               textAlign: 'left',
             }}
           >
-            <MapPin size={17} color="var(--green-primary)" />
-            <span>{isGu ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Focus'}</span>
+            <MapPin size={16} color="var(--green-primary)" />
+            <span>{isGu ? 'વડોદરા એગ્રો-ગ્રીડ' : 'Vadodara Agro-Grid'}</span>
           </button>
 
           <button
@@ -668,17 +607,17 @@ export const Navbar = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              padding: '0.65rem 0.95rem',
-              fontSize: '0.92rem',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.9rem',
               fontWeight: 600,
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 'var(--radius-sm)',
               color: 'var(--text-title)',
               backgroundColor: 'var(--bg-tint-green)',
               border: 'none',
               textAlign: 'left',
             }}
           >
-            <HelpCircle size={17} color="var(--green-primary)" />
+            <HelpCircle size={16} color="var(--green-primary)" />
             <span>{isGu ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs'}</span>
           </button>
         </div>

@@ -24,20 +24,20 @@ import {
 
 const LOADING_STAGES = [
   {
-    en: 'Scanning foliar vein geometry & chlorophyll density...',
-    gu: 'પાનની નસો અને હરિતકણ રચનાનું સ્કેનિંગ...',
+    en: 'Examining leaf surface and colors...',
+    gu: 'પાનની સપાટી અને રંગ તપાસાઈ રહ્યા છે...',
   },
   {
-    en: 'Detecting necrotic lesions and pathogen patterns...',
-    gu: 'કોષીય ક્ષતિ અને રોગકારક લક્ષણોની તપાસ...',
+    en: 'Looking for spots and disease signs...',
+    gu: 'ડાઘ અને રોગના લક્ષણો તપાસાઈ રહ્યા છે...',
   },
   {
-    en: 'Gemini Multimodal Agro-Pathology AI diagnosing condition...',
-    gu: 'જેમિની AI વિઝન મોડલ દ્વારા પાક રોગ નિદાન...',
+    en: 'AI identifying crop health condition...',
+    gu: 'AI દ્વારા પાકની સ્થિતિ ઓળખાઈ રહી છે...',
   },
   {
-    en: 'Formulating organic & scientific remedy dosages...',
-    gu: 'જૈવિક અને વૈજ્ઞાનિક દવાની માત્રા તૈયાર થઈ રહી છે...',
+    en: 'Preparing simple and effective remedies...',
+    gu: 'સરળ અને ઉપયોગી ઉપાયો તૈયાર થઈ રહ્યા છે...',
   },
 ];
 
@@ -280,7 +280,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             style={{ fontSize: '0.82rem', padding: '0.35rem 0.85rem' }}
           >
             <Sparkles size={14} />
-            <span>{isGu ? 'ગુજરાત પાક નિષ્ણાત AI મોડલ' : 'Gujarat Agro-Pathology Vision AI'}</span>
+            <span>{isGu ? 'ગુજરાત પાક સલાહકાર AI' : 'AI Crop Health Assistant'}</span>
           </div>
         </div>
 
@@ -295,9 +295,9 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               lineHeight: 1.25,
             }}
           >
-            {isGu ? 'AI પાક રોગ સ્કેનર અને જૈવિક-વૈજ્ઞાનિક ઉપચાર' : 'Multimodal Crop Vision Diagnostics'}{' '}
+            {isGu ? 'AI પાક રોગ સ્કેનર' : 'Plant Disease Scanner'}{' '}
             <span style={{ color: 'var(--green-primary)' }}>
-              {isGu ? '— હરિત અયન' : '& Dual Remedies'}
+              {isGu ? '— સરળ પાક તપાસ અને ઉપાયો' : '& Leaf Health Check'}
             </span>
           </h1>
           <p
@@ -308,8 +308,8 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             }}
           >
             {isGu
-              ? 'કપાસ, દિવેલા, ટામેટા, તુવેર કે ભીંડાના પાંદડાનો ફોટો અપલોડ કરો. જેમિની AI પાનની નસો, ક્લોરોફિલ અને રોગચિહ્નો તપાસીને ત્વરિત સચોટ નિદાન અને દેશી-વૈજ્ઞાનિક ઉપાયો આપશે.'
-              : 'Upload or photograph any crop leaf (Cotton, Castor, Tomato, Pigeon Pea, Okra). Gemini Multimodal AI detects cellular discoloration, identifies fungal or viral pathogens, and delivers organic and chemical remedies.'}
+              ? 'કપાસ, દિવેલા, ટામેટા કે શાકભાજીના પાનનો ફોટો અપલોડ કરો અથવા પાડો. AI ત્વરિત રોગ ઓળખીને સરળ દેશી અને યોગ્ય દવાઓની સલાહ આપશે.'
+              : 'Take or upload a photo of any crop leaf (Cotton, Castor, Tomato, Tuver, or Vegetables). Our AI quickly checks the leaf, identifies any disease, and suggests simple organic and recommended remedies.'}
           </p>
         </div>
 
@@ -363,7 +363,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               }}
             >
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-title)' }}>
-                {isGu ? '૧. પાંદડાનો ફોટો પસંદ કરો' : '1. Capture or Upload Leaf'}
+                {isGu ? 'પાનનો ફોટો પસંદ કરો અથવા પાડો' : 'Take or Upload Leaf Photo'}
               </h2>
               {selectedImage && (
                 <button
@@ -817,15 +817,15 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               <div style={{ marginBottom: '1.25rem' }}>
                 <div className="badge badge-leaf" style={{ marginBottom: '0.65rem' }}>
                   <Leaf size={14} />
-                  <span>{isGu ? 'ત્વરિત ડેમો સેમ્પલ્સ' : 'One-Click Gujarat Crop Samples'}</span>
+                  <span>{isGu ? 'સેમ્પલ પાન' : 'Sample Leaf Images'}</span>
                 </div>
                 <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-title)' }}>
-                  {isGu ? 'અથવા નીચેના સેમ્પલમાંથી પસંદ કરો' : 'Test with Gujarat Agro Samples'}
+                  {isGu ? 'સેમ્પલ પાન પસંદ કરીને ચકાસો' : 'Try With Sample Crops'}
                 </h2>
                 <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)' }}>
                   {isGu
                     ? 'તમારી પાસે હાલ છોડનો ફોટો ન હોય તો નીચેનામાંથી કોઈપણ પાક પર ક્લિક કરીને AI નિદાન ચકાસી શકો છો.'
-                    : 'Instantly preview the diagnostic pipeline across Gujarat cash crops and vegetables without uploading your own file.'}
+                    : 'Click any common Gujarat crop below to see how disease detection and simple remedies work.'}
                 </p>
               </div>
 
@@ -925,6 +925,23 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                 }}
               >
                 <div>
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.07em',
+                      color: 'var(--text-muted)',
+                      fontWeight: 700,
+                      marginBottom: '0.45rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                    }}
+                  >
+                    <FileText size={13} color="var(--green-primary)" />
+                    <span>{isGu ? 'પાક સ્વાસ્થ્ય રિપોર્ટ' : 'Plant Health Report'}</span>
+                  </div>
+
                   <div
                     style={{
                       display: 'inline-flex',
@@ -1028,7 +1045,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   }}
                 >
                   <Info size={16} color="var(--green-primary)" />
-                  <span>{isGu ? 'ઓળખાયેલા લક્ષણો (Foliar Symptoms):' : 'Identified Foliar Symptoms:'}</span>
+                  <span>{isGu ? 'જોવા મળેલા લક્ષણો:' : 'Symptoms Found on Leaf:'}</span>
                 </h4>
                 <ul
                   style={{
@@ -1093,7 +1110,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                     }}
                   >
                     <Leaf size={15} />
-                    <span>{isGu ? 'જૈવિક અને દેશી ઉપચાર' : 'Organic & Bio Remedies'}</span>
+                    <span>{isGu ? 'દેશી અને કુદરતી ઉપાયો' : 'Organic Remedies'}</span>
                   </button>
 
                   <button
@@ -1117,7 +1134,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                     }}
                   >
                     <Droplets size={15} />
-                    <span>{isGu ? 'વૈજ્ઞાનિક રાસાયણિક ઉપચાર' : 'Scientific Treatments'}</span>
+                    <span>{isGu ? 'દવાઓ અને છંટકાવ' : 'Medicines & Sprays'}</span>
                   </button>
 
                   <button
@@ -1142,7 +1159,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                     }}
                   >
                     <ShieldCheck size={15} />
-                    <span>{isGu ? 'આગોતરી કાળજી' : 'Cultural Prevention'}</span>
+                    <span>{isGu ? 'ખેત કાળજી અને બચાવ' : 'Farm Care & Prevention'}</span>
                   </button>
                 </div>
 
@@ -1164,9 +1181,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                         marginBottom: '0.75rem',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
                       }}
                     >
-                      🌿 {isGu ? 'કુદરતી જૈવિક ભલામણો (શૂન્ય રસાયણ):' : 'Eco-Friendly Bio-Pesticide Plan:'}
+                      <Leaf size={14} color="var(--green-primary)" />
+                      <span>{isGu ? 'કુદરતી અને દેશી ઉપાયો (કેમિકલ વગર):' : 'Natural & Organic Remedies (Chemical-Free):'}</span>
                     </p>
                     <ul
                       style={{
@@ -1217,9 +1238,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                         marginBottom: '0.75rem',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
                       }}
                     >
-                      🧪 {isGu ? 'રાસાયણિક દવાની માત્રા અને છંટકાવ:' : 'Targeted Active Formulations:'}
+                      <Droplets size={14} color="var(--dry-leaf)" />
+                      <span>{isGu ? 'જરૂરી દવાઓ અને છંટકાવની માત્રા:' : 'Recommended Medicines & Spray Dosages:'}</span>
                     </p>
                     <ul
                       style={{
@@ -1270,9 +1295,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                         marginBottom: '0.75rem',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
                       }}
                     >
-                      🛡️ {isGu ? 'ખેત કાળજી અને રોગ અટકાવવાના પગલાં:' : 'Field Sanitation & Irrigation Safeguards:'}
+                      <ShieldCheck size={14} color="var(--olive-sage)" />
+                      <span>{isGu ? 'ખેતરની કાળજી અને ભવિષ્યમાં રોગ અટકાવવા:' : 'Helpful Farm Care & Prevention Tips:'}</span>
                     </p>
                     <ul
                       style={{

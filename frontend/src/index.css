@@ -412,7 +412,7 @@ img {
 
 .module-dropdown-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   left: 0;
   width: 360px;
   background: #ffffff;
@@ -423,4 +423,56 @@ img {
   z-index: 200;
   animation: dropdownFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Invisible bridge between button and dropdown to prevent mouse leave gap */
+.nav-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-wrapper .module-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: transparent;
+}
+
+/* Normal Uniform Navbar Link Styling */
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  color: var(--text-body);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  text-decoration: none;
+}
+
+.nav-link-item:hover,
+.nav-link-item.open {
+  color: var(--green-deep);
+  background-color: var(--bg-tint-green);
+}
+
+.nav-link-item.active {
+  color: var(--green-deep);
+  font-weight: 700;
+  background-color: var(--bg-tint-green);
+}
+
+.nav-link-item:focus-visible {
+  outline: 2px solid var(--green-primary);
+  outline-offset: 1px;
+}
+
 

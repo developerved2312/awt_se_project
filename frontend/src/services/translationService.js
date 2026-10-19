@@ -32,7 +32,7 @@ export const translations = {
       subtitle: 'Empowering urban planners, farmers, gardeners, and district administrators with actionable AI and hyper-local data.',
     },
     heatSimulatorSection: {
-      kicker: 'Module 01 Preview',
+      kicker: 'Urban Microclimate Analytics',
       title: 'Urban Heat Mitigation & Tree Canopy Simulator',
       subtitle: 'Simulate microclimate cooling across Vadodara wards by calculating the cooling delta of planting native neem, peepal, and banyan trees.',
       selectWard: 'Select Vadodara Ward / Zone:',
@@ -43,7 +43,7 @@ export const translations = {
       uhiRisk: 'Heat Island Risk Level:',
     },
     scannerPreviewSection: {
-      kicker: 'Module 02 Preview',
+      kicker: 'Foliar Pathology Intelligence',
       title: 'Gemini Multimodal Crop Health & Disease Scanner',
       subtitle: 'Instant leaf-level pathogen recognition and planting site analysis tailored for Gujarat crops like Cotton, Castor, Pigeon Pea, and Vegetables.',
       selectSample: 'Try Pre-Loaded Diagnostic Sample:',
@@ -52,7 +52,7 @@ export const translations = {
       remedy: 'Bilingual Agronomic Treatment:',
     },
     mandiPreviewSection: {
-      kicker: 'Module 03 Preview',
+      kicker: 'Commodity Market Intelligence',
       title: 'Real-Time APMC Mandi Rates & Price Trends',
       subtitle: 'Direct agricultural market prices from Sayajigunj, Padra, Karjan, Dabhoi and Savli APMC yards with 24-hour market movements.',
       commodity: 'Commodity (પાક)',
@@ -143,7 +143,7 @@ export const translations = {
       subtitle: 'શહેરી આયોજકો, ખેડૂતો, બાગાયતકારો અને વહીવટી તંત્ર માટે સ્થાનિક ડેટા અને આધુનિક AI સલાહ.',
     },
     heatSimulatorSection: {
-      kicker: 'મોડ્યુલ ૦૧ પૂર્વાવલોકન',
+      kicker: 'અર્બન માઇક્રોક્લાઇમેટ વિશ્લેષણ',
       title: 'શહેરી ગરમી ઘટાડો અને વૃક્ષારોપણ કૂલિંગ સિમ્યુલેટર',
       subtitle: 'વડોદરાના વિવિધ વિસ્તારોમાં લીમડો, પીપળો અને વડ જેવા દેશી વૃક્ષો વાવીને તાપમાન કેટલું ઘટી શકે તેનું લાઈવ સિમ્યુલેશન.',
       selectWard: 'વડોદરાનો વિસ્તાર / વોર્ડ પસંદ કરો:',
@@ -154,7 +154,7 @@ export const translations = {
       uhiRisk: 'હીટવેવ જોખમ સ્તર:',
     },
     scannerPreviewSection: {
-      kicker: 'મોડ્યુલ ૦૨ પૂર્વાવલોકન',
+      kicker: 'વનસ્પતિ રોગવિજ્ઞાન ઇન્ટેલિજન્સ',
       title: 'જેમિની AI મલ્ટિમોડલ પાક રોગ નિદાન સ્કેનર',
       subtitle: 'ગુજરાતના મુખ્ય પાકો કપાસ, દિવેલા, તુવેર અને શાકભાજીના રોગોની પાંદડા પરથી ત્વરિત ઓળખ અને દેશી-વૈજ્ઞાનિક ઉપાયો.',
       selectSample: 'ડેમો પાક સેમ્પલ પસંદ કરો:',
@@ -163,7 +163,7 @@ export const translations = {
       remedy: 'ગુજરાતીમાં ઉપચાર અને ભલામણ:',
     },
     mandiPreviewSection: {
-      kicker: 'મોડ્યુલ ૦૩ પૂર્વાવલોકન',
+      kicker: 'કોમોડિટી માર્કેટ ઇન્ટેલિજન્સ',
       title: 'વડોદરા APMC માર્કેટ યાર્ડ લાઈવ બજાર ભાવો',
       subtitle: 'સયાજીગંજ, પાદરા, કરજણ, ડભોઇ અને સાવલી માર્કેટ યાર્ડના તાજા ક્વિન્ટલ ભાવો અને બજાર તેજી-મંદી.',
       commodity: 'કૃષિ પાક',
