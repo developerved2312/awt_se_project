@@ -111,3 +111,122 @@ SUMMARY OF IMPLEMENTATION:
      - Added "Browse Knowledge Base" toggle button directly on the Diagnostic Report Card so users can easily toggle back and forth between Live Scans and Knowledge Base samples.
      - Added dual engine origin badges on both Diagnostic Report cards and Live Feed cards ("Live Gemini Vision AI" with Sparkles icon vs "Curated Knowledge Base" with Database icon).
 ================================================================================
+
+[LOG ENTRY #007]
+TIMESTAMP: 2026-10-20T11:51:30+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Complete Plant Disease Vision Scanner Finalization (Image Pipeline, Storage, Print, & Delete APIs)
+FILES UPDATED / CREATED:
+  - [CREATED] backend/src/middleware/uploadMiddleware.js
+  - [MODIFIED] backend/src/server.js
+  - [MODIFIED] backend/src/controllers/scanController.js
+  - [MODIFIED] backend/src/routes/scanRoutes.js
+  - [MODIFIED] frontend/src/services/scanService.js
+  - [MODIFIED] frontend/src/pages/PlantScanner.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Image Storage & Compression Pipeline:
+     - Configured Multer upload middleware in `backend/src/middleware/uploadMiddleware.js` supporting JPEG, PNG, and WebP.
+     - Added server static hosting for `/uploads` directory in `backend/src/server.js` (`app.use('/uploads', express.static(...))`).
+     - Decoded camera Base64 snapshots and multipart uploads directly to disk in `backend/public/uploads/` and saved clean relative URL paths (`/uploads/leaf_...jpg`) to MongoDB Atlas, preventing document bloat and 16MB document limit issues.
+  2. Gemini Vision Diagnostic Engine:
+     - Prompt engineering enforcement in `backend/src/services/geminiService.js` for strict bilingual JSON output (English & Gujarati) across symptoms, organic remedies (Neem, buttermilk, bio-fungicides), safe chemical dosages, and non-plant rejections.
+     - Seamless offline knowledgebase fallback with zero crash risk when API key is missing or offline.
+  3. Live Feed & History APIs:
+     - Implemented `POST /api/scan/analyze` saving scan documents with persistent disk image URLs to MongoDB Atlas.
+     - Implemented `GET /api/scan/history` returning recent scans with resolved thumbnail paths.
+     - Implemented `DELETE /api/scan/:id` in `scanController.js` and `scanRoutes.js` allowing users to delete test scans and clean up disk image assets.
+  4. Frontend Enhancements:
+     - Live Feed cards in `PlantScanner.jsx` now render image thumbnails (`resolveImageUrl(scan.imageUrl)`) alongside crop and disease names.
+     - Added interactive scan delete button (`Trash2`) on live feed cards.
+     - Added "Print / Export Report" (`Printer`) button on the Diagnostic Report Card with clean `@media print` CSS rules.
+================================================================================
+
+[LOG ENTRY #008]
+TIMESTAMP: 2026-10-20T12:03:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Verification of User-Added Crop Leaf Images & Knowledge Base Real Thumbnail Mapping
+FILES UPDATED / CREATED:
+  - [MODIFIED] frontend/src/services/scanService.js
+  - [MODIFIED] frontend/src/pages/PlantScanner.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Verified that all 6 regional crop leaf images added by the user in `frontend/public/images/` exist:
+     - `cotton.jpeg` (Cotton / કપાસ - Leaf Curl Virus)
+     - `tomato.jpg` (Tomato / ટામેટા - Early Blight)
+     - `castor.png` (Castor / દિવેલા - Leaf Spot)
+     - `pigeon_pea.jpg` (Pigeon Pea / તુવેર - Fusarium Wilt)
+     - `okra.png` (Okra / ભીંડા - Yellow Vein Mosaic Virus)
+     - `healthy-crop.jpeg` (Healthy Crop / તંદુરસ્ત પાન)
+  2. Mapped `SAMPLE_CROPS` in `frontend/src/services/scanService.js` directly to each corresponding image asset.
+  3. Enhanced Knowledge Base sample crop items in `frontend/src/pages/PlantScanner.jsx` to render real 46px leaf thumbnails on each card with smooth error fallback.
+================================================================================
+
+[LOG ENTRY #009]
+TIMESTAMP: 2026-10-20T12:10:30+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Live Gemini API Key Verification, Latest Model Benchmark, & Cotton Vision Diagnostic Test
+FILES UPDATED / CREATED:
+  - [MODIFIED] backend/.env
+  - [MODIFIED] backend/src/services/geminiService.js
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Polled Google AI Studio Model Service via user's API key to identify active models.
+  2. Confirmed that Google's active, recommended flagship flash model is `gemini-3.8-flash`.
+  3. Executed live multimodal leaf vision diagnosis using `gemini-3.8-flash` on `frontend/public/images/cotton.jpeg`:
+     - Result: Accurate diagnosis returned in 2.5s: "This is a cotton plant affected by Cotton Leaf Curl Virus (CLCuV), characterized by pronounced vein thickening, upward leaf curling, and enations."
+  4. Configured `GEMINI_MODEL="gemini-3.8-flash"` in `backend/.env` and updated `backend/src/services/geminiService.js` defaults.
+================================================================================
+
+[LOG ENTRY #010]
+TIMESTAMP: 2026-10-20T13:35:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Migration to Multi-User System with Bcrypt Hashing, JWT Auth, 3 Gujarat Farmers, 1 Agricultural Officer, and Persistent Queries in MongoDB Atlas
+FILES UPDATED / CREATED:
+  - [CREATED] backend/src/models/User.js
+  - [CREATED] backend/src/models/Query.js
+  - [MODIFIED] backend/src/models/Scan.js
+  - [CREATED] backend/src/utils/generateToken.js
+  - [CREATED] backend/src/middleware/authMiddleware.js
+  - [CREATED] backend/src/controllers/authController.js
+  - [CREATED] backend/src/routes/authRoutes.js
+  - [CREATED] backend/src/controllers/queryController.js
+  - [CREATED] backend/src/routes/queryRoutes.js
+  - [MODIFIED] backend/src/server.js
+  - [MODIFIED] backend/src/controllers/scanController.js
+  - [MODIFIED] backend/src/routes/scanRoutes.js
+  - [MODIFIED] backend/.env
+  - [CREATED] backend/src/utils/seedData.js
+  - [CREATED] backend/src/utils/testAuth.js
+  - [CREATED] frontend/src/services/authService.js
+  - [CREATED] frontend/src/services/queryService.js
+  - [CREATED] frontend/src/components/AuthModal.jsx
+  - [CREATED] frontend/src/pages/UserProfile.jsx
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/pages/Home.jsx
+  - [MODIFIED] frontend/src/pages/PlantScanner.jsx
+  - [MODIFIED] frontend/src/services/scanService.js
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Multi-User Architecture & Password Hashing:
+     - Implemented User Mongoose model with bcryptjs salting and hashing (pre-save hook) and secure password verification method (matchPassword).
+     - Restricted roles strictly to 'farmer' and 'officer' (no admin role created or permitted, as per specifications).
+     - Built JWT authentication token utility (generateToken.js) and bearer authorization middleware (authMiddleware.js with protect, optionalAuth, and requireOfficer).
+  2. Database Seeding of 3 Gujarat Farmers & 1 Agricultural Officer:
+     - Seeded 3 authentic Gujarat farmers with genuine village and crop acreage details:
+       * Ramesh Patel - Padra, Vadodara (6.5 Acres, Cotton & Pigeon Pea)
+       * Bhavesh Solanki - Anklav, Anand (4.2 Acres, Tomato & Okra)
+       * Kanubhai Bharwad - Karjan, Vadodara (8.5 Acres, Castor & Cotton)
+     - Seeded 1 Senior District Agricultural Officer:
+       * Dr. Hitesh Trivedi - Krishi Bhavan, Vadodara (Badge GJ-VAD-AGRI-042)
+     - Populated 5 authentic farmer consultation queries and 3 initial plant diagnostic scans in MongoDB Atlas.
+     - Verified with testAuth.js that password hashes match, invalid passwords fail, and query associations link directly to Mongo ObjectIds.
+  3. Frontend Multi-User UI & Consultation Desk:
+     - Built AuthModal.jsx featuring an instant 1-Click Live Demo Switcher for presentations, standard login, and farmer registration.
+     - Built UserProfile.jsx with dual personas:
+       * For Farmers: Displays farm credentials, submitted consultation queries with officer status badges, and 'Ask New Field Query' modal with leaf image selection.
+       * For Agricultural Officers: Displays District Agronomist Advisory Desk, showing pending and reviewed inquiries with an interactive advisory issuance form that updates MongoDB Atlas live.
+     - Mounted a persistent Quick Demo Switcher bar in UserProfile.jsx allowing live demonstration toggling between any farmer and the agricultural officer with zero page reloads.
+     - Added navigation links and user badge chip in Navbar.jsx, Home.jsx, and PlantScanner.jsx.
+================================================================================

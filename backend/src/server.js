@@ -5,6 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/db.js';
 import scanRoutes from './routes/scanRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import queryRoutes from './routes/queryRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +31,10 @@ app.use(
 );
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+
+// Serve static leaf images from /uploads
+const uploadsPath = path.resolve(__dirname, '../public/uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // Health Check API Route
 app.get('/api/health', (req, res) => {
@@ -64,6 +70,12 @@ app.get('/api', (req, res) => {
 
 // AI Module 02 - Plant Disease Scanner Routes
 app.use('/api/scan', scanRoutes);
+
+// Multi-User Authentication Routes (Farmers & Agricultural Officers)
+app.use('/api/auth', authRoutes);
+
+// Farmer Consultations & Officer Review Station Routes
+app.use('/api/queries', queryRoutes);
 
 // Start Server
 app.listen(PORT, () => {

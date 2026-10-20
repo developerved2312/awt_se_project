@@ -13,6 +13,9 @@ import {
   BarChart3,
   Shield,
   Activity,
+  UserCheck,
+  User,
+  Sparkles,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -22,6 +25,9 @@ export const Navbar = ({
   onLanguageChange,
   activePage = 'home',
   onNavigate,
+  currentUser,
+  onOpenAuth,
+  onUserChange,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
@@ -443,6 +449,34 @@ export const Navbar = ({
             <HelpCircle size={15} color="var(--green-primary)" />
             <span>{isGu ? 'પ્રશ્નોત્તરી અને મદદ' : 'FAQs & Help'}</span>
           </button>
+
+          {/* Farmer & Officer Desk Link */}
+          <button
+            type="button"
+            id="nav-profile-link"
+            onClick={() => handleItemClick({ page: 'profile' })}
+            className={`nav-link-item ${activePage === 'profile' ? 'active' : ''}`}
+            style={{
+              fontWeight: 700,
+              backgroundColor: activePage === 'profile' ? 'var(--green-wash)' : 'transparent',
+              color: activePage === 'profile' ? 'var(--green-deep)' : 'var(--text-title)',
+            }}
+          >
+            {currentUser?.role === 'officer' ? (
+              <Shield size={15} color="var(--green-primary)" />
+            ) : (
+              <Sprout size={15} color="var(--green-primary)" />
+            )}
+            <span>
+              {currentUser?.role === 'officer'
+                ? isGu
+                  ? 'અધિકારી ડેસ્ક'
+                  : 'Officer Desk'
+                : isGu
+                ? 'કૃષિ સલાહ ડેસ્ક'
+                : 'Farmer Desk'}
+            </span>
+          </button>
         </nav>
 
         {/* Actions & Language Selector */}
@@ -450,9 +484,87 @@ export const Navbar = ({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
+            gap: '0.65rem',
           }}
         >
+          {/* User Profile Chip */}
+          {currentUser && (
+            <div
+              onClick={() => {
+                if (onNavigate) onNavigate('profile');
+              }}
+              title="View Farm Consultations & Profile"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '4px 9px',
+                borderRadius: '20px',
+                backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
+                border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <span style={{ fontSize: '1rem' }}>
+                {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
+              </span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span
+                  style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    color: 'var(--text-title)',
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {currentUser.name?.split(' ')?.[0] || 'User'}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.64rem',
+                    color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Demo Switcher / Login Trigger Button */}
+          <button
+            type="button"
+            id="nav-auth-toggle-btn"
+            onClick={onOpenAuth}
+            style={{
+              padding: '6px 11px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-medium)',
+              backgroundColor: '#ffffff',
+              color: 'var(--green-deep)',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--green-wash)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+            }}
+          >
+            <Sparkles size={14} color="var(--green-primary)" />
+            <span>{isGu ? 'લાઇવ સ્વિચર' : 'Switch User'}</span>
+          </button>
+
           <LanguageSelector currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
           {/* Mobile Menu Toggle Button */}
@@ -619,6 +731,39 @@ export const Navbar = ({
           >
             <HelpCircle size={16} color="var(--green-primary)" />
             <span>{isGu ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleItemClick({ page: 'profile' })}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              borderRadius: 'var(--radius-sm)',
+              color: activePage === 'profile' ? 'var(--green-deep)' : 'var(--text-title)',
+              backgroundColor: activePage === 'profile' ? 'var(--green-wash)' : '#eef6ec',
+              border: 'none',
+              textAlign: 'left',
+            }}
+          >
+            {currentUser?.role === 'officer' ? (
+              <Shield size={16} color="var(--green-primary)" />
+            ) : (
+              <Sprout size={16} color="var(--green-primary)" />
+            )}
+            <span>
+              {currentUser?.role === 'officer'
+                ? isGu
+                  ? 'કૃષિ અધિકારી સમીક્ષા ડેસ્ક'
+                  : 'Officer Review Desk'
+                : isGu
+                ? 'મારી કૃષિ પ્રોફાઇલ અને સલાહ'
+                : 'My Farm Profile & Advisories'}
+            </span>
           </button>
         </div>
       )}

@@ -23,7 +23,11 @@ import {
 import AlertCard from '../components/AlertCard';
 import { getTranslation } from '../services/translationService';
 
-export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
+export const Home = ({
+  currentLang = 'en',
+  onNavigateToScanner,
+  onNavigateToProfile,
+}) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
   const t = getTranslation(currentLang);
 
@@ -159,6 +163,16 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                 >
                   <Layers size={17} />
                   <span>{isGu ? "મોડ્યુલ્સ જુઓ" : "Explore Modules"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onNavigateToProfile}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.65rem 1.15rem' }}
+                >
+                  <Shield size={17} />
+                  <span>{isGu ? "કિસાન-અધિકારી ડેસ્ક" : "Farmer & Officer Desk"}</span>
                 </button>
 
                 <button

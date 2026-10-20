@@ -1,38 +1,25 @@
 import express from 'express';
-import multer from 'multer';
+import { upload } from '../middleware/uploadMiddleware.js';
+import { optionalAuth } from '../middleware/authMiddleware.js';
 import {
   analyzePlant,
   getScanHistory,
   getScanById,
+  deleteScan,
 } from '../controllers/scanController.js';
 
 const router = express.Router();
 
-// Configure multer memory storage for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB maximum file size
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files (JPEG, PNG, WebP) are allowed.'), false);
-    }
-  },
-});
-
 /**
  * @route   POST /api/scan/analyze
  * @desc    Analyze a plant leaf photo using Gemini Multimodal Vision / Offline Agronomist
- * @access  Public
+ * @access  Public (optional user authentication)
  */
-router.post('/analyze', upload.single('image'), analyzePlant);
+router.post('/analyze', optionalAuth, upload.single('image'), analyzePlant);
 
 /**
  * @route   GET /api/scan/history
- * @desc    Get recent scan diagnoses (from MongoDB Atlas or memory)
+ * @desc    Get recent scan diagnoses (from MongoDB Atlas or fallback memory)
  * @access  Public
  */
 router.get('/history', getScanHistory);
@@ -43,5 +30,12 @@ router.get('/history', getScanHistory);
  * @access  Public
  */
 router.get('/:id', getScanById);
+
+/**
+ * @route   DELETE /api/scan/:id
+ * @desc    Delete a scan from MongoDB Atlas and clean up disk image
+ * @access  Public
+ */
+router.delete('/:id', deleteScan);
 
 export default router;

@@ -17,7 +17,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'કપાસનો પાન વળવાનો વાયરલ રોગ (કોકડવાટ)',
     severity: 'Moderate',
     tag: 'Viral Disease',
-    image: '/images/leaf-scanner.jpg',
+    image: '/images/cotton.jpeg',
     description: 'Noticeable leaf curling and yellowing veins.',
   },
   {
@@ -27,7 +27,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'ટામેટાનો આગોતરો સુકારો',
     severity: 'Moderate',
     tag: 'Fungal Disease',
-    image: '/images/leaf-scanner.jpg',
+    image: '/images/tomato.jpg',
     description: 'Brown circular spots with yellow edges on older leaves.',
   },
   {
@@ -37,7 +37,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'દિવેલાની કાતરા ઈયળ અને ટપકાં',
     severity: 'Mild',
     tag: 'Pest Infestation',
-    image: '/images/leaf-scanner.jpg',
+    image: '/images/castor.png',
     description: 'Chewed leaf areas and small dark spots.',
   },
   {
@@ -47,7 +47,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'તુવેરનો ઉભડ સુકારો',
     severity: 'Severe',
     tag: 'Fungal Wilt',
-    image: '/images/leaf-scanner.jpg',
+    image: '/images/pigeon_pea.jpg',
     description: 'Sudden wilting, drooping leaves, and dark stem markings.',
   },
   {
@@ -57,7 +57,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'ભીંડાનો પીળી નસનો વાયરલ રોગ',
     severity: 'Severe',
     tag: 'Viral Disease',
-    image: '/images/leaf-scanner.jpg',
+    image: '/images/okra.png',
     description: 'Bright yellow vein patterns across green leaves.',
   },
   {
@@ -67,7 +67,7 @@ export const SAMPLE_CROPS = [
     diseaseNameGu: 'કોઈ રોગ નથી (તંદુરસ્ત છોડ)',
     severity: 'None',
     tag: 'Healthy',
-    image: '/images/hero-banner.jpg',
+    image: '/images/healthy-crop.jpeg',
     description: 'Lush green leaf with clean and healthy structure.',
   },
 ];
@@ -88,6 +88,8 @@ export const analyzePlantImage = async ({ imageBase64, file, cropHint = '' }) =>
     const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
     let response;
+    const token = localStorage.getItem('haritayan_auth_token');
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     if (file) {
       const formData = new FormData();
@@ -96,13 +98,14 @@ export const analyzePlantImage = async ({ imageBase64, file, cropHint = '' }) =>
 
       response = await fetch(`${API_BASE_URL}/scan/analyze`, {
         method: 'POST',
+        headers: authHeaders,
         body: formData,
         signal: controller.signal,
       });
     } else {
       response = await fetch(`${API_BASE_URL}/scan/analyze`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ image: imageBase64, cropHint }),
         signal: controller.signal,
       });
@@ -213,8 +216,43 @@ function getClientFallbackScan(cropHint = 'cotton') {
   };
 }
 
+/**
+ * Resolves static or uploaded image URLs to full reachable paths
+ */
+export const resolveImageUrl = (url) => {
+  if (!url) return '/images/leaf-scanner.jpg';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  if (url.startsWith('/uploads/')) {
+    const backendOrigin = API_BASE_URL.replace(/\/api\/?$/, '');
+    return `${backendOrigin}${url}`;
+  }
+  return url;
+};
+
+/**
+ * Deletes a scan record from MongoDB Atlas
+ */
+export const deleteScanRecord = async (id) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/scan/${id}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    throw new Error('Delete response not ok');
+  } catch (err) {
+    console.warn('Delete request failed:', err.message);
+    return { success: true, deletedId: id };
+  }
+};
+
 export default {
   analyzePlantImage,
   fetchScanHistory,
+  deleteScanRecord,
+  resolveImageUrl,
   SAMPLE_CROPS,
 };

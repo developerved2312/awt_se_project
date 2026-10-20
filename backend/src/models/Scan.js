@@ -94,12 +94,22 @@ const scanSchema = new mongoose.Schema(
     },
     engineUsed: {
       type: String,
-      enum: [
-        'gemini-1.5-flash',
-        'gemini-1.5-pro',
-        'offline-expert-knowledgebase',
-      ],
-      default: 'gemini-1.5-flash',
+      default: 'gemini-3.8-flash',
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    farmerName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    farmerLocation: {
+      type: String,
+      trim: true,
+      default: '',
     },
     userNotes: {
       type: String,

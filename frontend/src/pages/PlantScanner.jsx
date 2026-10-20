@@ -17,10 +17,14 @@ import {
   Database,
   Info,
   RefreshCw,
+  Printer,
+  Trash2,
 } from 'lucide-react';
 import {
   analyzePlantImage,
   fetchScanHistory,
+  deleteScanRecord,
+  resolveImageUrl,
   SAMPLE_CROPS,
 } from '../services/scanService';
 
@@ -43,7 +47,12 @@ const LOADING_STAGES = [
   },
 ];
 
-export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
+export const PlantScanner = ({
+  currentLang = 'en',
+  onNavigateHome,
+  currentUser,
+  onNavigateProfile,
+}) => {
   const isGu = currentLang === 'gu';
 
   // Input & analysis state
@@ -86,8 +95,8 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
 
   const handleSelectHistoryScan = (scan) => {
     setScanResult(scan);
-    if (scan.imageUrl && !scan.imageUrl.includes('...')) {
-      setSelectedImage(scan.imageUrl);
+    if (scan.imageUrl) {
+      setSelectedImage(resolveImageUrl(scan.imageUrl));
       setSelectedFileName(`${scan.cropName || 'scan'}_history.jpg`);
     }
     const reportElem = document.getElementById('diagnostic-report-card');
@@ -96,6 +105,23 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
     } else {
       window.scrollTo({ top: 180, behavior: 'smooth' });
     }
+  };
+
+  const handleDeleteHistoryScan = async (id, e) => {
+    e.stopPropagation();
+    try {
+      await deleteScanRecord(id);
+      setRecentScans((prev) => prev.filter((s) => s._id !== id));
+      if (scanResult && scanResult._id === id) {
+        setScanResult(null);
+      }
+    } catch (err) {
+      console.warn('Failed to delete scan:', err);
+    }
+  };
+
+  const handlePrintReport = () => {
+    window.print();
   };
 
   // Progressive analysis with multi-stage telemetry
@@ -342,6 +368,30 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               <Database size={13} />
               <span>{isGu ? 'કૃષિ જ્ઞાનકોશ' : 'Knowledge Base'}</span>
             </button>
+
+            {onNavigateProfile && (
+              <button
+                type="button"
+                onClick={onNavigateProfile}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.8rem',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: 'var(--radius-full)',
+                  backgroundColor: 'var(--green-wash)',
+                  color: 'var(--green-deep)',
+                  border: '1px solid var(--border-medium)',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Shield size={13} />
+                <span>{isGu ? 'કિસાન-અધિકારી ડેસ્ક' : 'Farmer & Officer Desk'}</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -949,12 +999,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.95rem 1.15rem',
+                      padding: '0.85rem 1.05rem',
                       borderRadius: 'var(--radius-md)',
                       border: '1px solid var(--border-subtle)',
                       backgroundColor: 'var(--bg-canvas)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
+                      gap: '0.75rem',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'var(--green-light)';
@@ -967,44 +1018,76 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                       e.currentTarget.style.transform = 'none';
                     }}
                   >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.2rem' }}>
-                        <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-title)' }}>
-                          {isGu ? sample.cropName : sample.cropName.split('(')[0].trim()}
-                        </span>
-                        <span
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0, flex: 1 }}>
+                      <div
+                        style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                          backgroundColor: '#e8f5e9',
+                          border: '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <img
+                          src={sample.image}
+                          alt={sample.cropName}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      </div>
+
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-title)' }}>
+                            {isGu ? sample.cropName : sample.cropName.split('(')[0].trim()}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              padding: '2px 7px',
+                              borderRadius: '4px',
+                              backgroundColor:
+                                sample.severity === 'Severe'
+                                  ? '#fee2e2'
+                                  : sample.severity === 'None'
+                                  ? '#dcfce7'
+                                  : '#fef3c7',
+                              color:
+                                sample.severity === 'Severe'
+                                  ? '#991b1b'
+                                  : sample.severity === 'None'
+                                  ? '#166534'
+                                  : '#92400e',
+                            }}
+                          >
+                            {sample.severity === 'None'
+                              ? isGu
+                                ? 'તંદુરસ્ત'
+                                : 'Healthy'
+                              : sample.severity}
+                          </span>
+                        </div>
+                        <p
                           style={{
-                            fontSize: '0.72rem',
-                            fontWeight: 700,
-                            padding: '2px 7px',
-                            borderRadius: '4px',
-                            backgroundColor:
-                              sample.severity === 'Severe'
-                                ? '#fee2e2'
-                                : sample.severity === 'None'
-                                ? '#dcfce7'
-                                : '#fef3c7',
-                            color:
-                              sample.severity === 'Severe'
-                                ? '#991b1b'
-                                : sample.severity === 'None'
-                                ? '#166534'
-                                : '#92400e',
+                            fontSize: '0.81rem',
+                            color: 'var(--text-muted)',
+                            margin: 0,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                           }}
                         >
-                          {sample.severity === 'None'
-                            ? isGu
-                              ? 'તંદુરસ્ત'
-                              : 'Healthy'
-                            : sample.severity}
-                        </span>
+                          {isGu ? sample.diseaseNameGu : sample.diseaseName}
+                        </p>
                       </div>
-                      <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
-                        {isGu ? sample.diseaseNameGu : sample.diseaseName}
-                      </p>
                     </div>
 
-                    <div style={{ color: 'var(--green-primary)' }}>
+                    <div style={{ color: 'var(--green-primary)', flexShrink: 0 }}>
                       <ArrowRight size={18} />
                     </div>
                   </div>
@@ -1526,15 +1609,40 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="btn btn-secondary"
-                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}
-                >
-                  <RotateCcw size={14} />
-                  <span>{isGu ? 'બીજા પાકનું સ્કેન કરો' : 'Scan Another Leaf'}</span>
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={handlePrintReport}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '0.4rem 0.85rem',
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                    }}
+                    title="Print or export diagnosis dossier"
+                  >
+                    <Printer size={14} />
+                    <span>{isGu ? 'રિપોર્ટ પ્રિન્ટ / સેવ કરો' : 'Print / Export Report'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="btn btn-primary"
+                    style={{
+                      padding: '0.4rem 0.85rem',
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                    }}
+                  >
+                    <RotateCcw size={14} />
+                    <span>{isGu ? 'બીજા પાકનું સ્કેન કરો' : 'Scan Another Leaf'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -1670,13 +1778,13 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    {/* Top Row: Engine badge & Severity */}
+                    {/* Top Row: Engine badge, Severity & Delete option */}
                     <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: '0.65rem',
+                        marginBottom: '0.75rem',
                         gap: '0.5rem',
                       }}
                     >
@@ -1697,44 +1805,104 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                         <span>{isGeminiLive ? 'Live Gemini AI' : 'Knowledge Base'}</span>
                       </span>
 
-                      <span
-                        style={{
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          padding: '2px 7px',
-                          borderRadius: '4px',
-                          backgroundColor: isSevere ? '#fee2e2' : isHealthy ? '#dcfce7' : '#fef3c7',
-                          color: isSevere ? '#991b1b' : isHealthy ? '#166534' : '#92400e',
-                        }}
-                      >
-                        {isHealthy ? (isGu ? 'તંદુરસ્ત' : 'Healthy') : scan.severity || 'Moderate'}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            padding: '2px 7px',
+                            borderRadius: '4px',
+                            backgroundColor: isSevere ? '#fee2e2' : isHealthy ? '#dcfce7' : '#fef3c7',
+                            color: isSevere ? '#991b1b' : isHealthy ? '#166534' : '#92400e',
+                          }}
+                        >
+                          {isHealthy ? (isGu ? 'તંદુરસ્ત' : 'Healthy') : scan.severity || 'Moderate'}
+                        </span>
+
+                        {scan._id && !scan._id.startsWith('mock_') && !scan._id.startsWith('sample_') && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteHistoryScan(scan._id, e)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--text-muted)',
+                              cursor: 'pointer',
+                              padding: '2px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              borderRadius: '4px',
+                              transition: 'color 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                            title="Delete scan from database"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Crop Name & Condition */}
-                    <h4
-                      style={{
-                        fontSize: '1rem',
-                        fontWeight: 700,
-                        color: 'var(--text-title)',
-                        marginBottom: '0.2rem',
-                      }}
-                    >
-                      {isGu && scan.cropNameGu ? scan.cropNameGu : scan.cropName}
-                    </h4>
+                    {/* Middle Section: Thumbnail + Crop & Condition */}
+                    <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', marginBottom: '0.85rem' }}>
+                      <div
+                        style={{
+                          width: '58px',
+                          height: '58px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                          backgroundColor: 'var(--bg-tint-green)',
+                          border: '1px solid var(--border-subtle)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {scan.imageUrl ? (
+                          <img
+                            src={resolveImageUrl(scan.imageUrl)}
+                            alt={scan.cropName || 'Leaf Scan'}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Leaf size={22} color="var(--green-primary)" />
+                        )}
+                      </div>
 
-                    <p
-                      style={{
-                        fontSize: '0.84rem',
-                        color: 'var(--text-muted)',
-                        marginBottom: '0.85rem',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {isGu && scan.diseaseNameGu ? scan.diseaseNameGu : scan.diseaseName}
-                    </p>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <h4
+                          style={{
+                            fontSize: '0.98rem',
+                            fontWeight: 700,
+                            color: 'var(--text-title)',
+                            margin: '0 0 0.2rem',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {isGu && scan.cropNameGu ? scan.cropNameGu : scan.cropName}
+                        </h4>
+
+                        <p
+                          style={{
+                            fontSize: '0.82rem',
+                            color: 'var(--text-muted)',
+                            margin: 0,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {isGu && scan.diseaseNameGu ? scan.diseaseNameGu : scan.diseaseName}
+                        </p>
+                      </div>
+                    </div>
 
                     {/* Bottom Row: Score, Date & Inspect prompt */}
                     <div
@@ -1807,6 +1975,23 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
         @media (max-width: 900px) {
           .scanner-main-grid {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media print {
+          body {
+            background: #ffffff !important;
+          }
+          #main-navbar, #live-scans-feed-section, .btn, .badge, #nav-brand-logo, header, footer {
+            display: none !important;
+          }
+          #diagnostic-report-card {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            width: 100% !important;
+          }
+          .scanner-main-grid {
+            display: block !important;
           }
         }
       `}</style>

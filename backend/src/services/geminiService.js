@@ -351,7 +351,7 @@ export const analyzeLeafImage = async ({ base64Data, mimeType = 'image/jpeg', cr
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+      model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
     });
 
     const imagePart = {
@@ -380,7 +380,7 @@ export const analyzeLeafImage = async ({ base64Data, mimeType = 'image/jpeg', cr
 
     return {
       ...parsedData,
-      engineUsed: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+      engineUsed: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
       isFallback: false,
     };
   } catch (error) {
