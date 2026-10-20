@@ -78,4 +78,3 @@ SUMMARY OF IMPLEMENTATION:
   4. Streamlined crop descriptions and fallback symptoms in scanService.js.
   5. Updated footer module links and district coverage notes in Footer.jsx.
 ================================================================================
-

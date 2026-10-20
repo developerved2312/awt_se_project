@@ -32,6 +32,17 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleExploreModules = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      const btn = document.getElementById('nav-module-dropdown-btn');
+      if (btn) {
+        btn.click();
+        btn.focus();
+      }
+    }, 150);
+  };
+
   const isGu = currentLang === 'gu';
 
   return (
@@ -135,18 +146,19 @@ export const Home = ({ currentLang = 'en', onNavigateToScanner }) => {
                   style={{ fontWeight: 700, padding: '0.65rem 1.25rem' }}
                 >
                   <Activity size={17} />
-                  <span>{isGu ? "પાકના રોગ તપાસો" : "Scan Plant Leaves"}</span>
+                  <span>{isGu ? "પાક રોગ સ્કેનર" : "Plant Disease Scanner"}</span>
                   <ArrowRight size={15} />
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => scrollTo('modules-section')}
+                  onClick={handleExploreModules}
                   className="btn btn-secondary"
                   style={{ padding: '0.65rem 1.15rem' }}
+                  title="Open Modules Menu in Navigation"
                 >
                   <Layers size={17} />
-                  <span>{isGu ? "મુખ્ય સુવિધાઓ" : "Explore Features"}</span>
+                  <span>{isGu ? "મોડ્યુલ્સ જુઓ" : "Explore Modules"}</span>
                 </button>
 
                 <button

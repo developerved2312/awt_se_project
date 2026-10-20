@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Camera,
   UploadCloud,
@@ -16,9 +16,11 @@ import {
   Clock,
   Database,
   Info,
+  RefreshCw,
 } from 'lucide-react';
 import {
   analyzePlantImage,
+  fetchScanHistory,
   SAMPLE_CROPS,
 } from '../services/scanService';
 
@@ -59,6 +61,42 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
   const [cameraActive, setCameraActive] = useState(false);
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Live Feed History State (MongoDB Atlas integration)
+  const [recentScans, setRecentScans] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+  const loadHistory = async () => {
+    try {
+      setIsLoadingHistory(true);
+      const res = await fetchScanHistory();
+      if (res && res.scans) {
+        setRecentScans(res.scans);
+      }
+    } catch (err) {
+      console.warn('Failed to load recent scans:', err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const handleSelectHistoryScan = (scan) => {
+    setScanResult(scan);
+    if (scan.imageUrl && !scan.imageUrl.includes('...')) {
+      setSelectedImage(scan.imageUrl);
+      setSelectedFileName(`${scan.cropName || 'scan'}_history.jpg`);
+    }
+    const reportElem = document.getElementById('diagnostic-report-card');
+    if (reportElem) {
+      reportElem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 180, behavior: 'smooth' });
+    }
+  };
 
   // Progressive analysis with multi-stage telemetry
   const runProgressiveAnalysis = async (actionFn) => {
@@ -183,6 +221,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
 
       if (response && response.scan) {
         setScanResult(response.scan);
+        loadHistory();
       } else {
         throw new Error('Invalid response structure');
       }
@@ -208,6 +247,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
 
       if (response && response.scan) {
         setScanResult(response.scan);
+        loadHistory();
       } else {
         throw new Error('Analysis failed');
       }
@@ -275,12 +315,74 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             </span>
           </div>
 
-          <div
-            className="badge badge-leaf"
-            style={{ fontSize: '0.82rem', padding: '0.35rem 0.85rem' }}
-          >
-            <Sparkles size={14} />
-            <span>{isGu ? 'ગુજરાત પાક સલાહકાર AI' : 'AI Crop Health Assistant'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setScanResult(null);
+                const kbCard = document.getElementById('crop-knowledge-base-card');
+                if (kbCard) kbCard.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.8rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--dry-leaf-soft)',
+                color: 'var(--dry-leaf-dark)',
+                border: '1px solid var(--border-medium)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                transition: 'all 0.2s ease',
+              }}
+              title="View Curated Knowledge Base"
+            >
+              <Database size={13} />
+              <span>{isGu ? 'કૃષિ જ્ઞાનકોશ' : 'Knowledge Base'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                const feed = document.getElementById('live-scans-feed-section');
+                if (feed) feed.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.8rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: '#e8f5e9',
+                color: 'var(--green-deep)',
+                border: '1px solid rgba(45, 106, 79, 0.3)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                transition: 'all 0.2s ease',
+              }}
+              title="Jump to Live Database Feed"
+            >
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: '#2d6a4f',
+                }}
+              />
+              <span>{isGu ? 'લાઈવ ફીડ' : 'Live Feed'}</span>
+            </button>
+
+            <div
+              className="badge badge-leaf"
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+            >
+              <Sparkles size={13} />
+              <span>{isGu ? 'જેમિની વિઝન AI' : 'Gemini Vision AI'}</span>
+            </div>
           </div>
         </div>
 
@@ -808,6 +910,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             </div>
           ) : !scanResult ? (
             <div
+              id="crop-knowledge-base-card"
               className="organic-card"
               style={{
                 padding: '1.75rem',
@@ -815,17 +918,25 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
               }}
             >
               <div style={{ marginBottom: '1.25rem' }}>
-                <div className="badge badge-leaf" style={{ marginBottom: '0.65rem' }}>
-                  <Leaf size={14} />
-                  <span>{isGu ? 'સેમ્પલ પાન' : 'Sample Leaf Images'}</span>
+                <div
+                  className="badge"
+                  style={{
+                    marginBottom: '0.65rem',
+                    backgroundColor: 'var(--dry-leaf-soft)',
+                    color: 'var(--dry-leaf-dark)',
+                    border: '1px solid var(--border-medium)',
+                  }}
+                >
+                  <Database size={13} />
+                  <span>{isGu ? 'ચકાસાયેલ કૃષિ જ્ઞાનકોશ' : 'Curated Knowledge Base'}</span>
                 </div>
                 <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-title)' }}>
-                  {isGu ? 'સેમ્પલ પાન પસંદ કરીને ચકાસો' : 'Try With Sample Crops'}
+                  {isGu ? 'પાક રોગ જ્ઞાનકોશ અને સેમ્પલ' : 'Crop Knowledge Base & Verified Samples'}
                 </h2>
                 <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)' }}>
                   {isGu
-                    ? 'તમારી પાસે હાલ છોડનો ફોટો ન હોય તો નીચેનામાંથી કોઈપણ પાક પર ક્લિક કરીને AI નિદાન ચકાસી શકો છો.'
-                    : 'Click any common Gujarat crop below to see how disease detection and simple remedies work.'}
+                    ? 'ગુજરાતના મુખ્ય પાકો (કપાસ, દિવેલા, ટામેટા, તુવેર, ભીંડા) માટે ચકાસાયેલ માહિતી. કોઈપણ પાક પર ક્લિક કરીને તેનો રોગ, લક્ષણો અને ઉપાયો તુરંત જુઓ.'
+                    : 'Verified agro-diagnostic records for major regional crops. Click any staple crop to instantly load verified diseases and remedies.'}
                 </p>
               </div>
 
@@ -905,6 +1016,7 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                DIAGNOSTIC REPORT CARD (WHEN SCAN SUCCEEDS)
                ========================================================================= */
             <div
+              id="diagnostic-report-card"
               className="organic-card"
               style={{
                 padding: '2rem',
@@ -922,24 +1034,53 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   borderBottom: '1px solid var(--border-subtle)',
                   paddingBottom: '1.25rem',
                   marginBottom: '1.25rem',
+                  flexWrap: 'wrap',
                 }}
               >
                 <div>
-                  <div
-                    style={{
-                      fontSize: '0.72rem',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.07em',
-                      color: 'var(--text-muted)',
-                      fontWeight: 700,
-                      marginBottom: '0.45rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.4rem',
-                    }}
-                  >
-                    <FileText size={13} color="var(--green-primary)" />
-                    <span>{isGu ? 'પાક સ્વાસ્થ્ય રિપોર્ટ' : 'Plant Health Report'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
+                    <div
+                      style={{
+                        fontSize: '0.72rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.07em',
+                        color: 'var(--text-muted)',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <FileText size={13} color="var(--green-primary)" />
+                      <span>{isGu ? 'પાક સ્વાસ્થ્ય રિપોર્ટ' : 'Plant Health Report'}</span>
+                    </div>
+
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        padding: '1px 8px',
+                        borderRadius: 'var(--radius-full)',
+                        background: scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? '#e8f5e9' : 'var(--dry-leaf-soft)',
+                        color: scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? 'var(--green-deep)' : 'var(--dry-leaf-dark)',
+                        border: '1px solid currentColor',
+                      }}
+                    >
+                      {scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? (
+                        <>
+                          <Sparkles size={11} />
+                          <span>{isGu ? 'લાઈવ જેમિની AI વિઝન' : 'Live Gemini Vision AI'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Database size={11} />
+                          <span>{isGu ? 'ચકાસાયેલ કૃષિ જ્ઞાનકોશ' : 'Curated Knowledge Base'}</span>
+                        </>
+                      )}
+                    </span>
                   </div>
 
                   <div
@@ -1004,30 +1145,57 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
                   </div>
                 </div>
 
-                {/* Confidence Score Pill */}
-                <div
-                  style={{
-                    textAlign: 'center',
-                    background: 'var(--bg-tint-green)',
-                    padding: '0.65rem 0.95rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-subtle)',
-                    flexShrink: 0,
-                  }}
-                >
+                {/* Confidence Score Pill & Knowledge Base Quick Access */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.45rem', flexShrink: 0 }}>
                   <div
                     style={{
-                      fontSize: '1.45rem',
-                      fontWeight: 800,
-                      color: 'var(--green-deep)',
-                      lineHeight: 1,
+                      textAlign: 'center',
+                      background: 'var(--bg-tint-green)',
+                      padding: '0.5rem 0.85rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-subtle)',
+                      width: '100%',
                     }}
                   >
-                    {scanResult.confidenceScore}%
+                    <div
+                      style={{
+                        fontSize: '1.4rem',
+                        fontWeight: 800,
+                        color: 'var(--green-deep)',
+                        lineHeight: 1,
+                      }}
+                    >
+                      {scanResult.confidenceScore}%
+                    </div>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                      {isGu ? 'સચોટતા સ્તર' : 'Confidence'}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    {isGu ? 'સચોટતા સ્તર' : 'Confidence'}
-                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScanResult(null);
+                      setSelectedImage(null);
+                      setSelectedFileName('');
+                      const kbCard = document.getElementById('crop-knowledge-base-card');
+                      if (kbCard) kbCard.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '0.3rem 0.65rem',
+                      fontSize: '0.74rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      width: '100%',
+                      justifyContent: 'center',
+                    }}
+                    title="Browse Curated Knowledge Base"
+                  >
+                    <Database size={12} />
+                    <span>{isGu ? 'જ્ઞાનકોશ જુઓ' : 'Knowledge Base'}</span>
+                  </button>
                 </div>
               </div>
 
@@ -1371,11 +1539,270 @@ export const PlantScanner = ({ currentLang = 'en', onNavigateHome }) => {
             </div>
           )}
         </div>
+
+        {/* =========================================================================
+            LIVE FEED OF RECENT SCANS (MONGODB ATLAS INTEGRATION)
+            ========================================================================= */}
+        <section
+          id="live-scans-feed-section"
+          style={{
+            marginTop: '3.5rem',
+            paddingTop: '2.5rem',
+            borderTop: '1px solid var(--border-medium)',
+          }}
+        >
+          {/* Section Header */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '1.75rem',
+              flexWrap: 'wrap',
+              gap: '1rem',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.45rem' }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '3px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    background: '#e8f5e9',
+                    border: '1px solid rgba(45, 106, 79, 0.25)',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    color: 'var(--green-deep)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: '7px',
+                      height: '7px',
+                      borderRadius: '50%',
+                      backgroundColor: '#2d6a4f',
+                      boxShadow: '0 0 8px #52b788',
+                      animation: 'pulseDot 1.8s ease-in-out infinite',
+                    }}
+                  />
+                  <span>{isGu ? 'લાઈવ ક્લાઉડ ફીડ' : 'Live Database Feed'}</span>
+                </span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  • MongoDB Atlas
+                </span>
+              </div>
+
+              <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-title)', margin: 0 }}>
+                {isGu ? 'તાજા પાક નિદાન લાઈવ ફીડ' : 'Recent Plant Health Scans'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '0.3rem 0 0' }}>
+                {isGu
+                  ? 'તમારા ડેટાબેઝમાં સાચવેલા તાજા સ્કેન રિપોર્ટ. વિગતવાર ઉપાયો જોવા માટે કોઈપણ કાર્ડ પર ક્લિક કરો.'
+                  : 'Real-time crop diagnoses recorded in your database. Click any card to inspect full remedies.'}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadHistory}
+              disabled={isLoadingHistory}
+              className="btn btn-secondary"
+              style={{
+                padding: '0.45rem 0.95rem',
+                fontSize: '0.82rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+              }}
+              title="Refresh live feed from database"
+            >
+              <RefreshCw
+                size={14}
+                style={{
+                  animation: isLoadingHistory ? 'spin 1s linear infinite' : 'none',
+                }}
+              />
+              <span>{isGu ? 'ફીડ રિફ્રેશ કરો' : 'Refresh Feed'}</span>
+            </button>
+          </div>
+
+          {/* Cards Grid */}
+          {recentScans && recentScans.length > 0 ? (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '1.15rem',
+              }}
+            >
+              {recentScans.map((scan, idx) => {
+                const isSevere = scan.severity === 'Severe';
+                const isHealthy = scan.severity === 'None';
+                const isGeminiLive = scan.engineUsed && !scan.engineUsed.includes('offline');
+
+                return (
+                  <div
+                    key={scan._id || idx}
+                    onClick={() => handleSelectHistoryScan(scan)}
+                    className="organic-card"
+                    style={{
+                      padding: '1.15rem',
+                      background: '#ffffff',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: 'var(--radius-md)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      position: 'relative',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.borderColor = 'var(--green-primary)';
+                      e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {/* Top Row: Engine badge & Severity */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '0.65rem',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          padding: '2px 7px',
+                          borderRadius: '4px',
+                          background: isGeminiLive ? '#e8f5e9' : 'var(--dry-leaf-soft)',
+                          color: isGeminiLive ? 'var(--green-deep)' : 'var(--dry-leaf-dark)',
+                        }}
+                      >
+                        {isGeminiLive ? <Sparkles size={11} /> : <Database size={11} />}
+                        <span>{isGeminiLive ? 'Live Gemini AI' : 'Knowledge Base'}</span>
+                      </span>
+
+                      <span
+                        style={{
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          padding: '2px 7px',
+                          borderRadius: '4px',
+                          backgroundColor: isSevere ? '#fee2e2' : isHealthy ? '#dcfce7' : '#fef3c7',
+                          color: isSevere ? '#991b1b' : isHealthy ? '#166534' : '#92400e',
+                        }}
+                      >
+                        {isHealthy ? (isGu ? 'તંદુરસ્ત' : 'Healthy') : scan.severity || 'Moderate'}
+                      </span>
+                    </div>
+
+                    {/* Crop Name & Condition */}
+                    <h4
+                      style={{
+                        fontSize: '1rem',
+                        fontWeight: 700,
+                        color: 'var(--text-title)',
+                        marginBottom: '0.2rem',
+                      }}
+                    >
+                      {isGu && scan.cropNameGu ? scan.cropNameGu : scan.cropName}
+                    </h4>
+
+                    <p
+                      style={{
+                        fontSize: '0.84rem',
+                        color: 'var(--text-muted)',
+                        marginBottom: '0.85rem',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {isGu && scan.diseaseNameGu ? scan.diseaseNameGu : scan.diseaseName}
+                    </p>
+
+                    {/* Bottom Row: Score, Date & Inspect prompt */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderTop: '1px solid var(--border-subtle)',
+                        paddingTop: '0.65rem',
+                        fontSize: '0.76rem',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <Clock size={12} />
+                        <span>
+                          {scan.createdAt
+                            ? new Date(scan.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                            : 'Recent'}
+                        </span>
+                      </div>
+
+                      <span
+                        style={{
+                          fontWeight: 700,
+                          color: 'var(--green-primary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                        }}
+                      >
+                        <span>{isGu ? 'રિપોર્ટ જુઓ' : 'View Report'}</span>
+                        <ArrowRight size={12} />
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: '2.5rem',
+                textAlign: 'center',
+                background: '#ffffff',
+                borderRadius: 'var(--radius-md)',
+                border: '1px dashed var(--border-medium)',
+                color: 'var(--text-muted)',
+              }}
+            >
+              <Database size={24} color="var(--green-primary)" style={{ marginBottom: '0.5rem' }} />
+              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>
+                {isGu
+                  ? 'હાલ કોઈ સ્કેન સંગ્રહિત નથી. ઉપરથી ફોટો અપલોડ કરો અથવા સેમ્પલ પાક પસંદ કરીને તમારું પ્રથમ નિદાન સાચવો!'
+                  : 'No scans saved in the database yet. Capture or upload a leaf photo above to record your first diagnosis!'}
+              </p>
+            </div>
+          )}
+        </section>
       </div>
 
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        @keyframes pulseDot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.3); }
         }
         @media (max-width: 900px) {
           .scanner-main-grid {
