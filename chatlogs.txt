@@ -78,3 +78,36 @@ SUMMARY OF IMPLEMENTATION:
   4. Streamlined crop descriptions and fallback symptoms in scanService.js.
   5. Updated footer module links and district coverage notes in Footer.jsx.
 ================================================================================
+
+[LOG ENTRY #005]
+TIMESTAMP: 2026-10-19T11:42:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Model Metadata Correction, Hero Formal Terminology, and Direct Navbar Module Trigger
+FILES UPDATED / CREATED:
+  - [MODIFIED] chatlogs.txt
+  - [MODIFIED] frontend/src/pages/Home.jsx
+SUMMARY OF IMPLEMENTATION:
+  1. Corrected all model metadata in chatlogs.txt to "Gemini 3.8 Flash (High)".
+  2. Upgraded Hero primary button label to formal, professional standard: "Plant Disease Scanner" (પાક રોગ સ્કેનર) instead of informal/crude phrasing ("Scan Plant Leaves").
+  3. Replaced secondary hero button with "Explore Modules" (મોડ્યુલ્સ જુઓ), connecting it directly to trigger the Navbar's "Select Module" dropdown menu and scroll into view.
+  4. Documented technical root-cause of Babel unterminated string error (UTF-8 multi-byte boundary truncation on Gujarati text during replacement tool execution).
+================================================================================
+
+[LOG ENTRY #006]
+TIMESTAMP: 2026-10-20T11:15:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Dual Architecture: Curated Knowledge Base & MongoDB Atlas Real-Time Live Feed
+FILES UPDATED / CREATED:
+  - [MODIFIED] frontend/src/pages/PlantScanner.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Maintained and enhanced both core modes simultaneously:
+     - Curated Agricultural Knowledge Base: Offline-verified diagnostic records for regional staple crops (Cotton, Castor, Tomato, Pigeon Pea, Okra, Healthy leaf) with instant 1-click loading of verified remedies, symptoms, and pathogen types.
+     - Live Database Feed (MongoDB Atlas): Real-time scans feed connected via `fetchScanHistory()` to `GET /api/scan/history`, rendering recent community and field diagnoses with live pulsing indicator, dynamic refresh button, and responsive cards.
+     - Multimodal Vision AI: Real-time Gemini 1.5 Flash vision scanning for any user-uploaded or live camera-captured leaf when `GEMINI_API_KEY` is configured.
+  2. Implemented seamless navigation and inter-linking between Knowledge Base and Live Feed:
+     - Added quick-jump pill buttons in the top breadcrumb bar for instant navigation to "Knowledge Base" (કૃષિ જ્ઞાનકોશ) and "Live Feed" (લાઈવ ફીડ).
+     - Upgraded the Knowledge Base panel with clear institutional branding, Database icon badges, and bilingual descriptions.
+     - Added "Browse Knowledge Base" toggle button directly on the Diagnostic Report Card so users can easily toggle back and forth between Live Scans and Knowledge Base samples.
+     - Added dual engine origin badges on both Diagnostic Report cards and Live Feed cards ("Live Gemini Vision AI" with Sparkles icon vs "Curated Knowledge Base" with Database icon).
+================================================================================
