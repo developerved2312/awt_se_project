@@ -230,3 +230,54 @@ SUMMARY OF IMPLEMENTATION:
      - Mounted a persistent Quick Demo Switcher bar in UserProfile.jsx allowing live demonstration toggling between any farmer and the agricultural officer with zero page reloads.
      - Added navigation links and user badge chip in Navbar.jsx, Home.jsx, and PlantScanner.jsx.
 ================================================================================
+
+[LOG ENTRY #011]
+TIMESTAMP: 2026-10-22T12:33:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Implementation of HaritAyan Sahayak - Offline Rule-Based Assistant Chatbot (No AI Token Costs)
+FILES UPDATED / CREATED:
+  - [CREATED] frontend/src/components/Chatbot.jsx
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Offline Rule-Based Assistant Architecture:
+     - Designed and implemented HaritAyan Sahayak (હરિતઅયન સહાયક) as a 100% client-side, zero-AI-cost interactive guide.
+     - Zero external API dependencies, eliminating token quotas and network failures during presentations.
+  2. Domain Knowledge Base & Bilingual Support:
+     - Embedded curated knowledge across plant disease diagnostics, farmer & officer consultation workflows, 1-click demo personas, organic spray recipes (Neem, sour buttermilk, turmeric), Vadodara heat island cooling, and APMC mandi rates.
+     - Full English and Gujarati bilingual dialogue with automated tone adaptation.
+  3. Interactive In-Chat Navigation:
+     - Integrated actionable navigation buttons inside chat bubbles allowing users to open the Plant Scanner, navigate to the Farmer Desk, or trigger the 1-Click Demo Switcher directly from the chatbot.
+  4. Floating Widget UI:
+     - Positioned unobtrusive floating launcher pill at bottom-right of viewport with smooth expand/collapse animations, suggestion chips, and responsive mobile layout.
+================================================================================
+
+[LOG ENTRY #012]
+TIMESTAMP: 2026-10-22T12:44:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Dedicated Login Page (LoginPage.jsx) with Standard Username/Password, 4 Demo Users (3 Farmers, 1 Officer) with Visible Credentials, Autofill, 1-Click Login, and Platform-Wide Logout
+FILES UPDATED / CREATED:
+  - [CREATED] frontend/src/pages/LoginPage.jsx
+  - [MODIFIED] frontend/src/services/authService.js
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] frontend/src/pages/UserProfile.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Dedicated Full-Page Login Portal (`LoginPage.jsx`):
+     - Engineered a standalone full-page authentication interface with standard email/username and password inputs, complete with password visibility toggle.
+     - Embedded a dual-mode switch allowing farmers to toggle smoothly between standard authentication and new farmer registration with Vadodara taluka and acreage profiles.
+     - Fully bilingual in English and Gujarati with reactive validation and error toasts.
+  2. Four Pre-configured Gujarat Demo Users with Visible Credentials:
+     - Featured dedicated persona cards for all 4 pre-configured users with credentials displayed:
+       * Ramesh Patel (Cotton Farmer) - ramesh.patel@haritayan.in | Password: Password@123
+       * Bhavesh Solanki (Vegetable Farmer) - bhavesh.solanki@haritayan.in | Password: Password@123
+       * Kanubhai Bharwad (Oilseeds Farmer) - kanubhai.bharwad@haritayan.in | Password: Password@123
+       * Dr. Hitesh Trivedi (District Agri Officer) - dr.hitesh.trivedi@haritayan.in | Password: Officer@2026
+     - Added 1-Click "Fill Form" autofill buttons to instantly populate the credentials into the login form inputs.
+     - Added "Instant Login →" 1-click buttons for presentations and rapid testing.
+  3. Real Unauthenticated State & Clear Logout Workflow:
+     - Refactored `App.jsx` user state initialization from hardcoded default to `getStoredUser() || null`, establishing a genuine unauthenticated/logged-out state.
+     - Added prominent red Logout buttons with `LogOut` icons across `Navbar.jsx` (desktop action bar & mobile drawer) and `UserProfile.jsx` identity header.
+     - Integrated `handleLogout` which clears `localStorage` tokens (`haritayan_auth_token` and `haritayan_auth_user`), sets `currentUser = null`, and smoothly routes the user to `LoginPage.jsx`.
+================================================================================
