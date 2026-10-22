@@ -16,6 +16,8 @@ import {
   UserCheck,
   User,
   Sparkles,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -28,6 +30,7 @@ export const Navbar = ({
   currentUser,
   onOpenAuth,
   onUserChange,
+  onLogout,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
@@ -487,83 +490,133 @@ export const Navbar = ({
             gap: '0.65rem',
           }}
         >
-          {/* User Profile Chip */}
-          {currentUser && (
-            <div
-              onClick={() => {
-                if (onNavigate) onNavigate('profile');
-              }}
-              title="View Farm Consultations & Profile"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                padding: '4px 9px',
-                borderRadius: '20px',
-                backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
-                border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <span style={{ fontSize: '1rem' }}>
-                {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
-              </span>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span
-                  style={{
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    color: 'var(--text-title)',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {currentUser.name?.split(' ')?.[0] || 'User'}
+          {currentUser ? (
+            <>
+              {/* User Profile Chip */}
+              <div
+                onClick={() => {
+                  if (onNavigate) onNavigate('profile');
+                }}
+                title="View Farm Consultations & Profile"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '4px 9px',
+                  borderRadius: '20px',
+                  backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
+                  border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span style={{ fontSize: '1rem' }}>
+                  {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
                 </span>
-                <span
-                  style={{
-                    fontSize: '0.64rem',
-                    color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      color: 'var(--text-title)',
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {currentUser.name?.split(' ')?.[0] || 'User'}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.64rem',
+                      color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
 
-          {/* Quick Demo Switcher / Login Trigger Button */}
-          <button
-            type="button"
-            id="nav-auth-toggle-btn"
-            onClick={onOpenAuth}
-            style={{
-              padding: '6px 11px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-medium)',
-              backgroundColor: '#ffffff',
-              color: 'var(--green-deep)',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--green-wash)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-            }}
-          >
-            <Sparkles size={14} color="var(--green-primary)" />
-            <span>{isGu ? 'લાઇવ સ્વિચર' : 'Switch User'}</span>
-          </button>
+              {/* Quick Demo Switcher Button */}
+              <button
+                type="button"
+                id="nav-auth-toggle-btn"
+                onClick={onOpenAuth}
+                style={{
+                  padding: '6px 11px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-medium)',
+                  backgroundColor: '#ffffff',
+                  color: 'var(--green-deep)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+                  transition: 'all 0.15s ease',
+                }}
+                title="Switch demo persona"
+              >
+                <Sparkles size={14} color="var(--green-primary)" />
+                <span>{isGu ? 'લાઇવ સ્વિચર' : 'Switch'}</span>
+              </button>
+
+              {/* Prominent Logout Button */}
+              <button
+                type="button"
+                id="nav-logout-btn"
+                onClick={onLogout}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '8px',
+                  border: '1px solid #f8b4b4',
+                  backgroundColor: '#fff5f5',
+                  color: '#c81e1e',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  transition: 'all 0.15s ease',
+                }}
+                title="Sign out of account"
+              >
+                <LogOut size={13} />
+                <span>{isGu ? 'લૉગ આઉટ' : 'Logout'}</span>
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Standalone Sign In Button */}
+              <button
+                type="button"
+                id="nav-login-btn"
+                onClick={() => {
+                  if (onNavigate) onNavigate('login');
+                }}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: 'var(--green-primary)',
+                  color: '#ffffff',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  boxShadow: '0 2px 8px rgba(45,106,79,0.22)',
+                }}
+              >
+                <LogIn size={14} />
+                <span>{isGu ? 'પ્રવેશ કરો (Login)' : 'Sign In'}</span>
+              </button>
+            </>
+          )}
 
           <LanguageSelector currentLang={currentLang} onLanguageChange={onLanguageChange} />
 
@@ -733,38 +786,84 @@ export const Navbar = ({
             <span>{isGu ? 'પ્રશ્નોત્તરી (FAQ)' : 'General FAQs'}</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleItemClick({ page: 'profile' })}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.65rem 0.85rem',
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              borderRadius: 'var(--radius-sm)',
-              color: activePage === 'profile' ? 'var(--green-deep)' : 'var(--text-title)',
-              backgroundColor: activePage === 'profile' ? 'var(--green-wash)' : '#eef6ec',
-              border: 'none',
-              textAlign: 'left',
-            }}
-          >
-            {currentUser?.role === 'officer' ? (
-              <Shield size={16} color="var(--green-primary)" />
-            ) : (
-              <Sprout size={16} color="var(--green-primary)" />
-            )}
-            <span>
-              {currentUser?.role === 'officer'
-                ? isGu
-                  ? 'કૃષિ અધિકારી સમીક્ષા ડેસ્ક'
-                  : 'Officer Review Desk'
-                : isGu
-                ? 'મારી કૃષિ પ્રોફાઇલ અને સલાહ'
-                : 'My Farm Profile & Advisories'}
-            </span>
-          </button>
+          {currentUser && (
+            <button
+              type="button"
+              onClick={() => handleItemClick({ page: 'profile' })}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.65rem 0.85rem',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                borderRadius: 'var(--radius-sm)',
+                color: activePage === 'profile' ? 'var(--green-deep)' : 'var(--text-title)',
+                backgroundColor: activePage === 'profile' ? 'var(--green-wash)' : '#eef6ec',
+                border: 'none',
+                textAlign: 'left',
+              }}
+            >
+              {currentUser?.role === 'officer' ? (
+                <Shield size={16} color="var(--green-primary)" />
+              ) : (
+                <Sprout size={16} color="var(--green-primary)" />
+              )}
+              <span>
+                {currentUser?.name || (isGu ? 'ખેડૂત પ્રોફાઇલ (Profile)' : 'My Profile')}
+              </span>
+            </button>
+          )}
+
+          {currentUser ? (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onLogout) onLogout();
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.65rem 0.85rem',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                borderRadius: 'var(--radius-sm)',
+                color: '#c81e1e',
+                backgroundColor: '#fff5f5',
+                border: '1px solid #f8b4b4',
+                textAlign: 'left',
+              }}
+            >
+              <LogOut size={16} />
+              <span>{isGu ? 'લૉગ આઉટ કરો (Logout)' : 'Sign Out / Logout'}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onNavigate) onNavigate('login');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.65rem 0.85rem',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                borderRadius: 'var(--radius-sm)',
+                color: '#ffffff',
+                backgroundColor: 'var(--green-primary)',
+                border: 'none',
+                textAlign: 'left',
+              }}
+            >
+              <LogIn size={16} />
+              <span>{isGu ? 'પ્રવેશ કરો (Sign In)' : 'Sign In to HaritAyan'}</span>
+            </button>
+          )}
         </div>
       )}
 

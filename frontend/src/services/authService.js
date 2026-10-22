@@ -27,6 +27,7 @@ export const MOCK_DEMO_USERS = [
     primaryCrops: ['Cotton (કપાસ)', 'Pigeon Pea (તુવેર)'],
     badge: 'Cotton Specialist',
     avatar: '👨‍🌾',
+    password: 'Password@123',
   },
   {
     id: 'farmer-2',
@@ -45,6 +46,7 @@ export const MOCK_DEMO_USERS = [
     primaryCrops: ['Tomato (ટામેટા)', 'Okra (ભીંડા)'],
     badge: 'Horticulture Producer',
     avatar: '👨‍🌾',
+    password: 'Password@123',
   },
   {
     id: 'farmer-3',
@@ -63,6 +65,7 @@ export const MOCK_DEMO_USERS = [
     primaryCrops: ['Castor (દિવેલા)', 'Cotton (કપાસ)'],
     badge: 'Oilseed & Cash Crop',
     avatar: '👨‍🌾',
+    password: 'Password@123',
   },
   {
     id: 'officer-1',
@@ -82,6 +85,7 @@ export const MOCK_DEMO_USERS = [
     officeLocation: 'Room 204, Krishi Bhavan, Kothi Road, Vadodara',
     badge: 'District Agro Expert',
     avatar: '🌾',
+    password: 'Officer@2026',
   },
 ];
 

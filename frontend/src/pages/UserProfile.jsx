@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Sparkles,
   Info,
+  LogOut,
 } from 'lucide-react';
 import {
   getStoredUser,
@@ -39,6 +40,7 @@ import { resolveImageUrl } from '../services/scanService';
 export const UserProfile = ({
   currentUser,
   onUserChange,
+  onLogout,
   currentLang = 'en',
   onNavigateToScanner,
   onNavigateHome,
@@ -546,6 +548,39 @@ export const UserProfile = ({
                   </button>
                 </>
               )}
+
+              {/* Profile Logout Option */}
+              <button
+                type="button"
+                id="profile-signout-btn"
+                onClick={() => {
+                  if (onLogout) {
+                    onLogout();
+                  } else {
+                    logout();
+                    if (onNavigateHome) onNavigateHome();
+                  }
+                }}
+                style={{
+                  padding: '0.65rem 1rem',
+                  borderRadius: '8px',
+                  border: '1px solid #f8b4b4',
+                  backgroundColor: '#fff5f5',
+                  color: '#c81e1e',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  boxShadow: '0 2px 6px rgba(200, 30, 30, 0.08)',
+                  transition: 'all 0.15s ease',
+                }}
+                title="Sign out of your account"
+              >
+                <LogOut size={15} />
+                <span>{isGu ? 'લૉગ આઉટ (Logout)' : 'Sign Out'}</span>
+              </button>
             </div>
           </div>
         </div>
