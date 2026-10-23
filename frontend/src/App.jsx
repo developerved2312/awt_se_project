@@ -24,7 +24,21 @@ export const App = () => {
     localStorage.setItem('haritayan_lang', lang);
   };
 
-  const navigateTo = (page) => {
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState('scanner');
+  const [loginPromptReason, setLoginPromptReason] = useState('');
+
+  const navigateTo = (page, reason = '', overrideUser = undefined) => {
+    const activeUser = overrideUser !== undefined ? overrideUser : (currentUser || getStoredUser());
+    // If trying to access scanner or profile without being logged in, prompt login
+    if ((page === 'scanner' || page === 'profile') && !activeUser) {
+      setRedirectAfterLogin(page);
+      setLoginPromptReason(page);
+      setActivePage('login');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setLoginPromptReason(reason);
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -36,6 +50,8 @@ export const App = () => {
   const handleLogout = () => {
     logout();
     setCurrentUser(null);
+    setRedirectAfterLogin('scanner');
+    setLoginPromptReason('');
     navigateTo('login');
   };
 
@@ -64,9 +80,13 @@ export const App = () => {
         {activePage === 'login' && (
           <LoginPage
             currentLang={currentLang}
+            loginPromptReason={loginPromptReason}
             onLoginSuccess={(user) => {
               handleUserChange(user);
-              navigateTo('profile');
+              const target = redirectAfterLogin || 'scanner';
+              setRedirectAfterLogin('scanner');
+              setLoginPromptReason('');
+              navigateTo(target, '', user);
             }}
             onNavigateHome={() => navigateTo('home')}
           />
@@ -78,6 +98,7 @@ export const App = () => {
             currentUser={currentUser}
             onNavigateHome={() => navigateTo('home')}
             onNavigateProfile={() => navigateTo('profile')}
+            onNavigate={navigateTo}
           />
         )}
 

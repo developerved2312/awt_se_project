@@ -474,6 +474,19 @@ export const Home = ({
                     <span>{isGu ? "વૃક્ષારોપણ માટે અનુકૂળ જગ્યા અને જમીનની માહિતી" : "Helpful tips on soil suitability and planting spots"}</span>
                   </li>
                 </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    type="button"
+                    onClick={onNavigateToScanner}
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center', padding: '0.65rem 1rem' }}
+                  >
+                    <Activity size={16} />
+                    <span>{isGu ? "પાક રોગ સ્કેનર શરૂ કરો" : "Launch AI Disease Scanner"}</span>
+                    <ArrowRight size={15} />
+                  </button>
+                </div>
               </div>
             </div>
 

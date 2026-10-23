@@ -104,7 +104,7 @@ SUMMARY OF IMPLEMENTATION:
   1. Maintained and enhanced both core modes simultaneously:
      - Curated Agricultural Knowledge Base: Offline-verified diagnostic records for regional staple crops (Cotton, Castor, Tomato, Pigeon Pea, Okra, Healthy leaf) with instant 1-click loading of verified remedies, symptoms, and pathogen types.
      - Live Database Feed (MongoDB Atlas): Real-time scans feed connected via `fetchScanHistory()` to `GET /api/scan/history`, rendering recent community and field diagnoses with live pulsing indicator, dynamic refresh button, and responsive cards.
-     - Multimodal Vision AI: Real-time Gemini 1.5 Flash vision scanning for any user-uploaded or live camera-captured leaf when `GEMINI_API_KEY` is configured.
+     - Multimodal Vision AI: Real-time Gemini 3.8 Flash vision scanning for any user-uploaded or live camera-captured leaf when `GEMINI_API_KEY` is configured.
   2. Implemented seamless navigation and inter-linking between Knowledge Base and Live Feed:
      - Added quick-jump pill buttons in the top breadcrumb bar for instant navigation to "Knowledge Base" (કૃષિ જ્ઞાનકોશ) and "Live Feed" (લાઈવ ફીડ).
      - Upgraded the Knowledge Base panel with clear institutional branding, Database icon badges, and bilingual descriptions.
@@ -280,4 +280,38 @@ SUMMARY OF IMPLEMENTATION:
      - Refactored `App.jsx` user state initialization from hardcoded default to `getStoredUser() || null`, establishing a genuine unauthenticated/logged-out state.
      - Added prominent red Logout buttons with `LogOut` icons across `Navbar.jsx` (desktop action bar & mobile drawer) and `UserProfile.jsx` identity header.
      - Integrated `handleLogout` which clears `localStorage` tokens (`haritayan_auth_token` and `haritayan_auth_user`), sets `currentUser = null`, and smoothly routes the user to `LoginPage.jsx`.
+================================================================================
+
+[LOG ENTRY #013]
+TIMESTAMP: 2026-10-23T21:55:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Fix Vision Scanner Module Loading with Login Prompt Redirect, Clean Login Page UI (Sign In & Sign Up only, no test credentials exposed), Left Pane with Platform Modules & About Platform, Sample Demo Queries as Rich Cards Grid, and Profile Edit Details with Logout
+FILES UPDATED / CREATED:
+  - [MODIFIED] frontend/src/pages/LoginPage.jsx
+  - [MODIFIED] frontend/src/pages/PlantScanner.jsx
+  - [MODIFIED] frontend/src/pages/UserProfile.jsx
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] frontend/src/services/authService.js
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Vision Scanner Loading Fix & Authentication Prompt Flow:
+     - Identified and resolved the JSX syntax error in UserProfile.jsx that was halting Vite production compilation.
+     - Resolved the stale React state closure in App.jsx's navigateTo by introducing overrideUser support, preventing successful sign-ins from bouncing back to the login page.
+     - Implemented seamless login prompting: clicking any scanner trigger while logged out redirects to LoginPage with an informative notice ("Please sign in or create an account to access the AI Plant Disease Scanner"), and upon login or new account creation, immediately routes them straight into the Plant Disease Scanner.
+  2. Clean, Minimalist Login Page (`LoginPage.jsx`):
+     - Removed all visible demo persona cards and test credentials from the UI for a clean, production-grade appearance.
+     - Features focused "Sign In" and "Sign Up / New Account" tabs, allowing users to authenticate or register a new farmer profile (name, email, password, phone, Vadodara taluka, village, acreage, primary crops).
+     - Standard test credentials remain fully operational for backend and offline authentication failover.
+  3. Vision Scanner Left Pane (`PlantScanner.jsx`):
+     - Engineered a responsive two-column layout (`scanner-shell-grid`) featuring a dedicated Left Sidebar / Pane.
+     - Module Suite Card: Displays all 5 platform modules (Leaf Disease Scanner [Active / Live], AgroWeather & Soil, Urban Heat & Tree Map, Mandi Crop Prices, Agronomist Desk) with status indicators and interactive routing.
+     - About HaritAyan Card: Details the Vadodara district agricultural mission, dual advisory standard (organic bio-inputs + precision ICAR chemical recommendations), and live system telemetry specs (Gemini 3.8 Flash Vision, offline failover status, Vadodara coordinates).
+  4. Sample Demo Queries as Cards Grid:
+     - Replaced the narrow vertical sample list with a responsive, high-impact card grid (`repeat(auto-fill, minmax(230px, 1fr))`).
+     - Rendered verified crop samples (Cotton, Tomato, Castor, Pigeon Pea, Okra, Healthy Crop) featuring leaf thumbnail images, crop names in English & Gujarati, pathogen category tags, severity badges, symptom descriptions, and 1-click "Run AI Diagnosis →" interactive trigger buttons.
+     - Added an additional demo query cards exploration shelf below the diagnostic report card when scan results are active.
+  5. Profile Actions (Edit Details & Logout):
+     - Configured the top navbar profile dropdown with accessible "Edit Details / Profile" and "Log Out" options.
+     - Implemented `EditProfileModal` in UserProfile.jsx allowing farmers to edit and persist name, phone, taluka, village, land size, and crops directly to state and localStorage.
 ================================================================================

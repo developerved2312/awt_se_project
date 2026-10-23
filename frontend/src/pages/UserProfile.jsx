@@ -22,6 +22,8 @@ import {
   Sparkles,
   Info,
   LogOut,
+  Edit3,
+  X,
 } from 'lucide-react';
 import {
   getStoredUser,
@@ -81,6 +83,60 @@ export const UserProfile = ({
 
   // Notification message
   const [bannerNotice, setBannerNotice] = useState('');
+
+  // Edit Profile Details State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: user?.name || '',
+    nameGu: user?.nameGu || '',
+    phone: user?.phone || '',
+    village: user?.village || '',
+    taluka: user?.taluka || 'Padra',
+    farmSizeAcres: user?.farmSizeAcres || 5.0,
+    primaryCrops: Array.isArray(user?.primaryCrops)
+      ? user.primaryCrops.join(', ')
+      : user?.primaryCrops || 'Cotton, Pigeon Pea',
+  });
+
+  useEffect(() => {
+    setEditFormData({
+      name: user?.name || '',
+      nameGu: user?.nameGu || '',
+      phone: user?.phone || '',
+      village: user?.village || '',
+      taluka: user?.taluka || 'Padra',
+      farmSizeAcres: user?.farmSizeAcres || 5.0,
+      primaryCrops: Array.isArray(user?.primaryCrops)
+        ? user.primaryCrops.join(', ')
+        : user?.primaryCrops || 'Cotton, Pigeon Pea',
+    });
+  }, [user]);
+
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    const updatedUser = {
+      ...user,
+      name: editFormData.name,
+      nameGu: editFormData.nameGu || editFormData.name,
+      phone: editFormData.phone,
+      village: editFormData.village,
+      taluka: editFormData.taluka,
+      farmSizeAcres: parseFloat(editFormData.farmSizeAcres) || 5.0,
+      primaryCrops: editFormData.primaryCrops
+        ? editFormData.primaryCrops.split(',').map((c) => c.trim())
+        : ['Cotton'],
+    };
+
+    localStorage.setItem('haritayan_auth_user', JSON.stringify(updatedUser));
+    if (onUserChange) onUserChange(updatedUser);
+    setShowEditModal(false);
+    setBannerNotice(
+      isGu
+        ? 'પ્રોફાઇલ વિગતો સફળતાપૂર્વક અપડેટ થઈ ગઈ!'
+        : 'Profile details updated successfully!'
+    );
+    setTimeout(() => setBannerNotice(''), 4000);
+  };
 
   const loadQueries = async () => {
     setLoading(true);
@@ -548,6 +604,31 @@ export const UserProfile = ({
                   </button>
                 </>
               )}
+              {/* Profile Edit Details Option */}
+              <button
+                type="button"
+                id="profile-edit-btn"
+                onClick={() => setShowEditModal(true)}
+                style={{
+                  padding: '0.65rem 1rem',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-medium)',
+                  backgroundColor: '#ffffff',
+                  color: 'var(--green-deep)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                  transition: 'all 0.15s ease',
+                }}
+                title="Edit Farmer Profile Details"
+              >
+                <Edit3 size={15} color="var(--green-primary)" />
+                <span>{isGu ? 'વિગતો સુધારો' : 'Edit Details'}</span>
+              </button>
 
               {/* Profile Logout Option */}
               <button
@@ -1288,6 +1369,177 @@ export const UserProfile = ({
                   ? 'કૃષિ અધિકારીને મોકલો'
                   : 'Submit to District Officer'}
               </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 5. EDIT PROFILE DETAILS MODAL */}
+      {showEditModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={() => setShowEditModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              maxWidth: '520px',
+              width: '100%',
+              padding: '1.75rem',
+              boxShadow: '0 20px 45px rgba(0,0,0,0.2)',
+              border: '1px solid var(--border-medium)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Edit3 size={18} color="var(--green-primary)" />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-title)' }}>
+                  {isGu ? 'પ્રોફાઇલ વિગતો સુધારો' : 'Edit Profile Details'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  {isGu ? 'ખેડૂતનું નામ' : 'Full Name'}
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                    {isGu ? 'મોબાઇલ નંબર' : 'Phone'}
+                  </label>
+                  <input
+                    type="tel"
+                    value={editFormData.phone}
+                    onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                    {isGu ? 'તાલુકો' : 'Taluka'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.taluka}
+                    onChange={(e) => setEditFormData({ ...editFormData, taluka: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                    {isGu ? 'ગામનું નામ' : 'Village'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.village}
+                    onChange={(e) => setEditFormData({ ...editFormData, village: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                    {isGu ? 'એકર જમીન' : 'Acres Land'}
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={editFormData.farmSizeAcres}
+                    onChange={(e) => setEditFormData({ ...editFormData, farmSizeAcres: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  {isGu ? 'મુખ્ય પાક' : 'Primary Crops'}
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.primaryCrops}
+                  onChange={(e) => setEditFormData({ ...editFormData, primaryCrops: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid var(--border-medium)', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button
+                  type="submit"
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: 'var(--green-primary)',
+                    color: '#ffffff',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {isGu ? 'વિગતો સાચવો (Save)' : 'Save Changes'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  style={{
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-medium)',
+                    backgroundColor: '#ffffff',
+                    color: 'var(--text-title)',
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {isGu ? 'રદ કરો' : 'Cancel'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

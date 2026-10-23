@@ -18,6 +18,7 @@ import {
   Sparkles,
   LogOut,
   LogIn,
+  Edit3,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -34,7 +35,9 @@ export const Navbar = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const profileMenuRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
   const t = getTranslation(currentLang);
   const isGu = currentLang === 'gu';
@@ -492,78 +495,147 @@ export const Navbar = ({
         >
           {currentUser ? (
             <>
-              {/* User Profile Chip */}
-              <div
-                onClick={() => {
-                  if (onNavigate) onNavigate('profile');
-                }}
-                title="View Farm Consultations & Profile"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  padding: '4px 9px',
-                  borderRadius: '20px',
-                  backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
-                  border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <span style={{ fontSize: '1rem' }}>
-                  {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
-                </span>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span
-                    style={{
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      color: 'var(--text-title)',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    {currentUser.name?.split(' ')?.[0] || 'User'}
+              {/* User Profile Chip with Dropdown */}
+              <div style={{ position: 'relative' }} ref={profileMenuRef}>
+                <div
+                  id="nav-profile-chip-btn"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  title="Profile Menu & Account Actions"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
+                    border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span style={{ fontSize: '1rem' }}>
+                    {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
                   </span>
-                  <span
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span
+                      style={{
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        color: 'var(--text-title)',
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {currentUser.name?.split(' ')?.[0] || 'User'}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.64rem',
+                        color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
+                    </span>
+                  </div>
+                  <ChevronDown
+                    size={13}
                     style={{
-                      fontSize: '0.64rem',
-                      color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
+                      color: 'var(--text-muted)',
+                      transform: profileMenuOpen ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 0.2s ease',
                     }}
-                  >
-                    {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
-                  </span>
+                  />
                 </div>
+
+                {/* Profile Actions Dropdown Menu */}
+                {profileMenuOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 'calc(100% + 8px)',
+                      width: '260px',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '12px',
+                      border: '1px solid var(--border-medium)',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                      padding: '0.65rem',
+                      zIndex: 1000,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.4rem',
+                    }}
+                  >
+                    <div style={{ padding: '0.5rem 0.65rem', borderBottom: '1px solid var(--border-subtle)', marginBottom: '0.25rem' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-title)' }}>
+                        {currentUser.name}
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                        {currentUser.email}
+                      </div>
+                    </div>
+
+                    {/* Edit Details Action */}
+                    <button
+                      type="button"
+                      id="nav-dropdown-edit-btn"
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        if (onNavigate) onNavigate('profile');
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        padding: '0.6rem 0.75rem',
+                        borderRadius: '8px',
+                        border: 'none',
+                        backgroundColor: 'var(--bg-tint-green)',
+                        color: 'var(--green-deep)',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        width: '100%',
+                      }}
+                    >
+                      <Edit3 size={15} color="var(--green-primary)" />
+                      <span>{isGu ? 'વિગતો સુધારો (Edit Details)' : 'Edit Details / Profile'}</span>
+                    </button>
+
+                    {/* Logout Action */}
+                    <button
+                      type="button"
+                      id="nav-dropdown-logout-btn"
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        if (onLogout) onLogout();
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        padding: '0.6rem 0.75rem',
+                        borderRadius: '8px',
+                        border: '1px solid #fecaca',
+                        backgroundColor: '#fff5f5',
+                        color: '#c81e1e',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        width: '100%',
+                      }}
+                    >
+                      <LogOut size={15} color="#c81e1e" />
+                      <span>{isGu ? 'લૉગ આઉટ (Log Out)' : 'Log Out'}</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Quick Demo Switcher Button */}
-              <button
-                type="button"
-                id="nav-auth-toggle-btn"
-                onClick={onOpenAuth}
-                style={{
-                  padding: '6px 11px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-medium)',
-                  backgroundColor: '#ffffff',
-                  color: 'var(--green-deep)',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-                  transition: 'all 0.15s ease',
-                }}
-                title="Switch demo persona"
-              >
-                <Sparkles size={14} color="var(--green-primary)" />
-                <span>{isGu ? 'લાઇવ સ્વિચર' : 'Switch'}</span>
-              </button>
-
-              {/* Prominent Logout Button */}
+              {/* Direct Quick Logout Button */}
               <button
                 type="button"
                 id="nav-logout-btn"
@@ -812,6 +884,32 @@ export const Navbar = ({
               <span>
                 {currentUser?.name || (isGu ? 'ખેડૂત પ્રોફાઇલ (Profile)' : 'My Profile')}
               </span>
+            </button>
+          )}
+
+          {currentUser && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onNavigate) onNavigate('profile');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.65rem 0.85rem',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--green-deep)',
+                backgroundColor: 'var(--bg-tint-green)',
+                border: '1px solid var(--border-medium)',
+                textAlign: 'left',
+              }}
+            >
+              <Edit3 size={16} color="var(--green-primary)" />
+              <span>{isGu ? 'વિગતો સુધારો (Edit Details)' : 'Edit Profile Details'}</span>
             </button>
           )}
 

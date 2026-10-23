@@ -283,7 +283,7 @@ const OFFLINE_DIAGNOSTIC_KNOWLEDGEBASE = {
 };
 
 /**
- * System Prompt instructing Gemini 1.5 Flash Vision to perform
+ * System Prompt instructing Gemini 3.8 Flash Vision to perform
  * rigorous agricultural leaf disease diagnosis with bilingual Gujarati output.
  */
 const SYSTEM_PROMPT = `
@@ -330,7 +330,7 @@ JSON SCHEMA:
 `;
 
 /**
- * Analyzes a plant image using Gemini 1.5 Flash Vision,
+ * Analyzes a plant image using Gemini 3.8 Flash Vision,
  * with automatic fallback to the local offline knowledgebase.
  *
  * @param {Object} params

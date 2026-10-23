@@ -19,6 +19,13 @@ import {
   RefreshCw,
   Printer,
   Trash2,
+  Flame,
+  BarChart3,
+  Shield,
+  Activity,
+  Sprout,
+  Sun,
+  Compass,
 } from 'lucide-react';
 import {
   analyzePlantImage,
@@ -52,6 +59,7 @@ export const PlantScanner = ({
   onNavigateHome,
   currentUser,
   onNavigateProfile,
+  onNavigate,
 }) => {
   const isGu = currentLang === 'gu';
 
@@ -436,34 +444,464 @@ export const PlantScanner = ({
           </div>
         </div>
 
-        {/* Header Section */}
-        <div style={{ marginBottom: '2.5rem', maxWidth: '820px' }}>
-          <h1
+        {/* =========================================================================
+            SCANNER TWO-COLUMN SHELL: LEFT PANE (MODULES & ABOUT) + RIGHT INTERACTION
+            ========================================================================= */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '320px 1fr',
+            gap: '2.25rem',
+            alignItems: 'start',
+          }}
+          className="scanner-shell-grid"
+        >
+          {/* =========================================================================
+              LEFT PANE: MODULES DIRECTORY + ABOUT HARITAYAN PLATFORM
+              ========================================================================= */}
+          <aside
+            className="scanner-left-pane"
             style={{
-              fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
-              fontWeight: 800,
-              color: 'var(--text-title)',
-              marginBottom: '0.85rem',
-              lineHeight: 1.25,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
             }}
           >
-            {isGu ? 'AI પાક રોગ સ્કેનર' : 'Plant Disease Scanner'}{' '}
-            <span style={{ color: 'var(--green-primary)' }}>
-              {isGu ? '— સરળ પાક તપાસ અને ઉપાયો' : '& Leaf Health Check'}
-            </span>
-          </h1>
-          <p
-            style={{
-              fontSize: '1.05rem',
-              color: 'var(--text-body)',
-              lineHeight: 1.7,
-            }}
-          >
-            {isGu
-              ? 'કપાસ, દિવેલા, ટામેટા કે શાકભાજીના પાનનો ફોટો અપલોડ કરો અથવા પાડો. AI ત્વરિત રોગ ઓળખીને સરળ દેશી અને યોગ્ય દવાઓની સલાહ આપશે.'
-              : 'Take or upload a photo of any crop leaf (Cotton, Castor, Tomato, Tuver, or Vegetables). Our AI quickly checks the leaf, identifies any disease, and suggests simple organic and recommended remedies.'}
-          </p>
-        </div>
+            {/* Card 1: Platform Modules Directory */}
+            <div
+              className="organic-card"
+              style={{
+                padding: '1.4rem',
+                backgroundColor: '#ffffff',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--border-medium)',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingBottom: '0.85rem',
+                  borderBottom: '1px solid var(--border-subtle)',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <Layers size={18} color="var(--green-primary)" />
+                  <h3 style={{ fontSize: '1.02rem', fontWeight: 800, color: 'var(--text-title)', margin: 0 }}>
+                    {isGu ? 'હરિતઅયન મોડ્યુલ્સ' : 'Platform Modules'}
+                  </h3>
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: 'var(--radius-full)',
+                    backgroundColor: '#e8f5e9',
+                    color: 'var(--green-deep)',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  5 SUITES
+                </span>
+              </div>
+
+              {/* Modules List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                {/* Module 1: Foliar Scanner (ACTIVE) */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    padding: '0.75rem 0.85rem',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--bg-tint-green)',
+                    border: '1.5px solid var(--green-primary)',
+                    cursor: 'default',
+                    boxShadow: '0 2px 6px rgba(45, 106, 79, 0.08)',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--green-primary)',
+                      color: '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                    }}
+                  >
+                    <Activity size={17} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--green-deep)' }}>
+                        {isGu ? 'પાક રોગ સ્કેનર' : 'Leaf Disease Scanner'}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '0.66rem',
+                          fontWeight: 800,
+                          color: '#166534',
+                          backgroundColor: '#dcfce7',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: '5px',
+                            height: '5px',
+                            borderRadius: '50%',
+                            backgroundColor: '#16a34a',
+                            animation: 'pulseDot 1.6s infinite',
+                          }}
+                        />
+                        {isGu ? 'સક્રિય' : 'Active'}
+                      </span>
+                    </div>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      {isGu ? 'જેમિની 3.8 વિઝન AI દ્વારા પાન રોગ અને ઉપાયો' : 'Gemini 3.8 Vision leaf diagnosis & remedies'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Module 2: AgroWeather */}
+                <div
+                  onClick={() => {
+                    if (onNavigate) onNavigate('home');
+                    setTimeout(() => {
+                      const el = document.getElementById('hero-top');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 120);
+                  }}
+                  className="scanner-module-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    padding: '0.7rem 0.85rem',
+                    borderRadius: '10px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--dry-leaf-soft)',
+                      color: 'var(--dry-leaf-dark)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                    }}
+                  >
+                    <Sun size={17} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-title)' }}>
+                        {isGu ? 'હવામાન અને સિંચાઈ' : 'AgroWeather & Soil'}
+                      </span>
+                      <span style={{ fontSize: '0.66rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                        IMD Live
+                      </span>
+                    </div>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      {isGu ? 'વડોદરા માઇક્રોક્લાઈમેટ અને પિયત સલાહ' : 'Vadodara microclimate & irrigation schedule'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Module 3: Urban Heat Map */}
+                <div
+                  onClick={() => {
+                    if (onNavigate) onNavigate('home');
+                    setTimeout(() => {
+                      const el = document.getElementById('module-01');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 120);
+                  }}
+                  className="scanner-module-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    padding: '0.7rem 0.85rem',
+                    borderRadius: '10px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
+                      backgroundColor: '#fee2e2',
+                      color: '#dc2626',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                    }}
+                  >
+                    <Flame size={17} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-title)' }}>
+                        {isGu ? 'શહેર ગરમી & કૂલિંગ નકશો' : 'Urban Heat & Tree Map'}
+                      </span>
+                      <span style={{ fontSize: '0.66rem', color: '#dc2626', fontWeight: 700 }}>
+                        GIS
+                      </span>
+                    </div>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      {isGu ? 'વૃક્ષારોપણથી તાપમાન ઘટાડાનો અંદાજ' : 'Canopy cover & surface cooling benefits'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Module 4: APMC Mandi Prices */}
+                <div
+                  onClick={() => {
+                    if (onNavigate) onNavigate('home');
+                    setTimeout(() => {
+                      const el = document.getElementById('module-03');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 120);
+                  }}
+                  className="scanner-module-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    padding: '0.7rem 0.85rem',
+                    borderRadius: '10px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
+                      backgroundColor: '#fef3c7',
+                      color: '#d97706',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                    }}
+                  >
+                    <BarChart3 size={17} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-title)' }}>
+                        {isGu ? 'APMC મંડી બજાર ભાવ' : 'Mandi Crop Prices'}
+                      </span>
+                      <span style={{ fontSize: '0.66rem', color: '#b45309', fontWeight: 700 }}>
+                        Daily
+                      </span>
+                    </div>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      {isGu ? 'સયાજીગંજ & પાદરા મંડી રોજના ભાવ' : 'Sayajiganj & Padra commodity rates'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Module 5: Agronomist & Officer Desk */}
+                <div
+                  onClick={() => {
+                    if (onNavigateProfile) {
+                      onNavigateProfile();
+                    } else if (onNavigate) {
+                      onNavigate('profile');
+                    }
+                  }}
+                  className="scanner-module-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    padding: '0.7rem 0.85rem',
+                    borderRadius: '10px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'all 0.18s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--olive-wash)',
+                      color: 'var(--olive-sage)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px',
+                    }}
+                  >
+                    <Shield size={17} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-title)' }}>
+                        {isGu ? 'કિસાન-અધિકારી ડેસ્ક' : 'Agronomist Desk'}
+                      </span>
+                      <span style={{ fontSize: '0.66rem', color: 'var(--green-deep)', fontWeight: 700 }}>
+                        Gov Desk
+                      </span>
+                    </div>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      {isGu ? 'કૃષિ ભવન નિષ્ણાત સમીક્ષા & ટિકિટ્સ' : 'Krishi Bhavan officer review & field tickets'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: General About HaritAyan Platform */}
+            <div
+              className="organic-card"
+              style={{
+                padding: '1.4rem',
+                backgroundColor: '#ffffff',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--border-medium)',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.55rem',
+                  paddingBottom: '0.85rem',
+                  borderBottom: '1px solid var(--border-subtle)',
+                  marginBottom: '0.9rem',
+                }}
+              >
+                <Sprout size={18} color="var(--green-primary)" />
+                <h3 style={{ fontSize: '1.02rem', fontWeight: 800, color: 'var(--text-title)', margin: 0 }}>
+                  {isGu ? 'હરિતઅયન વિશે' : 'About HaritAyan'}
+                </h3>
+              </div>
+
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                {isGu
+                  ? 'હરિતઅયન એ વડોદરા જિલ્લા માટે રચાયેલ સ્માર્ટ એગ્રી-ઇન્ટેલિજન્સ પ્લેટફોર્મ છે. આ પ્લેટફોર્મ આધુનિક મલ્ટિમોડલ જેમિની AI વિઝન અને આણંદ કૃષિ યુનિવર્સિટી (AAU) ની પરંપરાગત તથા વૈજ્ઞાનિક પદ્ધતિઓનો સમન્વય કરે છે.'
+                  : 'HaritAyan is Vadodara district\'s premier agricultural & ecological intelligence platform. It merges Gemini 3.8 Multimodal AI with Anand Agricultural University (AAU) agronomical standards.'}
+              </p>
+
+              {/* Dual Advisory Protocol Badge */}
+              <div
+                style={{
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--dry-leaf-soft)',
+                  border: '1px solid var(--border-subtle)',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--dry-leaf-dark)', textTransform: 'uppercase', marginBottom: '0.25rem', letterSpacing: '0.04em' }}>
+                  {isGu ? 'દ્વિસ્તરીય સલાહ પદ્ધતિ' : 'Dual Advisory Standard'}
+                </div>
+                <div style={{ fontSize: '0.76rem', color: 'var(--text-body)', lineHeight: 1.45 }}>
+                  {isGu
+                    ? '૧. દેશી પ્રાકૃતિક ઉપાયો (જીવામૃત, નીમ ઓઈલ, ખાટી છાશ)'
+                    : '1. Organic Controls (Jiv Amrut, NSKE Neem, Buttermilk)'}
+                  <br />
+                  {isGu
+                    ? '૨. ચોક્કસ માત્રા સાથે ભલામણ કરેલ વૈજ્ઞાનિક દવાઓ'
+                    : '2. Precision ICAR chemical sprays with safe harvest waiting intervals'}
+                </div>
+              </div>
+
+              {/* System Telemetry Specs */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Engine:</span>
+                  <strong style={{ color: 'var(--green-deep)' }}>Gemini 3.8 Flash Vision</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Failover:</span>
+                  <strong style={{ color: 'var(--green-deep)' }}>Curated Offline KB (Ready)</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>District:</span>
+                  <strong>Vadodara (22.30° N, 73.18° E)</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Language:</span>
+                  <strong>English & ગુજરાતી</strong>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* =========================================================================
+              RIGHT CONTENT AREA: TITLE, SCANNER INTERACTION, REPORT & FEEDS
+              ========================================================================= */}
+          <div className="scanner-main-content-column" style={{ minWidth: 0 }}>
+            {/* Header Section */}
+            <div style={{ marginBottom: '2.25rem', maxWidth: '820px' }}>
+              <h1
+                style={{
+                  fontSize: 'clamp(2rem, 3.5vw, 2.7rem)',
+                  fontWeight: 800,
+                  color: 'var(--text-title)',
+                  marginBottom: '0.85rem',
+                  lineHeight: 1.25,
+                }}
+              >
+                {isGu ? 'AI પાક રોગ સ્કેનર' : 'Plant Disease Scanner'}{' '}
+                <span style={{ color: 'var(--green-primary)' }}>
+                  {isGu ? '— સરળ પાક તપાસ અને ઉપાયો' : '& Leaf Health Check'}
+                </span>
+              </h1>
+              <p
+                style={{
+                  fontSize: '1.02rem',
+                  color: 'var(--text-body)',
+                  lineHeight: 1.7,
+                }}
+              >
+                {isGu
+                  ? 'કપાસ, દિવેલા, ટામેટા કે શાકભાજીના પાનનો ફોટો અપલોડ કરો અથવા પાડો. AI ત્વરિત રોગ ઓળખીને સરળ દેશી અને યોગ્ય દવાઓની સલાહ આપશે.'
+                  : 'Take or upload a photo of any crop leaf (Cotton, Castor, Tomato, Tuver, or Vegetables). Our AI quickly checks the leaf, identifies any disease, and suggests simple organic and recommended remedies.'}
+              </p>
+            </div>
 
         {/* Error Alert if any */}
         {errorMessage && (
@@ -990,105 +1428,189 @@ export const PlantScanner = ({
                 </p>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 {SAMPLE_CROPS.map((sample) => (
                   <div
                     key={sample.id}
+                    className="sample-query-card"
                     onClick={() => handleSelectSample(sample)}
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.85rem 1.05rem',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px solid var(--border-subtle)',
                       backgroundColor: 'var(--bg-canvas)',
+                      borderRadius: '12px',
+                      border: '1.5px solid var(--border-medium)',
+                      overflow: 'hidden',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      gap: '0.75rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+                      position: 'relative',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--green-light)';
-                      e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
-                      e.currentTarget.style.transform = 'translateX(4px)';
+                      e.currentTarget.style.borderColor = 'var(--green-primary)';
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.boxShadow = '0 10px 20px rgba(45, 106, 79, 0.12)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                      e.currentTarget.style.borderColor = 'var(--border-medium)';
                       e.currentTarget.style.backgroundColor = 'var(--bg-canvas)';
                       e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.03)';
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0, flex: 1 }}>
-                      <div
+                    {/* Leaf Image Preview Header */}
+                    <div
+                      style={{
+                        position: 'relative',
+                        height: '135px',
+                        backgroundColor: '#e8f5e9',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <img
+                        src={sample.image}
+                        alt={sample.cropName}
                         style={{
-                          width: '46px',
-                          height: '46px',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          flexShrink: 0,
-                          backgroundColor: '#e8f5e9',
-                          border: '1px solid var(--border-subtle)',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          transition: 'transform 0.3s ease',
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                      {/* Severity Badge */}
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          padding: '2px 7px',
+                          borderRadius: '4px',
+                          backgroundColor:
+                            sample.severity === 'Severe'
+                              ? '#fee2e2'
+                              : sample.severity === 'None'
+                              ? '#dcfce7'
+                              : '#fef3c7',
+                          color:
+                            sample.severity === 'Severe'
+                              ? '#991b1b'
+                              : sample.severity === 'None'
+                              ? '#166534'
+                              : '#92400e',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.08)',
                         }}
                       >
-                        <img
-                          src={sample.image}
-                          alt={sample.cropName}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
+                        {sample.severity === 'None'
+                          ? isGu ? 'તંદુરસ્ત' : 'Healthy'
+                          : sample.severity}
+                      </span>
 
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-title)' }}>
-                            {isGu ? sample.cropName : sample.cropName.split('(')[0].trim()}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: '0.7rem',
-                              fontWeight: 700,
-                              padding: '2px 7px',
-                              borderRadius: '4px',
-                              backgroundColor:
-                                sample.severity === 'Severe'
-                                  ? '#fee2e2'
-                                  : sample.severity === 'None'
-                                  ? '#dcfce7'
-                                  : '#fef3c7',
-                              color:
-                                sample.severity === 'Severe'
-                                  ? '#991b1b'
-                                  : sample.severity === 'None'
-                                  ? '#166534'
-                                  : '#92400e',
-                            }}
-                          >
-                            {sample.severity === 'None'
-                              ? isGu
-                                ? 'તંદુરસ્ત'
-                                : 'Healthy'
-                              : sample.severity}
-                          </span>
-                        </div>
-                        <p
-                          style={{
-                            fontSize: '0.81rem',
-                            color: 'var(--text-muted)',
-                            margin: 0,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {isGu ? sample.diseaseNameGu : sample.diseaseName}
-                        </p>
-                      </div>
+                      {/* Tag Badge */}
+                      <span
+                        style={{
+                          position: 'absolute',
+                          bottom: '8px',
+                          left: '8px',
+                          fontSize: '0.66rem',
+                          fontWeight: 700,
+                          padding: '2px 7px',
+                          borderRadius: '4px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                          backdropFilter: 'blur(4px)',
+                          color: 'var(--green-deep)',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.08)',
+                        }}
+                      >
+                        {sample.tag}
+                      </span>
                     </div>
 
-                    <div style={{ color: 'var(--green-primary)', flexShrink: 0 }}>
-                      <ArrowRight size={18} />
+                    {/* Card Content */}
+                    <div style={{ padding: '0.9rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <div
+                        style={{
+                          fontSize: '0.74rem',
+                          fontWeight: 800,
+                          color: 'var(--green-primary)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                          marginBottom: '0.2rem',
+                        }}
+                      >
+                        {isGu ? sample.cropName : sample.cropName.split('(')[0].trim()}
+                      </div>
+
+                      <h4
+                        style={{
+                          fontSize: '0.94rem',
+                          fontWeight: 800,
+                          color: 'var(--text-title)',
+                          margin: '0 0 0.35rem',
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {isGu ? sample.diseaseNameGu : sample.diseaseName}
+                      </h4>
+
+                      <p
+                        style={{
+                          fontSize: '0.78rem',
+                          color: 'var(--text-muted)',
+                          lineHeight: 1.4,
+                          margin: '0 0 0.85rem',
+                          flex: 1,
+                        }}
+                      >
+                        {sample.description}
+                      </p>
+
+                      {/* Action CTA Button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectSample(sample);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.4rem',
+                          width: '100%',
+                          padding: '0.5rem',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: 'var(--bg-tint-green)',
+                          color: 'var(--green-deep)',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--green-primary)';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--bg-tint-green)';
+                          e.currentTarget.style.color = 'var(--green-deep)';
+                        }}
+                      >
+                        <Sparkles size={13} />
+                        <span>{isGu ? 'નિદાન શરૂ કરો →' : 'Run AI Diagnosis →'}</span>
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -1649,6 +2171,165 @@ export const PlantScanner = ({
         </div>
 
         {/* =========================================================================
+            SAMPLE DEMO QUERIES SECTION (WHEN SCAN RESULT IS ACTIVE)
+            ========================================================================= */}
+        {scanResult && (
+          <section
+            id="sample-demo-queries-section"
+            style={{
+              marginTop: '3rem',
+              paddingTop: '2.5rem',
+              borderTop: '1px solid var(--border-medium)',
+            }}
+          >
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div
+                className="badge"
+                style={{
+                  marginBottom: '0.5rem',
+                  backgroundColor: 'var(--dry-leaf-soft)',
+                  color: 'var(--dry-leaf-dark)',
+                  border: '1px solid var(--border-medium)',
+                }}
+              >
+                <Database size={13} />
+                <span>{isGu ? 'ચકાસાયેલ સેમ્પલ પાક પ્રશ્નો' : 'Sample Demo Queries'}</span>
+              </div>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-title)', margin: '0 0 0.35rem' }}>
+                {isGu ? 'અન્ય પાકોનું AI નિદાન ચકાસો' : 'Try Other Crop Sample Diagnoses'}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: 0 }}>
+                {isGu
+                  ? 'નીચે આપેલા કોઈપણ સેમ્પલ કાર્ડ પર ક્લિક કરીને ત્વરિત AI રોગ પરીક્ષણ અને ઉપાયો ચકાસો.'
+                  : 'Click any verified crop leaf sample card below to test instant Gemini AI pathology diagnosis.'}
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
+                gap: '1rem',
+              }}
+            >
+              {SAMPLE_CROPS.map((sample) => (
+                <div
+                  key={sample.id}
+                  className="sample-query-card"
+                  onClick={() => handleSelectSample(sample)}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '12px',
+                    border: '1.5px solid var(--border-subtle)',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'all 0.2s ease',
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--green-primary)';
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                  }}
+                >
+                  <div style={{ position: 'relative', height: '130px', backgroundColor: '#e8f5e9' }}>
+                    <img
+                      src={sample.image}
+                      alt={sample.cropName}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        padding: '2px 7px',
+                        borderRadius: '4px',
+                        backgroundColor:
+                          sample.severity === 'Severe'
+                            ? '#fee2e2'
+                            : sample.severity === 'None'
+                            ? '#dcfce7'
+                            : '#fef3c7',
+                        color:
+                          sample.severity === 'Severe'
+                            ? '#991b1b'
+                            : sample.severity === 'None'
+                            ? '#166534'
+                            : '#92400e',
+                      }}
+                    >
+                      {sample.severity === 'None' ? (isGu ? 'તંદુરસ્ત' : 'Healthy') : sample.severity}
+                    </span>
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: '8px',
+                        left: '8px',
+                        fontSize: '0.66rem',
+                        fontWeight: 700,
+                        padding: '2px 7px',
+                        borderRadius: '4px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                        color: 'var(--green-deep)',
+                      }}
+                    >
+                      {sample.tag}
+                    </span>
+                  </div>
+                  <div style={{ padding: '0.85rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--green-primary)', marginBottom: '0.2rem' }}>
+                      {isGu ? sample.cropName : sample.cropName.split('(')[0].trim()}
+                    </div>
+                    <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-title)', margin: '0 0 0.3rem' }}>
+                      {isGu ? sample.diseaseNameGu : sample.diseaseName}
+                    </h4>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4, margin: '0 0 0.8rem', flex: 1 }}>
+                      {sample.description}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectSample(sample);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        width: '100%',
+                        padding: '0.45rem',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: 'var(--bg-tint-green)',
+                        color: 'var(--green-deep)',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Sparkles size={13} />
+                      <span>{isGu ? 'આ સેમ્પલ ચકાસો →' : 'Test This Sample →'}</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* =========================================================================
             LIVE FEED OF RECENT SCANS (MONGODB ATLAS INTEGRATION)
             ========================================================================= */}
         <section
@@ -1962,6 +2643,8 @@ export const PlantScanner = ({
             </div>
           )}
         </section>
+          </div>
+        </div>
       </div>
 
       <style>{`
@@ -1972,16 +2655,30 @@ export const PlantScanner = ({
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(1.3); }
         }
+        @media (max-width: 1024px) {
+          .scanner-shell-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
         @media (max-width: 900px) {
           .scanner-main-grid {
             grid-template-columns: 1fr !important;
           }
         }
+        .scanner-module-item:hover {
+          border-color: var(--green-primary) !important;
+          background-color: var(--bg-tint-green) !important;
+          transform: translateX(3px);
+        }
+        .sample-query-card:hover {
+          transform: translateY(-3px);
+          border-color: var(--green-primary) !important;
+        }
         @media print {
           body {
             background: #ffffff !important;
           }
-          #main-navbar, #live-scans-feed-section, .btn, .badge, #nav-brand-logo, header, footer {
+          #main-navbar, #live-scans-feed-section, .scanner-left-pane, .btn, .badge, #nav-brand-logo, header, footer {
             display: none !important;
           }
           #diagnostic-report-card {
@@ -1990,7 +2687,7 @@ export const PlantScanner = ({
             padding: 0 !important;
             width: 100% !important;
           }
-          .scanner-main-grid {
+          .scanner-shell-grid, .scanner-main-grid {
             display: block !important;
           }
         }
