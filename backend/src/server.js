@@ -7,6 +7,7 @@ import { connectDB } from './config/db.js';
 import scanRoutes from './routes/scanRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import queryRoutes from './routes/queryRoutes.js';
+import mandiRoutes from './routes/mandiRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +26,7 @@ connectDB();
 // Core Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: true,
     credentials: true,
   })
 );
@@ -76,6 +77,9 @@ app.use('/api/auth', authRoutes);
 
 // Farmer Consultations & Officer Review Station Routes
 app.use('/api/queries', queryRoutes);
+
+// AI Module 03 - Real-Time APMC Mandi Market Prices Engine
+app.use('/api/mandi', mandiRoutes);
 
 // Start Server
 app.listen(PORT, () => {
