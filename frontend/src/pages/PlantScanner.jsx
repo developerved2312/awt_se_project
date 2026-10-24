@@ -511,7 +511,7 @@ export const PlantScanner = ({
 
               {/* Modules List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-                {/* Module 1: Foliar Scanner (ACTIVE) */}
+                {/* Foliar Scanner (ACTIVE) */}
                 <div
                   style={{
                     display: 'flex',
@@ -577,7 +577,7 @@ export const PlantScanner = ({
                   </div>
                 </div>
 
-                {/* Module 2: AgroWeather */}
+                {/* AgroWeather */}
                 <div
                   onClick={() => {
                     if (onNavigate) onNavigate('home');
@@ -630,14 +630,10 @@ export const PlantScanner = ({
                   </div>
                 </div>
 
-                {/* Module 3: Urban Heat Map */}
+                {/* Urban Heat Map */}
                 <div
                   onClick={() => {
-                    if (onNavigate) onNavigate('home');
-                    setTimeout(() => {
-                      const el = document.getElementById('module-01');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }, 120);
+                    if (onNavigate) onNavigate('heatmap');
                   }}
                   className="scanner-module-item"
                   style={{
@@ -683,7 +679,7 @@ export const PlantScanner = ({
                   </div>
                 </div>
 
-                {/* Module 4: APMC Mandi Prices */}
+                {/* APMC Mandi Prices */}
                 <div
                   onClick={() => {
                     if (onNavigate) onNavigate('mandi');
@@ -732,7 +728,7 @@ export const PlantScanner = ({
                   </div>
                 </div>
 
-                {/* Module 5: Agronomist & Officer Desk */}
+                {/* Agronomist & Officer Desk */}
                 <div
                   onClick={() => {
                     if (onNavigateProfile) {

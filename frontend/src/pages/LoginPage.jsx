@@ -203,6 +203,7 @@ export const LoginPage = ({
               fontWeight: 800,
               fontFamily: 'var(--font-heading)',
               letterSpacing: '-0.01em',
+              color: '#ffffff',
             }}
           >
             HaritAyan • {isGu ? 'હરિતઅયન' : 'Smart Agriculture'}
@@ -212,7 +213,7 @@ export const LoginPage = ({
             style={{
               margin: 0,
               fontSize: '0.86rem',
-              color: 'rgba(216, 243, 220, 0.92)',
+              color: '#d8f3dc',
               fontWeight: 500,
             }}
           >
@@ -303,9 +304,9 @@ export const LoginPage = ({
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                backgroundColor: activeTab === 'signin' ? '#ffffff' : 'transparent',
-                color: activeTab === 'signin' ? 'var(--green-deep)' : 'var(--text-muted)',
-                boxShadow: activeTab === 'signin' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
+                backgroundColor: activeTab === 'signin' ? 'var(--green-deep)' : 'transparent',
+                color: activeTab === 'signin' ? '#ffffff' : 'var(--text-muted)',
+                boxShadow: activeTab === 'signin' ? '0 2px 8px rgba(27, 67, 50, 0.18)' : 'none',
               }}
             >
               {isGu ? 'પ્રવેશ કરો (Sign In)' : 'Sign In'}
@@ -328,9 +329,9 @@ export const LoginPage = ({
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                backgroundColor: activeTab === 'signup' ? '#ffffff' : 'transparent',
-                color: activeTab === 'signup' ? 'var(--green-deep)' : 'var(--text-muted)',
-                boxShadow: activeTab === 'signup' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
+                backgroundColor: activeTab === 'signup' ? 'var(--green-deep)' : 'transparent',
+                color: activeTab === 'signup' ? '#ffffff' : 'var(--text-muted)',
+                boxShadow: activeTab === 'signup' ? '0 2px 8px rgba(27, 67, 50, 0.18)' : 'none',
               }}
             >
               {isGu ? 'નવું ખાતું (Sign Up)' : 'New Account'}
@@ -391,7 +392,7 @@ export const LoginPage = ({
                     display: 'block',
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)',
+                    color: 'var(--green-deep)',
                     marginBottom: '0.4rem',
                   }}
                 >
@@ -423,7 +424,7 @@ export const LoginPage = ({
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.92rem',
                       backgroundColor: '#ffffff',
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       outline: 'none',
                       transition: 'border-color 0.2s ease',
                       boxSizing: 'border-box',
@@ -440,7 +441,7 @@ export const LoginPage = ({
                     style={{
                       fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                     }}
                   >
                     {isGu ? 'પાસવર્ડ' : 'Password'}
@@ -472,7 +473,7 @@ export const LoginPage = ({
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.92rem',
                       backgroundColor: '#ffffff',
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       outline: 'none',
                       transition: 'border-color 0.2s ease',
                       boxSizing: 'border-box',
@@ -576,7 +577,7 @@ export const LoginPage = ({
                     display: 'block',
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)',
+                    color: 'var(--green-deep)',
                     marginBottom: '0.35rem',
                   }}
                 >
@@ -607,6 +608,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.9rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -619,7 +621,7 @@ export const LoginPage = ({
                     display: 'block',
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)',
+                    color: 'var(--green-deep)',
                     marginBottom: '0.35rem',
                   }}
                 >
@@ -650,6 +652,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.9rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -662,7 +665,7 @@ export const LoginPage = ({
                     display: 'block',
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)',
+                    color: 'var(--green-deep)',
                     marginBottom: '0.35rem',
                   }}
                 >
@@ -693,6 +696,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.9rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -724,7 +728,7 @@ export const LoginPage = ({
                       display: 'block',
                       fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       marginBottom: '0.35rem',
                     }}
                   >
@@ -742,6 +746,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.88rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -753,7 +758,7 @@ export const LoginPage = ({
                       display: 'block',
                       fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       marginBottom: '0.35rem',
                     }}
                   >
@@ -769,6 +774,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.88rem',
+                      color: 'var(--green-deep)',
                       backgroundColor: '#ffffff',
                       boxSizing: 'border-box',
                     }}
@@ -790,7 +796,7 @@ export const LoginPage = ({
                       display: 'block',
                       fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       marginBottom: '0.35rem',
                     }}
                   >
@@ -808,6 +814,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.88rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -819,7 +826,7 @@ export const LoginPage = ({
                       display: 'block',
                       fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: 'var(--text-title)',
+                      color: 'var(--green-deep)',
                       marginBottom: '0.35rem',
                     }}
                   >
@@ -838,6 +845,7 @@ export const LoginPage = ({
                       borderRadius: '10px',
                       border: '1px solid var(--border-medium)',
                       fontSize: '0.88rem',
+                      color: 'var(--green-deep)',
                       boxSizing: 'border-box',
                     }}
                   />
@@ -850,7 +858,7 @@ export const LoginPage = ({
                     display: 'block',
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)',
+                    color: 'var(--green-deep)',
                     marginBottom: '0.35rem',
                   }}
                 >
@@ -868,6 +876,7 @@ export const LoginPage = ({
                     borderRadius: '10px',
                     border: '1px solid var(--border-medium)',
                     fontSize: '0.88rem',
+                    color: 'var(--green-deep)',
                     boxSizing: 'border-box',
                   }}
                 />

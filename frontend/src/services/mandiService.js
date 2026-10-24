@@ -1,6 +1,6 @@
 /**
  * mandiService.js - Client-Side API Connector for Real-Time APMC Mandi Market Prices Engine
- * Module C: Vadodara District Agricultural Produce Market Committee (APMC) Intel
+ * Vadodara District Agricultural Produce Market Committee (APMC) Intel
  */
 
 const API_BASE_URL =

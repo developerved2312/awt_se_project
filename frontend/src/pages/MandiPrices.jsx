@@ -292,7 +292,7 @@ export const MandiPrices = ({ currentLang = 'en', onNavigateHome, onNavigateScan
                 }}
               >
                 <Sparkles size={14} />
-                {isGu ? 'મોડ્યુલ સી • રીયલ-ટાઇમ માર્કેટ ઇન્ટેલિજન્સ' : 'Module C • Real-Time Market Intelligence'}
+                {isGu ? 'રીયલ-ટાઇમ માર્કેટ ઇન્ટેલિજન્સ' : 'Real-Time Market Intelligence'}
               </span>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                 {isGu ? 'વડોદરા જિલ્લો' : 'Vadodara District'}
