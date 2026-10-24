@@ -8,6 +8,7 @@ import scanRoutes from './routes/scanRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import queryRoutes from './routes/queryRoutes.js';
 import mandiRoutes from './routes/mandiRoutes.js';
+import heatRoutes from './routes/heatRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -60,16 +61,16 @@ app.get('/api', (req, res) => {
   res.json({
     name: 'HaritAyan API Grid',
     description: 'AI-Powered Smart Agriculture, Urban Heat Mitigation & Mandi Intelligence for Vadodara District',
-    modules: [
-      'Module 01: Urban Heat Mitigation & Tree Cooling Simulator',
-      'Module 02: Gemini AI Multimodal Crop Vision Scanner',
-      'Module 03: Real-Time APMC Mandi Price Engine',
-      'Module 04: Operations & Agro-climatic Early Warning System',
+    features: [
+      'Urban Heat Mitigation & Tree Cooling Simulator',
+      'Gemini AI Multimodal Crop Vision Scanner',
+      'Real-Time APMC Mandi Price Engine',
+      'Operations & Agro-climatic Early Warning System',
     ],
   });
 });
 
-// AI Module 02 - Plant Disease Scanner Routes
+// Plant Disease Scanner Routes
 app.use('/api/scan', scanRoutes);
 
 // Multi-User Authentication Routes (Farmers & Agricultural Officers)
@@ -78,8 +79,11 @@ app.use('/api/auth', authRoutes);
 // Farmer Consultations & Officer Review Station Routes
 app.use('/api/queries', queryRoutes);
 
-// AI Module 03 - Real-Time APMC Mandi Market Prices Engine
+// Real-Time APMC Mandi Market Prices Engine
 app.use('/api/mandi', mandiRoutes);
+
+// Urban Heat Mitigation & Tree Cooling Simulator
+app.use('/api/heat', heatRoutes);
 
 // Start Server
 app.listen(PORT, () => {
