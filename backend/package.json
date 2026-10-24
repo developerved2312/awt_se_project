@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed": "node src/utils/seedData.js"
+    "seed": "node src/utils/seedData.js",
+    "seed:mandi": "node src/utils/seedMandiData.js"
   },
   "keywords": [
     "haritayan",
