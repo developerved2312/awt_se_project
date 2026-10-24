@@ -360,5 +360,39 @@ SUMMARY OF IMPLEMENTATION:
      - Registered 'mandi' in App.jsx as a public module accessible without login barriers.
      - Activated 'APMC Mandi Market Prices' in Navbar.jsx with active 'Live' indicator.
      - Linked 'Daily APMC Mandi Rates' card and 'Explore APMC Mandi Rates' button in Home.jsx.
-     - Linked Module 4 in PlantScanner.jsx Left Pane directly to the Mandi page.
+   ================================================================================
+
+[LOG ENTRY #015]
+TIMESTAMP: 2026-10-24T21:40:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Implementation of Real-Time Mandi Ingestion, Sample Datasets, and Urban Heat Island Observatory & Tree Cooling Simulator
+FILES UPDATED / CREATED:
+  - [NEW] data/sample/mandi_rates.csv
+  - [NEW] data/sample/heatmap_data.json
+  - [NEW] frontend/src/pages/HeatMap.jsx
+  - [NEW] backend/src/controllers/heatController.js
+  - [NEW] backend/src/routes/heatRoutes.js
+  - [MODIFIED] backend/src/controllers/mandiController.js
+  - [MODIFIED] backend/src/server.js
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/pages/Home.jsx
+  - [MODIFIED] frontend/src/components/Footer.jsx
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Real-Time Mandi Ingestion Engine:
+     - Integrated the Government of India Open Data API (data.gov.in / Agmarknet API endpoint 9ef84268-d588-465a-a308-a864a43d0070) into `backend/src/controllers/mandiController.js`.
+     - Direct live sync into MongoDB Atlas (`haritayan_db.mandiprices`) with bulkWrite upserts and live timestamp updates upon triggering `POST /api/mandi/sync`.
+     - Live endpoint returns verified data source `"data.gov.in (Agmarknet Live)"` with 21 commodities tracked.
+  2. Sample Datasets & Images:
+     - Created `data/sample/mandi_rates.csv` populated with authentic modal, minimum, maximum, and arrivals data for Vadodara's 5 mandis.
+     - Created `data/sample/heatmap_data.json` with GIS coordinates, Land Surface Temperatures (LST), ambient temperatures, NDVI vegetation indices, and native tree cooling parameters across Vadodara municipal wards.
+     - Populated `data/sample/` with regional crop leaf and thermal map image assets.
+  3. Module 01: Urban Heat Island Observatory & Tree Cooling Simulator (HeatMap.jsx):
+     - Built comprehensive interactive thermal observatory page covering Alkapuri, Makarpura GIDC, Old City (Mandvi), Sayajigunj (MSU), and Gotri wards.
+     - Interactive Tree Canopy Cooling Simulator with plantation slider (10 to 300+ trees) and native Gujarat species (Neem, Banyan, Peepal, Gulmohar), calculating live ambient temperature drop (-1.5°C to -3.8°C), shaded ground surface area (m²), and daily oxygen production (kg/day).
+     - Strategic municipal afforestation policy recommendations for urban cooling.
+  4. Platform Integration & Routing:
+     - Created backend `/api/heat/wards` and `/api/heat/simulate` endpoints in `backend/src/controllers/heatController.js` and mounted at `app.use('/api/heat', heatRoutes)`.
+     - Registered `/heatmap` route in `App.jsx`, linked 'City Heat & Tree Cooling Map' in `Navbar.jsx` with active Live indicator, wired clickable card in `Home.jsx`, and connected quick links in `Footer.jsx`.
 ================================================================================
