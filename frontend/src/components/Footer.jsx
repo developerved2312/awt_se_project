@@ -97,7 +97,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('module-01')}
+                  onClick={() => (onNavigate ? onNavigate('heatmap') : scrollTo('module-01'))}
                   style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
@@ -119,7 +119,7 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('module-03')}
+                  onClick={() => (onNavigate ? onNavigate('mandi') : scrollTo('module-03'))}
                   style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}

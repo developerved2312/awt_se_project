@@ -128,13 +128,13 @@ export const Navbar = ({
     },
     {
       id: 'module-urban-heat',
-      page: null,
-      anchor: 'modules-section',
+      page: 'heatmap',
+      anchor: null,
       title: isGu ? 'શહેરની ગરમી અને વૃક્ષારોપણ નકશો' : 'City Heat & Tree Cooling Map',
       subtitle: isGu ? 'વડોદરાના વિસ્તારો અને વૃક્ષોથી તાપમાન ઘટાડો' : 'Vadodara heat zones and tree cooling benefits',
       icon: Flame,
-      status: 'upcoming',
-      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
+      status: 'active',
+      statusText: isGu ? 'લાઈવ' : 'Live',
     },
     {
       id: 'module-apmc-mandi',

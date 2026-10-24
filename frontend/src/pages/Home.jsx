@@ -27,6 +27,7 @@ export const Home = ({
   currentLang = 'en',
   onNavigateToScanner,
   onNavigateToMandi,
+  onNavigateToHeatMap,
   onNavigateToProfile,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -319,7 +320,14 @@ export const Home = ({
               </p>
             </div>
 
-            <div className="organic-card" style={{ padding: '1.6rem' }}>
+            <div
+              className="organic-card"
+              style={{ padding: '1.6rem', cursor: 'pointer', transition: 'all 0.2s ease' }}
+              onClick={() => onNavigateToHeatMap && onNavigateToHeatMap()}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-3px)')}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+              title="Click to launch Urban Heat & Tree Cooling Observatory"
+            >
               <div
                 style={{
                   width: '38px',
@@ -335,9 +343,14 @@ export const Home = ({
               >
                 <TreeDeciduous size={20} />
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "શહેરમાં વૃક્ષોથી ઠંડક" : "City Tree Cooling"}
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+                  {isGu ? "શહેરમાં વૃક્ષોથી ઠંડક" : "City Tree Cooling"}
+                </h3>
+                <span style={{ color: 'var(--green-primary)', fontSize: '0.78rem', fontWeight: 700 }}>
+                  {isGu ? 'ખોલો →' : 'Launch →'}
+                </span>
+              </div>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
                   ? "વડોદરાના વિસ્તારોમાં ગરમીનું પ્રમાણ અને છાંયડાવાળા વૃક્ષો વાવવાથી મળતી ઠંડક."
@@ -386,7 +399,7 @@ export const Home = ({
       </section>
 
       {/* =========================================================================
-          THE 4 CORE MODULES (FEATURES OVERVIEW)
+          KEY PLATFORM FEATURES (OVERVIEW)
           ========================================================================= */}
       <section id="modules-section" style={{ padding: '4.5rem 0' }}>
         <div className="container">
@@ -405,7 +418,7 @@ export const Home = ({
           </div>
 
           <div className="grid-2">
-            {/* Module 1 */}
+            {/* Urban Heat & Tree Cooling Map */}
             <div id="module-01" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--green-primary)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge" style={{ background: 'var(--bg-tint-green)', color: 'var(--green-deep)' }}>
@@ -447,7 +460,7 @@ export const Home = ({
               </div>
             </div>
 
-            {/* Module 2 */}
+            {/* AI Plant Disease Scanner */}
             <div id="module-02" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--dry-leaf)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge badge-leaf">
@@ -502,7 +515,7 @@ export const Home = ({
               </div>
             </div>
 
-            {/* Module 3 */}
+            {/* Real-Time APMC Mandi Rates */}
             <div id="module-03" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--earth-ochre)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge" style={{ background: '#fdf3e7', color: 'var(--earth-clay)', borderColor: 'rgba(212, 163, 115, 0.4)' }}>
@@ -568,7 +581,7 @@ export const Home = ({
               </div>
             </div>
 
-            {/* Module 4 */}
+            {/* Weather Alerts & Notice Panel */}
             <div id="module-04" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid var(--olive-sage)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span className="badge badge-olive">

@@ -6,6 +6,7 @@ import PlantScanner from './pages/PlantScanner';
 import UserProfile from './pages/UserProfile';
 import LoginPage from './pages/LoginPage';
 import MandiPrices from './pages/MandiPrices';
+import HeatMap from './pages/HeatMap';
 import AuthModal from './components/AuthModal';
 import Chatbot from './components/Chatbot';
 import { getStoredUser, logout } from './services/authService';
@@ -122,11 +123,19 @@ export const App = () => {
           />
         )}
 
+        {activePage === 'heatmap' && (
+          <HeatMap
+            currentLang={currentLang}
+            onNavigateHome={() => navigateTo('home')}
+          />
+        )}
+
         {activePage === 'home' && (
           <Home
             currentLang={currentLang}
             onNavigateToScanner={() => navigateTo('scanner')}
             onNavigateToMandi={() => navigateTo('mandi')}
+            onNavigateToHeatMap={() => navigateTo('heatmap')}
             onNavigateToProfile={() => navigateTo(currentUser ? 'profile' : 'login')}
           />
         )}
