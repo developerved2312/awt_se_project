@@ -26,6 +26,7 @@ import { getTranslation } from '../services/translationService';
 export const Home = ({
   currentLang = 'en',
   onNavigateToScanner,
+  onNavigateToMandi,
   onNavigateToProfile,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -344,7 +345,13 @@ export const Home = ({
               </p>
             </div>
 
-            <div className="organic-card" style={{ padding: '1.6rem' }}>
+            <div
+              className="organic-card"
+              style={{ padding: '1.6rem', cursor: 'pointer', transition: 'all 0.2s ease' }}
+              onClick={() => onNavigateToMandi && onNavigateToMandi()}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-3px)')}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
               <div
                 style={{
                   width: '38px',
@@ -360,9 +367,14 @@ export const Home = ({
               >
                 <BarChart3 size={20} />
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                {isGu ? "રોજના APMC મંડી ભાવ" : "Daily APMC Mandi Rates"}
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
+                  {isGu ? "રોજના APMC મંડી ભાવ" : "Daily APMC Mandi Rates"}
+                </h3>
+                <span style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 700, backgroundColor: 'rgba(34, 197, 94, 0.12)', padding: '2px 8px', borderRadius: '12px' }}>
+                  Live
+                </span>
+              </div>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 {isGu
                   ? "વડોદરા જિલ્લાની મુખ્ય મંડીઓના રોજના પાકના ભાવો ગુજરાતી અને અંગ્રેજીમાં સરળતાથી જુઓ."
@@ -529,6 +541,30 @@ export const Home = ({
                     <span>{isGu ? "ખેડૂતો માટે સરળ ગુજરાતીમાં ભાવની માહિતી" : "Easy-to-read market price trends in Gujarati"}</span>
                   </li>
                 </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    onClick={() => onNavigateToMandi && onNavigateToMandi()}
+                    className="btn btn-outline"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '10px',
+                      padding: '0.65rem 1rem',
+                      fontWeight: 700,
+                      borderColor: 'var(--earth-ochre)',
+                      color: 'var(--earth-clay)',
+                      backgroundColor: '#fffdfa',
+                    }}
+                  >
+                    <BarChart3 size={16} />
+                    <span>{isGu ? "APMC મંડી ભાવ એન્જિન ખોલો" : "Explore APMC Mandi Rates"}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
               </div>
             </div>
 

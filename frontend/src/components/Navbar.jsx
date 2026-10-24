@@ -138,13 +138,13 @@ export const Navbar = ({
     },
     {
       id: 'module-apmc-mandi',
-      page: null,
-      anchor: 'modules-section',
-      title: isGu ? 'APMC મંડી બજાર ભાવ' : 'Mandi Crop Prices (APMC)',
-      subtitle: isGu ? 'વડોદરા જિલ્લાની મંડીઓના રોજના તાજા ભાવ' : 'Daily market prices from Vadodara district mandis',
+      page: 'mandi',
+      anchor: null,
+      title: isGu ? 'APMC મંડી બજાર ભાવ' : 'APMC Mandi Market Prices',
+      subtitle: isGu ? 'વડોદરા જિલ્લાની મંડીઓના રોજના તાજા ભાવ' : 'Daily market rates across Vadodara district mandis',
       icon: BarChart3,
-      status: 'upcoming',
-      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
+      status: 'active',
+      statusText: isGu ? 'લાઈવ' : 'Live',
     },
     {
       id: 'module-operations',
@@ -283,7 +283,7 @@ export const Navbar = ({
               type="button"
               id="nav-module-dropdown-btn"
               onClick={() => setModuleDropdownOpen(!moduleDropdownOpen)}
-              className={`nav-link-item ${activePage === 'scanner' ? 'active' : ''} ${moduleDropdownOpen ? 'open' : ''}`}
+              className={`nav-link-item ${activePage === 'scanner' || activePage === 'mandi' ? 'active' : ''} ${moduleDropdownOpen ? 'open' : ''}`}
               aria-haspopup="true"
               aria-expanded={moduleDropdownOpen}
             >
@@ -293,6 +293,10 @@ export const Navbar = ({
                   ? isGu
                     ? 'પાક સ્કેનર'
                     : 'Plant Scanner'
+                  : activePage === 'mandi'
+                  ? isGu
+                    ? 'APMC મંડી ભાવ'
+                    : 'APMC Mandi'
                   : isGu
                     ? 'મોડ્યુલ્સ'
                     : 'Modules'}

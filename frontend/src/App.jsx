@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import PlantScanner from './pages/PlantScanner';
 import UserProfile from './pages/UserProfile';
 import LoginPage from './pages/LoginPage';
+import MandiPrices from './pages/MandiPrices';
 import AuthModal from './components/AuthModal';
 import Chatbot from './components/Chatbot';
 import { getStoredUser, logout } from './services/authService';
@@ -113,10 +114,19 @@ export const App = () => {
           />
         )}
 
+        {activePage === 'mandi' && (
+          <MandiPrices
+            currentLang={currentLang}
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateScanner={() => navigateTo('scanner')}
+          />
+        )}
+
         {activePage === 'home' && (
           <Home
             currentLang={currentLang}
             onNavigateToScanner={() => navigateTo('scanner')}
+            onNavigateToMandi={() => navigateTo('mandi')}
             onNavigateToProfile={() => navigateTo(currentUser ? 'profile' : 'login')}
           />
         )}

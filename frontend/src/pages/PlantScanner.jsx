@@ -686,11 +686,7 @@ export const PlantScanner = ({
                 {/* Module 4: APMC Mandi Prices */}
                 <div
                   onClick={() => {
-                    if (onNavigate) onNavigate('home');
-                    setTimeout(() => {
-                      const el = document.getElementById('module-03');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }, 120);
+                    if (onNavigate) onNavigate('mandi');
                   }}
                   className="scanner-module-item"
                   style={{
