@@ -396,3 +396,72 @@ SUMMARY OF IMPLEMENTATION:
      - Created backend `/api/heat/wards` and `/api/heat/simulate` endpoints in `backend/src/controllers/heatController.js` and mounted at `app.use('/api/heat', heatRoutes)`.
      - Registered `/heatmap` route in `App.jsx`, linked 'City Heat & Tree Cooling Map' in `Navbar.jsx` with active Live indicator, wired clickable card in `Home.jsx`, and connected quick links in `Footer.jsx`.
 ================================================================================
+
+[LOG ENTRY #016]
+TIMESTAMP: 2026-10-26T06:30:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Implementation of Smart Precision Irrigation Timer, Soil Moisture Advisory, and MGVCL 3-Phase Agricultural Power Roster
+FILES UPDATED / CREATED:
+  - [NEW] backend/src/routes/irrigationRoutes.js
+  - [NEW] frontend/src/pages/IrrigationTimer.jsx
+  - [MODIFIED] backend/src/server.js
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/pages/Home.jsx
+  - [MODIFIED] frontend/src/utils/constants.js
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Backend Precision Irrigation Engine (irrigationRoutes.js):
+     - Implemented `/api/irrigation/calculate` endpoint with crop-specific coefficients (Kc) for Cotton, Banana (Padra specialty), Tomato, Pigeon Pea (Tuver), Wheat, and Castor.
+     - Computes net irrigation demand (mm), gross volume (Liters), and runtime based on soil texture (Goradu Sandy Loam, Medium Black, Heavy Clay) and irrigation method (Drip 90% efficiency, Sprinkler 75%, Furrow/Flood 48%).
+     - Calculates water conserved vs. traditional flood irrigation and electricity tariff savings (₹4.80/unit).
+     - Implemented `/api/irrigation/power-schedule` mapping MGVCL 3-Phase 8-hour Jyotigram agricultural power shifts across Vadodara district talukas (Padra, Karjan, Dabhoi, Savli, Waghodia, Shinor).
+     - Implemented `/api/irrigation/weather-advisory` with real-time evapotranspiration (ET₀) and rain-skip logic.
+     - Implemented `/api/irrigation/logs` with session history persistence.
+  2. Dedicated Irrigation Timer Page (IrrigationTimer.jsx):
+     - Interactive Crop & Stage Selector with regional Vadodara crops and physiological stage coefficients.
+     - Soil & Application Method Matrix with dynamic Vigha / Acre plot area slider and current moisture depletion toggles.
+     - Live Digital Countdown Timer with circular progress, flow rate ticker, delivered liters counter, and Web Audio API chime completion alarm.
+     - MGVCL 3-Phase Power Roster Widget showing live active feeder status and upcoming group shifts.
+     - Live Weather-Aware Rain-Skip Advisory banner alerting farmers to delay irrigation during rainfall.
+     - GGRC (Gujarat Green Revolution Company) subsidy breakdown (up to 70% micro-irrigation grant for small farmers).
+     - Recent Irrigation History Table logging session runtime, water applied, and liters saved.
+  3. Platform Integration:
+     - Mounted backend routes under `/api/irrigation` in `backend/src/server.js`.
+     - Integrated `IrrigationTimer` route in `frontend/src/App.jsx`.
+     - Added 'Smart Irrigation Timer' to Navbar dropdown under active status.
+     - Added dedicated organic showcase card with launch action in `frontend/src/pages/Home.jsx`.
+     - Registered irrigation module telemetry in `frontend/src/utils/constants.js`.
+================================================================================
+
+[LOG ENTRY #017]
+TIMESTAMP: 2026-10-26T06:50:00+05:30
+MODEL: Gemini 3.8 Flash (High)
+ACTION: Implementation of Agro-Meteorological Weather Observatory, Carto Watermark Removal, and Mapbox/OSM Dual-Mode Integration
+FILES UPDATED / CREATED:
+  - [NEW] backend/src/models/WeatherAlert.js
+  - [NEW] backend/src/routes/weatherRoutes.js
+  - [NEW] frontend/src/pages/Weather.jsx
+  - [NEW] frontend/.env.example
+  - [MODIFIED] frontend/src/components/UrbanHeat2DMap.jsx
+  - [MODIFIED] backend/src/server.js
+  - [MODIFIED] frontend/src/App.jsx
+  - [MODIFIED] frontend/src/components/Navbar.jsx
+  - [MODIFIED] frontend/src/pages/Home.jsx
+  - [MODIFIED] .env.example
+  - [MODIFIED] README.md
+  - [MODIFIED] chatlogs.txt
+SUMMARY OF IMPLEMENTATION:
+  1. Agro-Meteorological Weather Engine (weatherRoutes.js & Weather.jsx):
+     - Integrated live Open-Meteo real-time API (zero API key required) covering 7 Vadodara administrative talukas (Vadodara City, Padra, Karjan, Dabhoi, Savli, Waghodia, Shinor).
+     - Built Foliar Spraying Suitability Index (evaluates wind speed <15 km/h, rain, and scorching temperatures to prevent chemical drift and scorching).
+     - Built 24-Hour hourly agro-weather & wind timeline plus 7-day crop weather outlook.
+     - Created Mongoose WeatherAlert model for storing IMD heatwave notices and agricultural bulletins in MongoDB Atlas.
+  2. Mapbox & OpenStreetMap Watermark Resolution (UrbanHeat2DMap.jsx):
+     - Resolved CartoDB "API KEY REQUIRED" watermark by transitioning default tile layer to 100% free, open-source OpenStreetMap standard raster tiles (tile.openstreetmap.org).
+     - Added support for VITE_MAPBOX_TOKEN (Mapbox Streets & Satellite) and VITE_CARTO_API_KEY with graceful fallback.
+     - Verified live in browser subagent test (heatmap_osm_tiles_verified).
+  3. Documentation & Environment Configuration:
+     - Updated README.md with comprehensive API Keys & Environment Configuration Guide.
+     - Documented Mapbox, CartoDB, Open-Meteo, Gemini, and MongoDB Atlas setups in frontend/.env.example and .env.example.
+================================================================================

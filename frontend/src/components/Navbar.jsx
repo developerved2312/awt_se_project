@@ -19,6 +19,7 @@ import {
   LogOut,
   LogIn,
   Edit3,
+  Droplets,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -147,14 +148,24 @@ export const Navbar = ({
       statusText: isGu ? 'લાઈવ' : 'Live',
     },
     {
-      id: 'module-operations',
-      page: null,
-      anchor: 'modules-section',
-      title: isGu ? 'હવામાન ચેતવણી અને સલાહ' : 'Weather Alerts & Advisory',
-      subtitle: isGu ? 'ગરમીની ચેતવણી અને ખેડૂતો માટે જરૂરી સૂચનાઓ' : 'Heat alerts and useful seasonal farming tips',
+      id: 'module-irrigation-timer',
+      page: 'irrigation',
+      anchor: null,
+      title: isGu ? 'સ્માર્ટ સિંચાઈ ટાઈમર' : 'Smart Irrigation Timer',
+      subtitle: isGu ? 'પાક, જમીન અને વીજળી શેડ્યૂલ મુજબ પાણી ગણતરી' : 'Precision root-zone moisture timer and power roster',
+      icon: Droplets,
+      status: 'active',
+      statusText: isGu ? 'લાઈવ' : 'Live',
+    },
+    {
+      id: 'module-weather-advisory',
+      page: 'weather',
+      anchor: null,
+      title: isGu ? 'હવામાન આગાહી અને સલાહ' : 'Weather Alerts & Advisory',
+      subtitle: isGu ? 'ગરમીની ચેતવણી અને ખેડૂતો માટે જરૂરી સૂચનાઓ' : 'Agro-weather observations & heatwave notices',
       icon: Shield,
-      status: 'upcoming',
-      statusText: isGu ? 'વિકાસ હેઠળ' : 'In Development',
+      status: 'active',
+      statusText: isGu ? 'લાઈવ' : 'Live',
     },
   ];
 

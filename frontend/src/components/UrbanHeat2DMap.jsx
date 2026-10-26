@@ -104,14 +104,34 @@ export const UrbanHeat2DMap = ({
         attributionControl: false,
       });
 
-      // CartoDB Voyager Light Tiles (Clean, elegant, modern cartography)
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-        {
+      // Map Tiles:
+      // Priority 1: Mapbox if VITE_MAPBOX_TOKEN is provided in frontend/.env
+      // Priority 2: CartoDB with API Key if VITE_CARTO_API_KEY is provided
+      // Default: OpenStreetMap standard tiles (100% free, zero watermark, reliable open-access)
+      const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+      const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+
+      let tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+      let tileOptions = {
+        maxZoom: 19,
+      };
+
+      if (mapboxToken) {
+        tileUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`;
+        tileOptions = {
+          maxZoom: 19,
+          tileSize: 512,
+          zoomOffset: -1,
+        };
+      } else if (cartoKey) {
+        tileUrl = `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`;
+        tileOptions = {
           subdomains: 'abcd',
           maxZoom: 19,
-        }
-      ).addTo(map);
+        };
+      }
+
+      L.tileLayer(tileUrl, tileOptions).addTo(map);
 
       // Custom Zoom Control top-right
       L.control
@@ -124,7 +144,11 @@ export const UrbanHeat2DMap = ({
       L.control
         .attribution({
           position: 'bottomright',
-          prefix: 'Vadodara Municipal GeoGrid • Landsat-9 TIRS',
+          prefix: mapboxToken
+            ? 'Mapbox • Vadodara Municipal GeoGrid'
+            : cartoKey
+            ? 'CartoDB • Vadodara Municipal GeoGrid'
+            : 'OpenStreetMap • Vadodara Municipal GeoGrid',
         })
         .addTo(map);
 

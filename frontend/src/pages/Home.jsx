@@ -28,6 +28,8 @@ export const Home = ({
   onNavigateToScanner,
   onNavigateToMandi,
   onNavigateToHeatMap,
+  onNavigateToIrrigation,
+  onNavigateToWeather,
   onNavigateToProfile,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -165,6 +167,16 @@ export const Home = ({
                 >
                   <Layers size={17} />
                   <span>{isGu ? "મોડ્યુલ્સ જુઓ" : "Explore Modules"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onNavigateToIrrigation}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.65rem 1.15rem' }}
+                >
+                  <Droplets size={17} color="#0284c7" />
+                  <span>{isGu ? "સિંચાઈ ટાઈમર" : "Irrigation Timer"}</span>
                 </button>
 
                 <button
@@ -620,6 +632,96 @@ export const Home = ({
                     <span>{isGu ? "AI સ્કેનર સિસ્ટમનું સતત મોનિટરિંગ" : "Continuous checking of AI scanner performance"}</span>
                   </li>
                 </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    onClick={() => onNavigateToWeather && onNavigateToWeather()}
+                    className="btn btn-outline"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '10px',
+                      padding: '0.65rem 1rem',
+                      fontWeight: 700,
+                      borderColor: 'var(--olive-sage)',
+                      color: 'var(--green-deep)',
+                      backgroundColor: '#fbfcf8',
+                    }}
+                  >
+                    <Shield size={16} />
+                    <span>{isGu ? "હવામાન આગાહી અને એલર્ટ જુઓ" : "Open Weather & Alerts Hub"}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Smart Irrigation Timer & Water Conservation */}
+            <div id="module-irrigation" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid #0284c7' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="badge" style={{ background: '#e0f2fe', color: '#0369a1', borderColor: '#bae6fd' }}>
+                  {isGu ? "સ્માર્ટ સિંચાઈ" : "Smart Irrigation"}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: '#0284c7', fontWeight: 700 }}>
+                  {isGu ? "ઓટો-ટાઈમર" : "Auto-Timer"}
+                </span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
+                {isGu ? "સ્માર્ટ સિંચાઈ ટાઈમર અને જળ વ્યવસ્થાપન" : "Smart Irrigation Timer & Advisory"}
+              </h3>
+
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                {isGu
+                  ? "વડોદરા જિલ્લાના પાક, જમીન અને MGVCL ૩-ફેઝ વીજળી શેડ્યૂલ મુજબ ચોક્કસ પાણી ગણતરી અને લાઇવ ટાઈમર."
+                  : "Precision root-zone moisture balancing, live runtime countdown, and MGVCL 3-phase agricultural power roster."}
+              </p>
+
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
+                <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
+                </h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#0284c7" />
+                    <span>{isGu ? "કપાસ, કેળ, ટામેટા અને તુવેર માટે લિટર અને રન-ટાઇમ ગણતરી" : "Calculates precise runtime & liters for Cotton, Banana, and Tomato"}</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#0284c7" />
+                    <span>{isGu ? "લાઇવ કાઉન્ટડાઉન ટાઈમર અને પંપ બંધ કરવાની એલાર્મ રીંગ" : "Live countdown timer with pump shutoff chime alerts"}</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#0284c7" />
+                    <span>{isGu ? "MGVCL જ્યોતિગ્રામ ૩-ફેઝ ૮ કલાક વીજળી શિફ્ટ ટ્રેકર" : "Vadodara DISCOM MGVCL 3-phase 8-hour agricultural power roster"}</span>
+                  </li>
+                </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    onClick={() => onNavigateToIrrigation && onNavigateToIrrigation()}
+                    className="btn btn-outline"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '10px',
+                      padding: '0.65rem 1rem',
+                      fontWeight: 700,
+                      borderColor: '#0284c7',
+                      color: '#0369a1',
+                      backgroundColor: '#f0f9ff',
+                    }}
+                  >
+                    <Droplets size={16} />
+                    <span>{isGu ? "સિંચાઈ ટાઈમર શરૂ કરો" : "Launch Irrigation Timer"}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

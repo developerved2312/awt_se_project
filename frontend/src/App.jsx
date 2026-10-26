@@ -7,6 +7,8 @@ import UserProfile from './pages/UserProfile';
 import LoginPage from './pages/LoginPage';
 import MandiPrices from './pages/MandiPrices';
 import HeatMap from './pages/HeatMap';
+import IrrigationTimer from './pages/IrrigationTimer';
+import Weather from './pages/Weather';
 import AuthModal from './components/AuthModal';
 import Chatbot from './components/Chatbot';
 import { getStoredUser, logout } from './services/authService';
@@ -130,12 +132,30 @@ export const App = () => {
           />
         )}
 
+        {activePage === 'irrigation' && (
+          <IrrigationTimer
+            currentLang={currentLang}
+            onNavigateHome={() => navigateTo('home')}
+          />
+        )}
+
+        {activePage === 'weather' && (
+          <Weather
+            currentLang={currentLang}
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateToHeatMap={() => navigateTo('heatmap')}
+            onNavigateToIrrigation={() => navigateTo('irrigation')}
+          />
+        )}
+
         {activePage === 'home' && (
           <Home
             currentLang={currentLang}
             onNavigateToScanner={() => navigateTo('scanner')}
             onNavigateToMandi={() => navigateTo('mandi')}
             onNavigateToHeatMap={() => navigateTo('heatmap')}
+            onNavigateToIrrigation={() => navigateTo('irrigation')}
+            onNavigateToWeather={() => navigateTo('weather')}
             onNavigateToProfile={() => navigateTo(currentUser ? 'profile' : 'login')}
           />
         )}

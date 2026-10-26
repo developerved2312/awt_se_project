@@ -201,6 +201,20 @@ npm run preview
 
 ---
 
+## 🔑 API Keys & Environment Configuration Guide
+
+HaritAyan is designed to run seamlessly out of the box with zero required API keys using built-in public endpoints and authentic regional fallbacks, while also supporting production API keys for enhanced real-time data:
+
+| Service / Variable | Status | How to Obtain | Fallback if Omitted |
+|---|---|---|---|
+| **`VITE_MAPBOX_TOKEN`**<br/>*(Frontend Map Tiles)* | Optional | 1. Sign up at [account.mapbox.com](https://account.mapbox.com/) (Free 50,000 map loads/month).<br/>2. Copy your default public access token (`pk.eyJ...`).<br/>3. Add to `frontend/.env`: `VITE_MAPBOX_TOKEN="pk.eyJ..."` | Defaults automatically to high-resolution **CartoDB Voyager** raster tiles (`cartocdn.com`) with zero configuration or keys required. |
+| **`OPENWEATHER_API_KEY`**<br/>*(Weather Overlays)* | Optional | 1. Sign up at [openweathermap.org/api](https://openweathermap.org/api) (Free tier 1,000 calls/day).<br/>2. Add to `backend/.env`: `OPENWEATHER_API_KEY="your_key"` | Real-time weather, ET₀, and rain probabilities automatically use the open **Open-Meteo API** (100% free, zero keys needed). |
+| **`GEMINI_API_KEY`**<br/>*(AI Crop Vision Scanner)* | Optional | 1. Go to [Google AI Studio](https://aistudio.google.com/).<br/>2. Click **Create API Key**.<br/>3. Add to `backend/.env`: `GEMINI_API_KEY="AIzaSy..."` | Automatically falls back to HaritAyan's authentic botanical diagnostic rules engine with organic Gujarati remedies. |
+| **`DATA_GOV_IN_API_KEY`**<br/>*(Live National Mandi Sync)* | Optional | 1. Register at [data.gov.in](https://data.gov.in/) (Open Government Data Platform India).<br/>2. Generate an API Key in the user dashboard.<br/>3. Add to `backend/.env`: `DATA_GOV_IN_API_KEY="579b..."` | Ships with authentic pre-ingested CSV/JSON benchmark rate records for all 5 Vadodara district market yards (`data/sample/mandi_rates.csv`). |
+| **`MONGODB_URI`**<br/>*(Persistent Data Storage)* | **Configured** | See MongoDB Atlas setup below. Pre-configured in `backend/.env` for cloud persistence of users, scans, and mandi prices. | In-memory session cache. |
+
+---
+
 ## ☁️ MongoDB Atlas Setup Guide
 
 To integrate MongoDB Atlas for persistent storage of scan reports and mandi data:

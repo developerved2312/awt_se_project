@@ -9,6 +9,8 @@ import authRoutes from './routes/authRoutes.js';
 import queryRoutes from './routes/queryRoutes.js';
 import mandiRoutes from './routes/mandiRoutes.js';
 import heatRoutes from './routes/heatRoutes.js';
+import irrigationRoutes from './routes/irrigationRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -84,6 +86,12 @@ app.use('/api/mandi', mandiRoutes);
 
 // Urban Heat Mitigation & Tree Cooling Simulator
 app.use('/api/heat', heatRoutes);
+
+// Smart Precision Irrigation Timer & Water Conservation Advisory
+app.use('/api/irrigation', irrigationRoutes);
+
+// Agro-Meteorological Weather Intelligence & IMD Heatwave Alerts
+app.use('/api/weather', weatherRoutes);
 
 // Start Server
 app.listen(PORT, () => {
