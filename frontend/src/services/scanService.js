@@ -1,7 +1,8 @@
-/**
- * scanService.js - Client-Side API Connector for HaritAyan's Gemini AI Scanner
- * Connects frontend UI to backend /api/scan with resilient client-side fallback
- */
+import {
+  classifyLeafImage,
+  getEngineTelemetry,
+  runBenchmarkTest,
+} from './tfjsModelService';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
@@ -73,16 +74,56 @@ export const SAMPLE_CROPS = [
 ];
 
 /**
- * Sends a leaf image to the backend Gemini AI diagnostic endpoint.
- * Gracefully falls back to client mock if backend server is not active.
+ * Stores a scan in localStorage for offline persistence
+ */
+function persistOfflineScanLocally(scan) {
+  try {
+    const raw = localStorage.getItem('haritayan_local_scans');
+    const existing = raw ? JSON.parse(raw) : [];
+    const updated = [scan, ...existing.filter((s) => s._id !== scan._id)].slice(0, 30);
+    localStorage.setItem('haritayan_local_scans', JSON.stringify(updated));
+  } catch (e) {
+    console.warn('[scanService] Failed to save scan to localStorage:', e);
+  }
+}
+
+/**
+ * Sends a leaf image to the chosen diagnostic engine (Cloud Gemini AI vs. Local Offline TensorFlow.js).
  *
  * @param {Object} options
- * @param {string} [options.imageBase64] - Base64 image data string
+ * @param {string} [options.imageBase64] - Base64 image data string or URL
  * @param {File} [options.file] - Raw file object from file input
  * @param {string} [options.cropHint] - Optional crop name or sample ID
+ * @param {'auto'|'edge'|'cloud'} [options.engineMode] - Diagnostic engine mode
  * @returns {Promise<Object>} Diagnostic scan result
  */
-export const analyzePlantImage = async ({ imageBase64, file, cropHint = '' }) => {
+export const analyzePlantImage = async ({
+  imageBase64,
+  file,
+  cropHint = '',
+  engineMode = 'auto',
+}) => {
+  const imageSource = imageBase64 || file;
+
+  // 1. Force Offline Edge AI (TensorFlow.js) if explicitly requested or device is offline
+  const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+  if (engineMode === 'edge' || isOffline) {
+    console.log('[scanService] Running In-Browser Offline TensorFlow.js Edge Classifier...');
+    try {
+      const result = await classifyLeafImage({ imageSource, cropHint });
+      if (result && result.scan) {
+        persistOfflineScanLocally(result.scan);
+      }
+      return result;
+    } catch (edgeErr) {
+      console.warn('[scanService] Edge model failed, falling back to rule-based KB:', edgeErr);
+      const fallback = getClientFallbackScan(cropHint);
+      persistOfflineScanLocally(fallback.scan);
+      return fallback;
+    }
+  }
+
+  // 2. Cloud AI (Gemini 1.5 Pro) with automatic failover to local TensorFlow.js edge model
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
@@ -120,37 +161,69 @@ export const analyzePlantImage = async ({ imageBase64, file, cropHint = '' }) =>
     const data = await response.json();
     return data;
   } catch (error) {
-    console.warn(`[scanService] Backend API not reachable (${error.message}). Using client-side diagnostic engine.`);
-    return getClientFallbackScan(cropHint);
+    console.warn(
+      `[scanService] Cloud Gemini API unavailable (${error.message}). Auto-switching to Local Offline TensorFlow.js Edge Model.`
+    );
+    try {
+      const edgeResult = await classifyLeafImage({ imageSource, cropHint });
+      if (edgeResult && edgeResult.scan) {
+        persistOfflineScanLocally(edgeResult.scan);
+      }
+      return edgeResult;
+    } catch (edgeFallbackErr) {
+      console.warn('[scanService] TensorFlow.js edge fallback failed:', edgeFallbackErr);
+      const fallback = getClientFallbackScan(cropHint);
+      persistOfflineScanLocally(fallback.scan);
+      return fallback;
+    }
   }
 };
 
 /**
- * Fetches recent scan history
+ * Fetches recent scan history (merging MongoDB Atlas cloud scans with offline local scans)
  */
 export const fetchScanHistory = async () => {
+  let localScans = [];
+  try {
+    const raw = localStorage.getItem('haritayan_local_scans');
+    if (raw) localScans = JSON.parse(raw);
+  } catch (e) {
+    localScans = [];
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/scan/history`);
     if (res.ok) {
-      return await res.json();
+      const cloudData = await res.json();
+      const cloudScans = cloudData.scans || [];
+      // Deduplicate by _id
+      const merged = [
+        ...localScans,
+        ...cloudScans.filter((cs) => !localScans.some((ls) => ls._id === cs._id)),
+      ];
+      return { success: true, scans: merged };
     }
     throw new Error('History fetch failed');
   } catch (e) {
+    // Return local scans + mock
+    const fallbackList = [
+      ...localScans,
+      {
+        _id: 'mock_1',
+        cropName: 'Cotton (કપાસ)',
+        cropNameGu: 'કપાસ',
+        diseaseName: 'Cotton Leaf Curl Virus',
+        diseaseNameGu: 'કપાસનો પાન વળવાનો વાયરલ રોગ',
+        severity: 'Moderate',
+        confidenceScore: 94,
+        engineUsed: 'offline-tfjs-edge',
+        createdAt: new Date().toISOString(),
+      },
+    ];
     return {
       success: true,
       source: 'client-offline',
-      scans: [
-        {
-          _id: 'mock_1',
-          cropName: 'Cotton (કપાસ)',
-          cropNameGu: 'કપાસ',
-          diseaseName: 'Cotton Leaf Curl Virus',
-          diseaseNameGu: 'કપાસનો પાન વળવાનો વાયરલ રોગ',
-          severity: 'Moderate',
-          confidenceScore: 94,
-          createdAt: new Date().toISOString(),
-        },
-      ],
+      scans: fallbackList,
     };
   }
 };
@@ -249,10 +322,17 @@ export const deleteScanRecord = async (id) => {
   }
 };
 
+export {
+  getEngineTelemetry,
+  runBenchmarkTest,
+};
+
 export default {
   analyzePlantImage,
   fetchScanHistory,
   deleteScanRecord,
   resolveImageUrl,
+  getEngineTelemetry,
+  runBenchmarkTest,
   SAMPLE_CROPS,
 };

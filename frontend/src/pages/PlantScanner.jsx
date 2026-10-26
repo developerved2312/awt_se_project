@@ -26,6 +26,11 @@ import {
   Sprout,
   Sun,
   Compass,
+  Cpu,
+  Zap,
+  Gauge,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import {
   analyzePlantImage,
@@ -34,6 +39,7 @@ import {
   resolveImageUrl,
   SAMPLE_CROPS,
 } from '../services/scanService';
+import { TensorFlowLabModal } from '../components/TensorFlowLabModal';
 
 const LOADING_STAGES = [
   {
@@ -74,10 +80,29 @@ export const PlantScanner = ({
   const [scanResult, setScanResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Engine Mode: 'auto' (Dual engine failover), 'edge' (100% Offline TensorFlow.js), 'cloud' (Gemini Vision)
+  const [engineMode, setEngineMode] = useState('auto');
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
+  const [showTfjsModal, setShowTfjsModal] = useState(false);
+
+  // Monitor network connectivity
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   // Camera state
-  const [cameraActive, setCameraActive] = useState(false);
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [cameraActive, setCameraActive] = useState(false);
 
   // Live Feed History State (MongoDB Atlas integration)
   const [recentScans, setRecentScans] = useState([]);
@@ -251,6 +276,7 @@ export const PlantScanner = ({
       const response = await analyzePlantImage({
         imageBase64: sample.image,
         cropHint: sample.id,
+        engineMode,
       });
 
       if (response && response.scan) {
@@ -277,6 +303,7 @@ export const PlantScanner = ({
       const response = await analyzePlantImage({
         imageBase64: selectedImage,
         cropHint: cropHint || 'Cotton',
+        engineMode,
       });
 
       if (response && response.scan) {
@@ -345,11 +372,36 @@ export const PlantScanner = ({
             </button>
             <span style={{ color: 'var(--border-medium)' }}>/</span>
             <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--green-deep)' }}>
-              {isGu ? 'જેમિની AI પાક રોગ નિદાન' : 'Gemini AI Vision Scanner'}
+              {isGu ? 'હરિતઅયન AI પાક રોગ નિદાન' : 'HaritAyan AI Vision Diagnostics'}
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            {/* TensorFlow.js Edge Lab Modal Trigger */}
+            <button
+              type="button"
+              onClick={() => setShowTfjsModal(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                fontSize: '0.8rem',
+                padding: '0.35rem 0.8rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: '#1b4332',
+                color: '#d8f3dc',
+                border: '1.5px solid #52b788',
+                cursor: 'pointer',
+                fontWeight: 700,
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 6px rgba(45, 106, 79, 0.2)',
+              }}
+              title="Inspect TensorFlow.js Hardware Telemetry & Run Benchmarks"
+            >
+              <Cpu size={14} color="#52b788" />
+              <span>{isGu ? 'ટેન્સરફ્લો એજ લેબ' : 'TensorFlow Edge Lab'}</span>
+            </button>
+
             <button
               type="button"
               onClick={() => {
@@ -434,12 +486,42 @@ export const PlantScanner = ({
               <span>{isGu ? 'લાઈવ ફીડ' : 'Live Feed'}</span>
             </button>
 
+            {/* Dynamic Connectivity & Engine Mode Badge */}
             <div
-              className="badge badge-leaf"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                fontSize: '0.78rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: !isOnline ? '#fee2e2' : engineMode === 'edge' ? '#143527' : '#e8f5e9',
+                color: !isOnline ? '#991b1b' : engineMode === 'edge' ? '#d8f3dc' : 'var(--green-deep)',
+                border: '1px solid currentColor',
+                fontWeight: 700,
+              }}
             >
-              <Sparkles size={13} />
-              <span>{isGu ? 'જેમિની વિઝન AI' : 'Gemini Vision AI'}</span>
+              {!isOnline ? (
+                <>
+                  <WifiOff size={13} />
+                  <span>{isGu ? 'ઓફલાઇન (એજ AI સક્રિય)' : 'Offline (Edge AI)'}</span>
+                </>
+              ) : engineMode === 'edge' ? (
+                <>
+                  <Zap size={13} color="#ffd166" />
+                  <span>{isGu ? 'ટેન્સરફ્લો એજ AI' : 'TF.js WebGL Edge'}</span>
+                </>
+              ) : engineMode === 'cloud' ? (
+                <>
+                  <Sparkles size={13} />
+                  <span>{isGu ? 'જેમિની ક્લાઉડ AI' : 'Gemini Cloud AI'}</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={13} />
+                  <span>{isGu ? 'દ્વિસ્તરીય AI (ઓટો)' : 'Dual AI (Auto)'}</span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -959,6 +1041,140 @@ export const PlantScanner = ({
                 </button>
               )}
             </div>
+
+            {/* Dual Diagnostic Engine Selector Strip */}
+            <div
+              style={{
+                backgroundColor: 'var(--bg-tint-green)',
+                padding: '0.4rem',
+                borderRadius: '10px',
+                border: '1px solid var(--border-medium)',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr',
+                gap: '0.35rem',
+                marginBottom: '1rem',
+              }}
+            >
+              {/* Option 1: Auto Failover */}
+              <button
+                type="button"
+                onClick={() => setEngineMode('auto')}
+                style={{
+                  padding: '0.45rem 0.5rem',
+                  borderRadius: '7px',
+                  border: 'none',
+                  backgroundColor: engineMode === 'auto' ? '#1b4332' : 'transparent',
+                  color: engineMode === 'auto' ? '#ffffff' : 'var(--text-title)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  transition: 'all 0.15s ease',
+                  boxShadow: engineMode === 'auto' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                }}
+              >
+                <Sparkles size={13} color={engineMode === 'auto' ? '#52b788' : 'currentColor'} />
+                <span>{isGu ? 'ઓટો (દ્વિસ્તરીય)' : 'Smart Auto'}</span>
+              </button>
+
+              {/* Option 2: 100% Offline Edge TensorFlow.js */}
+              <button
+                type="button"
+                onClick={() => setEngineMode('edge')}
+                style={{
+                  padding: '0.45rem 0.5rem',
+                  borderRadius: '7px',
+                  border: 'none',
+                  backgroundColor: engineMode === 'edge' ? '#1b4332' : 'transparent',
+                  color: engineMode === 'edge' ? '#ffffff' : 'var(--text-title)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  transition: 'all 0.15s ease',
+                  boxShadow: engineMode === 'edge' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                }}
+              >
+                <Zap size={13} color={engineMode === 'edge' ? '#ffd166' : 'currentColor'} />
+                <span>{isGu ? 'ઓફલાઇન એજ AI' : 'Offline TF.js'}</span>
+              </button>
+
+              {/* Option 3: Cloud Gemini */}
+              <button
+                type="button"
+                onClick={() => setEngineMode('cloud')}
+                disabled={!isOnline}
+                style={{
+                  padding: '0.45rem 0.5rem',
+                  borderRadius: '7px',
+                  border: 'none',
+                  backgroundColor: engineMode === 'cloud' ? '#1b4332' : 'transparent',
+                  color: !isOnline ? 'var(--text-muted)' : engineMode === 'cloud' ? '#ffffff' : 'var(--text-title)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: !isOnline ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  transition: 'all 0.15s ease',
+                  boxShadow: engineMode === 'cloud' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none',
+                  opacity: !isOnline ? 0.6 : 1,
+                }}
+              >
+                <Sparkles size={13} color={engineMode === 'cloud' ? '#74c69d' : 'currentColor'} />
+                <span>{isGu ? 'જેમિની ક્લાઉડ' : 'Gemini Cloud'}</span>
+              </button>
+            </div>
+
+            {/* Offline notification banner if edge active */}
+            {(engineMode === 'edge' || !isOnline) && (
+              <div
+                style={{
+                  padding: '0.55rem 0.85rem',
+                  borderRadius: '8px',
+                  backgroundColor: '#143527',
+                  color: '#d8f3dc',
+                  fontSize: '0.76rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '1rem',
+                  border: '1px solid #52b788',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <Zap size={14} color="#ffd166" />
+                  <span>
+                    {isGu
+                      ? 'ઓફલાઇન એજ AI: 0 KB ડેટા વપરાશ • વેબજીએલ સ્પીડ'
+                      : 'Offline Edge AI: 0 KB data transfer • WebGL GPU acceleration'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTfjsModal(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#74c69d',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  {isGu ? 'લેબ વિગત' : 'Lab Specs'}
+                </button>
+              </div>
+            )}
 
             {/* Hidden native file input */}
             <input
@@ -1661,12 +1877,27 @@ export const PlantScanner = ({
                         fontWeight: 700,
                         padding: '1px 8px',
                         borderRadius: 'var(--radius-full)',
-                        background: scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? '#e8f5e9' : 'var(--dry-leaf-soft)',
-                        color: scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? 'var(--green-deep)' : 'var(--dry-leaf-dark)',
+                        background:
+                          scanResult.engineUsed === 'offline-tfjs-edge'
+                            ? '#1b4332'
+                            : scanResult.engineUsed && !scanResult.engineUsed.includes('offline')
+                            ? '#e8f5e9'
+                            : 'var(--dry-leaf-soft)',
+                        color:
+                          scanResult.engineUsed === 'offline-tfjs-edge'
+                            ? '#d8f3dc'
+                            : scanResult.engineUsed && !scanResult.engineUsed.includes('offline')
+                            ? 'var(--green-deep)'
+                            : 'var(--dry-leaf-dark)',
                         border: '1px solid currentColor',
                       }}
                     >
-                      {scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? (
+                      {scanResult.engineUsed === 'offline-tfjs-edge' ? (
+                        <>
+                          <Zap size={11} color="#ffd166" />
+                          <span>{isGu ? 'ઓફલાઇન ટેન્સરફ્લો એજ AI' : 'Offline TensorFlow.js Edge'}</span>
+                        </>
+                      ) : scanResult.engineUsed && !scanResult.engineUsed.includes('offline') ? (
                         <>
                           <Sparkles size={11} />
                           <span>{isGu ? 'લાઈવ જેમિની AI વિઝન' : 'Live Gemini Vision AI'}</span>
@@ -1795,6 +2026,130 @@ export const PlantScanner = ({
                   </button>
                 </div>
               </div>
+
+              {/* Edge AI Telemetry & Differential Breakdown (when run via TensorFlow.js) */}
+              {scanResult.telemetry && (
+                <div
+                  style={{
+                    backgroundColor: 'var(--bg-tint-green)',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '10px',
+                    border: '1px solid var(--border-medium)',
+                    marginBottom: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.65rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--green-deep)' }}>
+                      <Cpu size={14} color="var(--green-primary)" />
+                      <span>
+                        {isGu ? 'ઓન-ડિવાઇસ એજ અનુમાન:' : 'Edge Inference Telemetry:'}{' '}
+                        <strong>{scanResult.telemetry.inferenceTimeMs} ms</strong>
+                      </span>
+                      <span style={{ color: 'var(--border-medium)' }}>•</span>
+                      <span style={{ textTransform: 'uppercase', color: 'var(--text-title)' }}>
+                        {scanResult.telemetry.backend} {scanResult.telemetry.isHardwareAccelerated ? '(GPU)' : '(CPU)'}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowTfjsModal(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--green-primary)',
+                        fontSize: '0.76rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        padding: 0,
+                      }}
+                    >
+                      <span>{isGu ? 'લેબ મેટ્રિક્સ જુઓ →' : 'View Lab Telemetry →'}</span>
+                    </button>
+                  </div>
+
+                  {/* Differential Diagnosis Top-3 Bars */}
+                  {scanResult.telemetry.differentialDiagnosis && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.2rem' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                        {isGu ? 'સંભાવના વિતરણ (ટોપ-૩ રોગ સંભાવના):' : 'Top-3 Probability Distribution:'}
+                      </span>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        {scanResult.telemetry.differentialDiagnosis.map((item, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              backgroundColor: '#ffffff',
+                              padding: '0.45rem 0.65rem',
+                              borderRadius: '6px',
+                              border: '1px solid var(--border-subtle)',
+                              fontSize: '0.74rem',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                              <span
+                                style={{
+                                  fontWeight: 700,
+                                  color: 'var(--text-title)',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '120px',
+                                }}
+                                title={isGu ? item.diseaseNameGu : item.diseaseName}
+                              >
+                                {isGu ? item.diseaseNameGu : item.diseaseName}
+                              </span>
+                              <strong style={{ color: idx === 0 ? 'var(--green-primary)' : 'var(--text-muted)' }}>
+                                {item.confidence}%
+                              </strong>
+                            </div>
+                            <div
+                              style={{
+                                width: '100%',
+                                height: '4px',
+                                backgroundColor: 'var(--border-subtle)',
+                                borderRadius: '2px',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: `${item.confidence}%`,
+                                  height: '100%',
+                                  backgroundColor: idx === 0 ? 'var(--green-primary)' : 'var(--olive-sage)',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Foliar Symptoms */}
               <div style={{ marginBottom: '1.5rem' }}>
@@ -2638,6 +2993,14 @@ export const PlantScanner = ({
           </div>
         </div>
       </div>
+
+      {/* TensorFlow.js Edge Diagnostics & Hardware Telemetry Modal */}
+      <TensorFlowLabModal
+        isOpen={showTfjsModal}
+        onClose={() => setShowTfjsModal(false)}
+        currentLang={currentLang}
+        latestDifferential={scanResult?.telemetry?.differentialDiagnosis}
+      />
 
       <style>{`
         @keyframes spin {
