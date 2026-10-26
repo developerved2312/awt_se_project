@@ -219,6 +219,8 @@ export const respondToQuery = async (queryId, responseData) => {
   }
 };
 
+export const submitOfficerResponse = respondToQuery;
+
 /**
  * Delete a query
  */

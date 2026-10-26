@@ -11,6 +11,8 @@ import mandiRoutes from './routes/mandiRoutes.js';
 import heatRoutes from './routes/heatRoutes.js';
 import irrigationRoutes from './routes/irrigationRoutes.js';
 import weatherRoutes from './routes/weatherRoutes.js';
+import equipmentRoutes from './routes/equipmentRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -92,6 +94,12 @@ app.use('/api/irrigation', irrigationRoutes);
 
 // Agro-Meteorological Weather Intelligence & IMD Heatwave Alerts
 app.use('/api/weather', weatherRoutes);
+
+// Agricultural Tools & Equipment Rental & i-Khedut Subsidy Marketplace
+app.use('/api/equipment', equipmentRoutes);
+
+// Administrative Operations & Telemetry Hub
+app.use('/api/admin', adminRoutes);
 
 // Start Server
 app.listen(PORT, () => {
