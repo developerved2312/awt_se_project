@@ -17,6 +17,8 @@ import {
   Sliders,
   Layers,
 } from 'lucide-react';
+import UrbanHeat2DMap from '../components/UrbanHeat2DMap';
+import TreeCanopy3D from '../components/TreeCanopy3D';
 
 export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
   const isGu = currentLang === 'gu';
@@ -56,6 +58,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
           id: 'ward-01',
           name: 'Alkapuri & RC Dutt Road',
           nameGu: 'અલકાપુરી અને આર.સી. દત્ત રોડ',
+          lat: 22.3108,
+          lng: 73.1706,
           surfaceTempC: 38.2,
           ambientTempC: 35.1,
           heatIslandIntensity: '+1.4°C',
@@ -72,6 +76,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
           id: 'ward-02',
           name: 'Makarpura GIDC Industrial Corridor',
           nameGu: 'મકરપુરા જી.આઈ.ડી.સી. ઔદ્યોગિક વિસ્તાર',
+          lat: 22.2536,
+          lng: 73.1952,
           surfaceTempC: 43.6,
           ambientTempC: 39.8,
           heatIslandIntensity: '+4.2°C (Critical Hotspot)',
@@ -88,6 +94,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
           id: 'ward-03',
           name: 'Old City (Mandvi & Nyay Mandir)',
           nameGu: 'જૂનું શહેર (માંડવી અને ન્યાય મંદિર)',
+          lat: 22.3001,
+          lng: 73.2045,
           surfaceTempC: 41.9,
           ambientTempC: 38.5,
           heatIslandIntensity: '+3.4°C',
@@ -104,6 +112,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
           id: 'ward-04',
           name: 'Sayajigunj & MS University Campus',
           nameGu: 'સયાજીગંજ અને એમ.એસ. યુનિવર્સિટી પરિસર',
+          lat: 22.3168,
+          lng: 73.1895,
           surfaceTempC: 36.4,
           ambientTempC: 34.2,
           heatIslandIntensity: '-0.5°C (Cooling Oasis)',
@@ -120,6 +130,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
           id: 'ward-05',
           name: 'Gotri & Vasna Urban Extension',
           nameGu: 'ગોત્રી અને વાસણા નવો રહેણાંક વિસ્તાર',
+          lat: 22.3082,
+          lng: 73.1412,
           surfaceTempC: 39.1,
           ambientTempC: 36.3,
           heatIslandIntensity: '+1.8°C',
@@ -388,9 +400,21 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
         </button>
       </div>
 
-      {/* TAB 1: WARD HEAT INDEX */}
+      {/* TAB 1: WARD HEAT INDEX & 2D SATELLITE MAP */}
       {activeTab === 'map' && (
         <div>
+          {/* Interactive 2D Urban Heat Island Map */}
+          <UrbanHeat2DMap
+            wards={wards}
+            selectedWard={selectedWard}
+            onSelectWard={(ward) => setSelectedWard(ward)}
+            onRunSimulator={(ward) => {
+              setSelectedWard(ward);
+              setActiveTab('simulator');
+            }}
+            currentLang={currentLang}
+          />
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
             {wards.map((ward) => {
               const isSelected = selectedWard?.id === ward.id;
@@ -581,9 +605,17 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
         </div>
       )}
 
-      {/* TAB 2: INTERACTIVE TREE COOLING SIMULATOR */}
+      {/* TAB 2: INTERACTIVE TREE COOLING SIMULATOR & 3D CANOPY VIEWER */}
       {activeTab === 'simulator' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.75rem' }}>
+        <div>
+          {/* Interactive 3D Tree Canopy Visualizer */}
+          <TreeCanopy3D
+            selectedTree={selectedTree}
+            treeCount={treeCount}
+            currentLang={currentLang}
+          />
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.75rem' }}>
           {/* Controls Column */}
           <div
             style={{
@@ -804,7 +836,8 @@ export const HeatMap = ({ currentLang = 'en', onNavigateHome }) => {
             </div>
           )}
         </div>
-      )}
+      </div>
+    )}
 
       {/* TAB 3: STRATEGIC URBAN FORESTRY RECOMMENDATIONS */}
       {activeTab === 'strategies' && (
