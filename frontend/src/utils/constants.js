@@ -1,4 +1,4 @@
-﻿export const APP_CONFIG = {
+export const APP_CONFIG = {
   name: 'HaritAyan',
   sanskritName: 'हरित अयन',
   taglineEn: 'A Journey Towards a Greener, Smarter Future',
@@ -61,6 +61,19 @@ export const MODULES_INFO = [
     statLabelEn: 'Real-Time Monitoring',
     statLabelGu: 'સતત મોનિટરિંગ',
     color: '#8b5cf6',
+  },
+  {
+    id: 'irrigation',
+    titleEn: 'Smart Irrigation Timer & Precision Water Advisory',
+    titleGu: 'સ્માર્ટ સિંચાઈ ટાઈમર અને જળ વ્યવસ્થાપન',
+    descEn: 'Crop-specific root zone moisture balancing, live runtime countdown, and MGVCL 3-phase agricultural power roster.',
+    descGu: 'વડોદરા જિલ્લાના પાક, જમીન અને વીજળી શેડ્યૂલ મુજબ ચોક્કસ પાણી ગણતરી અને લાઇવ ટાઈમર.',
+    badgeEn: 'Precision Water',
+    badgeGu: 'ચોક્કસ સિંચાઈ',
+    stat: '52%',
+    statLabelEn: 'Water Conserved vs Flood',
+    statLabelGu: 'ધોરિયા પદ્ધતિ સામે પાણી બચત',
+    color: '#0284c7',
   },
 ];
 
