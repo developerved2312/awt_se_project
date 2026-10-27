@@ -89,7 +89,7 @@ export const App = () => {
             loginPromptReason={loginPromptReason}
             onLoginSuccess={(user) => {
               handleUserChange(user);
-              const target = redirectAfterLogin || 'scanner';
+              const target = user?.role === 'admin' ? 'admin' : (redirectAfterLogin || 'scanner');
               setRedirectAfterLogin('scanner');
               setLoginPromptReason('');
               navigateTo(target, '', user);
@@ -193,7 +193,7 @@ export const App = () => {
         onClose={() => setAuthModalOpen(false)}
         onSuccess={(user) => {
           handleUserChange(user);
-          navigateTo('profile');
+          navigateTo(user?.role === 'admin' ? 'admin' : 'profile', '', user);
         }}
         currentLang={currentLang}
       />

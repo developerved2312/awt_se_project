@@ -36,8 +36,8 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: {
-        values: ['farmer', 'officer'],
-        message: 'Role must be either farmer or officer',
+        values: ['farmer', 'officer', 'admin'],
+        message: 'Role must be farmer, officer, or admin',
       },
       default: 'farmer',
       required: true,

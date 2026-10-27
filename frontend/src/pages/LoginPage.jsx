@@ -43,9 +43,11 @@ export const LoginPage = ({
     name: '',
     email: '',
     password: '',
+    role: 'farmer', // 'farmer' | 'admin' | 'officer'
     phone: '',
     taluka: 'Padra',
     village: '',
+    department: 'Vadodara District Agriculture Operations Hub',
     farmSizeAcres: '5.0',
     primaryCrops: 'Cotton, Pigeon Pea',
   });
@@ -120,18 +122,25 @@ export const LoginPage = ({
         name: regData.name.trim(),
         email: regData.email.trim(),
         password: regData.password,
+        role: regData.role,
         phone: regData.phone.trim(),
         district: 'Vadodara',
         taluka: regData.taluka,
         village: regData.village.trim() || 'Vadodara',
         farmSizeAcres: parseFloat(regData.farmSizeAcres) || 5.0,
         primaryCrops: cropsArray,
+        department: regData.department || (regData.role === 'admin' ? 'District Agriculture Operations Hub' : ''),
+        designation: regData.role === 'admin' ? 'District Agriculture Operations Administrator' : regData.role === 'officer' ? 'Agricultural Officer' : '',
       });
 
       setSuccessMsg(
         isGu
-          ? 'નવું ખાતું સફળતાપૂર્વક બની ગયું! આપનું સ્વાગત છે.'
-          : 'Farmer account created successfully! Signing in...'
+          ? regData.role === 'admin'
+            ? 'એડમિન ખાતું સફળતાપૂર્વક બની ગયું! આપનું સ્વાગત છે...'
+            : 'નવું ખાતું સફળતાપૂર્વક બની ગયું! આપનું સ્વાગત છે.'
+          : regData.role === 'admin'
+          ? 'Administrator account created! Directing to Operations Console...'
+          : 'Account created successfully! Signing in...'
       );
 
       setTimeout(() => {
@@ -571,6 +580,86 @@ export const LoginPage = ({
               ========================================================================= */}
           {activeTab === 'signup' && (
             <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* Account Role Selector */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    color: 'var(--green-deep)',
+                    marginBottom: '0.45rem',
+                  }}
+                >
+                  {isGu ? 'ખાતાનો પ્રકાર (Account Type)' : 'Select Account Type'} *
+                </label>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '0.4rem',
+                    backgroundColor: '#f3efe6',
+                    padding: '4px',
+                    borderRadius: '10px',
+                  }}
+                >
+                  {[
+                    { id: 'farmer', en: 'Farmer', gu: 'ખેડૂત', icon: '👨‍🌾' },
+                    { id: 'admin', en: 'Admin', gu: 'એડમિન', icon: '🛡️' },
+                    { id: 'officer', en: 'Officer', gu: 'અધિકારી', icon: '🌾' },
+                  ].map((r) => {
+                    const active = regData.role === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        type="button"
+                        id={`signup-role-${r.id}-btn`}
+                        onClick={() => setRegData({ ...regData, role: r.id })}
+                        style={{
+                          padding: '8px 4px',
+                          borderRadius: '8px',
+                          border: active ? '1.5px solid var(--green-primary)' : '1px solid transparent',
+                          backgroundColor: active ? '#ffffff' : 'transparent',
+                          color: active ? 'var(--green-deep)' : 'var(--text-muted)',
+                          fontWeight: active ? 800 : 600,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '2px',
+                          transition: 'all 0.15s ease',
+                          boxShadow: active ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                        }}
+                      >
+                        <span style={{ fontSize: '1rem' }}>{r.icon}</span>
+                        <span>{isGu ? r.gu : r.en}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {regData.role === 'admin' && (
+                  <div
+                    style={{
+                      marginTop: '0.5rem',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      backgroundColor: '#eef6f0',
+                      border: '1px solid #74c69d',
+                      fontSize: '0.78rem',
+                      color: '#1b4332',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <strong>🛡️ {isGu ? 'એડમિન વિશેષાધિકાર:' : 'Administrator Access:'}</strong>{' '}
+                    {isGu
+                      ? 'આ ખાતાને MongoDB Atlas ટેલિમેટ્રી, ડ્યુઅલ-એન્જિન AI વપરાશ લેજર, આપાતકાલીન હવામાન ચેતવણીઓ અને APMC મંડી ભાવ નિયંત્રણની સીધી સુવિધા મળશે.'
+                      : 'Full operational access to live Atlas shard latency, Dual-Engine AI token consumption ledger, emergency alert broadcast, and APMC mandi controls.'}
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label
                   style={{
@@ -581,7 +670,13 @@ export const LoginPage = ({
                     marginBottom: '0.35rem',
                   }}
                 >
-                  {isGu ? 'ખેડૂતનું પૂરું નામ' : 'Full Name'} *
+                  {regData.role === 'admin'
+                    ? isGu
+                      ? 'એડમિનિસ્ટ્રેટરનું નામ'
+                      : 'Administrator Full Name'
+                    : isGu
+                    ? 'ખેડૂતનું પૂરું નામ'
+                    : 'Full Name'} *
                 </label>
                 <div style={{ position: 'relative' }}>
                   <User
@@ -720,167 +815,265 @@ export const LoginPage = ({
                 </div>
               </div>
 
-              {/* Grid: Phone & Taluka */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      color: 'var(--green-deep)',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    {isGu ? 'મોબાઇલ નંબર' : 'Phone'}
-                  </label>
-                  <input
-                    type="tel"
-                    value={regData.phone}
-                    onChange={(e) => setRegData({ ...regData, phone: e.target.value })}
-                    placeholder="+91 98250..."
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.7rem 0.85rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-medium)',
-                      fontSize: '0.88rem',
-                      color: 'var(--green-deep)',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
+              {/* Role-Specific Fields: Admin vs Farmer/Officer */}
+              {regData.role === 'admin' ? (
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'સંપર્ક નંબર (Phone)' : 'Contact Phone'}
+                      </label>
+                      <input
+                        type="tel"
+                        value={regData.phone}
+                        onChange={(e) => setRegData({ ...regData, phone: e.target.value })}
+                        placeholder="+91 99090..."
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
 
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      color: 'var(--green-deep)',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    {isGu ? 'તાલુકો' : 'Taluka'}
-                  </label>
-                  <select
-                    value={regData.taluka}
-                    onChange={(e) => setRegData({ ...regData, taluka: e.target.value })}
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.7rem 0.85rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-medium)',
-                      fontSize: '0.88rem',
-                      color: 'var(--green-deep)',
-                      backgroundColor: '#ffffff',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    {vadodaraTalukas.map((t) => (
-                      <option key={t.en} value={t.en}>
-                        {isGu ? t.gu : t.en}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'મુખ્ય મથક (Headquarter District)' : 'HQ District'}
+                      </label>
+                      <input
+                        type="text"
+                        value="Vadodara (વડોદરા)"
+                        disabled
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          backgroundColor: '#f6fbf7',
+                          boxSizing: 'border-box',
+                          fontWeight: 700,
+                        }}
+                      />
+                    </div>
+                  </div>
 
-              {/* Grid: Village & Farm Size */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '0.75rem' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      color: 'var(--green-deep)',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    {isGu ? 'ગામનું નામ' : 'Village'}
-                  </label>
-                  <input
-                    type="text"
-                    value={regData.village}
-                    onChange={(e) => setRegData({ ...regData, village: e.target.value })}
-                    placeholder={isGu ? 'દા.ત. સામિયાલા' : 'e.g. Samiyala'}
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.7rem 0.85rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-medium)',
-                      fontSize: '0.88rem',
-                      color: 'var(--green-deep)',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        color: 'var(--green-deep)',
+                        marginBottom: '0.35rem',
+                      }}
+                    >
+                      {isGu ? 'ઓપરેશન્સ વિભાગ (Department)' : 'Operations Department'}
+                    </label>
+                    <input
+                      type="text"
+                      value={regData.department || 'Vadodara District Agriculture Operations Hub'}
+                      onChange={(e) => setRegData({ ...regData, department: e.target.value })}
+                      disabled={loading}
+                      style={{
+                        width: '100%',
+                        padding: '0.7rem 0.85rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.88rem',
+                        color: 'var(--green-deep)',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Grid: Phone & Taluka */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'મોબાઇલ નંબર' : 'Phone'}
+                      </label>
+                      <input
+                        type="tel"
+                        value={regData.phone}
+                        onChange={(e) => setRegData({ ...regData, phone: e.target.value })}
+                        placeholder="+91 98250..."
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
 
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      color: 'var(--green-deep)',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    {isGu ? 'એકર જમીન' : 'Acres Land'}
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={regData.farmSizeAcres}
-                    onChange={(e) => setRegData({ ...regData, farmSizeAcres: e.target.value })}
-                    placeholder="5.0"
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.7rem 0.85rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-medium)',
-                      fontSize: '0.88rem',
-                      color: 'var(--green-deep)',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
-              </div>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'તાલુકો' : 'Taluka'}
+                      </label>
+                      <select
+                        value={regData.taluka}
+                        onChange={(e) => setRegData({ ...regData, taluka: e.target.value })}
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          backgroundColor: '#ffffff',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        {vadodaraTalukas.map((t) => (
+                          <option key={t.en} value={t.en}>
+                            {isGu ? t.gu : t.en}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
 
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.84rem',
-                    fontWeight: 700,
-                    color: 'var(--green-deep)',
-                    marginBottom: '0.35rem',
-                  }}
-                >
-                  {isGu ? 'વાવેતર કરેલ મુખ્ય પાક' : 'Primary Crops'}
-                </label>
-                <input
-                  type="text"
-                  value={regData.primaryCrops}
-                  onChange={(e) => setRegData({ ...regData, primaryCrops: e.target.value })}
-                  placeholder={isGu ? 'દા.ત. કપાસ, તુવેર, દિવેલા' : 'e.g. Cotton, Tomato, Pigeon Pea'}
-                  disabled={loading}
-                  style={{
-                    width: '100%',
-                    padding: '0.7rem 0.85rem',
-                    borderRadius: '10px',
-                    border: '1px solid var(--border-medium)',
-                    fontSize: '0.88rem',
-                    color: 'var(--green-deep)',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
+                  {/* Grid: Village & Farm Size */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '0.75rem' }}>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'ગામનું નામ' : 'Village'}
+                      </label>
+                      <input
+                        type="text"
+                        value={regData.village}
+                        onChange={(e) => setRegData({ ...regData, village: e.target.value })}
+                        placeholder={isGu ? 'દા.ત. સામિયાલા' : 'e.g. Samiyala'}
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: 'var(--green-deep)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        {isGu ? 'એકર જમીન' : 'Acres Land'}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.5"
+                        value={regData.farmSizeAcres}
+                        onChange={(e) => setRegData({ ...regData, farmSizeAcres: e.target.value })}
+                        placeholder="5.0"
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-medium)',
+                          fontSize: '0.88rem',
+                          color: 'var(--green-deep)',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        color: 'var(--green-deep)',
+                        marginBottom: '0.35rem',
+                      }}
+                    >
+                      {isGu ? 'વાવેતર કરેલ મુખ્ય પાક' : 'Primary Crops'}
+                    </label>
+                    <input
+                      type="text"
+                      value={regData.primaryCrops}
+                      onChange={(e) => setRegData({ ...regData, primaryCrops: e.target.value })}
+                      placeholder={isGu ? 'દા.ત. કપાસ, તુવેર, દિવેલા' : 'e.g. Cotton, Tomato, Pigeon Pea'}
+                      disabled={loading}
+                      style={{
+                        width: '100%',
+                        padding: '0.7rem 0.85rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.88rem',
+                        color: 'var(--green-deep)',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                </>
+              )}
 
               <button
                 type="submit"
@@ -912,8 +1105,16 @@ export const LoginPage = ({
                       ? 'ખાતું બની રહ્યું છે...'
                       : 'Creating Account...'
                     : isGu
-                    ? 'નવું ખાતું બનાવો (Create Account)'
-                    : 'Register as New Farmer'}
+                    ? regData.role === 'admin'
+                      ? '🛡️ એડમિનિસ્ટ્રેટર ખાતું બનાવો (Create Admin Account)'
+                      : regData.role === 'officer'
+                      ? '🌾 અધિકારી ખાતું બનાવો (Create Officer Account)'
+                      : '👨‍🌾 નવું ખાતું બનાવો (Create Account)'
+                    : regData.role === 'admin'
+                    ? '🛡️ Create Administrator Account'
+                    : regData.role === 'officer'
+                    ? '🌾 Register as Agri Officer'
+                    : '👨‍🌾 Register as New Farmer'}
                 </span>
                 {!loading && <ArrowRight size={17} />}
               </button>

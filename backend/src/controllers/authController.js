@@ -131,6 +131,7 @@ export const registerFarmer = async (req, res) => {
       nameGu,
       email,
       password,
+      role = 'farmer',
       phone,
       district,
       districtGu,
@@ -140,6 +141,9 @@ export const registerFarmer = async (req, res) => {
       villageGu,
       farmSizeAcres,
       primaryCrops,
+      designation,
+      department,
+      badgeNumber,
     } = req.body;
 
     if (!name || !email || !password) {
@@ -157,12 +161,14 @@ export const registerFarmer = async (req, res) => {
       });
     }
 
+    const assignedRole = ['farmer', 'officer', 'admin'].includes(role) ? role : 'farmer';
+
     const user = await User.create({
       name,
       nameGu: nameGu || name,
       email: email.toLowerCase().trim(),
       password,
-      role: 'farmer', // Strictly farmer - No admin can be created here
+      role: assignedRole,
       phone: phone || '',
       district: district || 'Vadodara',
       districtGu: districtGu || 'વડોદરા',
@@ -172,13 +178,16 @@ export const registerFarmer = async (req, res) => {
       villageGu: villageGu || '',
       farmSizeAcres: Number(farmSizeAcres) || 0,
       primaryCrops: Array.isArray(primaryCrops) ? primaryCrops : [],
+      designation: designation || (assignedRole === 'admin' ? 'District Agriculture Operations Administrator' : ''),
+      department: department || (assignedRole === 'admin' ? 'Vadodara District Agriculture Operations Hub' : ''),
+      badgeNumber: badgeNumber || (assignedRole === 'admin' ? `ADM-${Math.floor(1000 + Math.random() * 9000)}` : ''),
     });
 
     const token = generateToken(user._id, user.role);
 
     return res.status(201).json({
       success: true,
-      message: 'Farmer account registered successfully',
+      message: `${assignedRole === 'admin' ? 'Administrator' : assignedRole === 'officer' ? 'Agricultural Officer' : 'Farmer'} account registered successfully`,
       token,
       user: user.toSafeObject(),
     });

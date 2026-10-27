@@ -87,6 +87,25 @@ export const MOCK_DEMO_USERS = [
     avatar: '🌾',
     password: 'Officer@2026',
   },
+  {
+    id: 'admin-1',
+    name: 'District Administrator',
+    nameGu: 'જિલ્લા એડમિનિસ્ટ્રેટર',
+    email: 'admin.operations@haritayan.in',
+    role: 'admin',
+    phone: '+91 99090 12026',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Vadodara Urban',
+    talukaGu: 'વડોદરા શહેર',
+    designation: 'District Operations & Telemetry Administrator',
+    designationGu: 'જિલ્લા સંચાલન અને ટેલિમેટ્રી એડમિનિસ્ટ્રેટર',
+    department: 'Vadodara District Agriculture Operations Hub',
+    badgeNumber: 'GJ-VAD-ADM-001',
+    badge: 'Operations Chief',
+    avatar: '🛡️',
+    password: 'Admin@2026',
+  },
 ];
 
 export const saveAuthData = (token, user) => {
@@ -227,24 +246,30 @@ export const registerFarmer = async (formData) => {
     return data;
   } catch (error) {
     console.warn('Backend registration offline, saving locally:', error.message);
+    const assignedRole = formData.role || 'farmer';
     const newUser = {
-      id: `local_farmer_${Date.now()}`,
+      id: `local_${assignedRole}_${Date.now()}`,
       name: formData.name,
       nameGu: formData.name,
       email: formData.email,
-      role: 'farmer',
+      role: assignedRole,
       phone: formData.phone,
       district: formData.district || 'Vadodara',
       taluka: formData.taluka || 'Padra',
       village: formData.village || 'Vadodara',
       farmSizeAcres: formData.farmSizeAcres || 5.0,
       primaryCrops: formData.primaryCrops || ['Cotton'],
-      avatar: '👨‍🌾',
+      designation: formData.designation || (assignedRole === 'admin' ? 'District Agriculture Operations Administrator' : ''),
+      department: formData.department || (assignedRole === 'admin' ? 'Vadodara District Agriculture Operations Hub' : ''),
+      badgeNumber: formData.badgeNumber || (assignedRole === 'admin' ? 'ADM-7842' : ''),
+      avatar: assignedRole === 'admin' ? '🛡️' : assignedRole === 'officer' ? '🌾' : '👨‍🌾',
     };
     saveAuthData('local_jwt_token_' + newUser.id, newUser);
     return { success: true, token: 'local_jwt_token_' + newUser.id, user: newUser };
   }
 };
+
+export const registerUser = registerFarmer;
 
 /**
  * Fetch fresh user profile from backend

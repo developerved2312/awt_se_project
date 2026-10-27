@@ -179,16 +179,6 @@ export const Navbar = ({
       status: 'active',
       statusText: isGu ? 'સબસિડી' : 'Subsidy',
     },
-    {
-      id: 'module-admin-telemetry',
-      page: 'admin',
-      anchor: null,
-      title: isGu ? 'સંચાલન & ટેલિમેટ્રી હબ' : 'Operations & Admin Telemetry',
-      subtitle: isGu ? 'Atlas લેટન્સી, AI ટોકન લેજર, મંડી & ચેતવણી' : 'Atlas latency, AI token ledger & alerts',
-      icon: Server,
-      status: 'active',
-      statusText: isGu ? 'ઓપરેશન્સ' : 'Admin',
-    },
   ];
 
   return (
@@ -509,41 +499,37 @@ export const Navbar = ({
             <span>{isGu ? 'ઓજાર બજાર' : 'Tools Market'}</span>
           </button>
 
-          {/* Operations & Admin Hub Link */}
-          <button
-            type="button"
-            id="nav-admin-link"
-            onClick={() => handleItemClick({ page: 'admin' })}
-            className={`nav-link-item ${activePage === 'admin' ? 'active' : ''}`}
-            style={{
-              fontWeight: 700,
-              backgroundColor: activePage === 'admin' ? 'var(--green-wash)' : 'transparent',
-              color: activePage === 'admin' ? 'var(--green-deep)' : 'var(--text-title)',
-            }}
-          >
-            <Server size={15} color="var(--green-primary)" />
-            <span>{isGu ? 'ઓપરેશન્સ હબ' : 'Operations Hub'}</span>
-          </button>
-
-          {/* Farmer & Officer Desk Link */}
+          {/* Farmer / Officer / Admin Desk Link */}
           <button
             type="button"
             id="nav-profile-link"
-            onClick={() => handleItemClick({ page: 'profile' })}
-            className={`nav-link-item ${activePage === 'profile' ? 'active' : ''}`}
+            onClick={() => {
+              if (currentUser?.role === 'admin') {
+                handleItemClick({ page: 'admin' });
+              } else {
+                handleItemClick({ page: 'profile' });
+              }
+            }}
+            className={`nav-link-item ${activePage === 'profile' || (currentUser?.role === 'admin' && activePage === 'admin') ? 'active' : ''}`}
             style={{
               fontWeight: 700,
-              backgroundColor: activePage === 'profile' ? 'var(--green-wash)' : 'transparent',
-              color: activePage === 'profile' ? 'var(--green-deep)' : 'var(--text-title)',
+              backgroundColor: (activePage === 'profile' || (currentUser?.role === 'admin' && activePage === 'admin')) ? 'var(--green-wash)' : 'transparent',
+              color: (activePage === 'profile' || (currentUser?.role === 'admin' && activePage === 'admin')) ? 'var(--green-deep)' : 'var(--text-title)',
             }}
           >
-            {currentUser?.role === 'officer' ? (
+            {currentUser?.role === 'admin' ? (
+              <Shield size={15} color="var(--green-primary)" />
+            ) : currentUser?.role === 'officer' ? (
               <Shield size={15} color="var(--green-primary)" />
             ) : (
               <Sprout size={15} color="var(--green-primary)" />
             )}
             <span>
-              {currentUser?.role === 'officer'
+              {currentUser?.role === 'admin'
+                ? isGu
+                  ? 'એડમિન કન્સોલ'
+                  : 'Admin Console'
+                : currentUser?.role === 'officer'
                 ? isGu
                   ? 'અધિકારી ડેસ્ક'
                   : 'Officer Desk'
@@ -576,14 +562,14 @@ export const Navbar = ({
                     gap: '0.45rem',
                     padding: '4px 10px',
                     borderRadius: '20px',
-                    backgroundColor: currentUser.role === 'officer' ? '#d8f3dc' : '#f0f5ea',
-                    border: currentUser.role === 'officer' ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
+                    backgroundColor: (currentUser.role === 'admin' || currentUser.role === 'officer') ? '#d8f3dc' : '#f0f5ea',
+                    border: (currentUser.role === 'admin' || currentUser.role === 'officer') ? '1.5px solid var(--green-primary)' : '1px solid var(--border-medium)',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
                   }}
                 >
                   <span style={{ fontSize: '1rem' }}>
-                    {currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
+                    {currentUser.role === 'admin' ? '🛡️' : currentUser.role === 'officer' ? '🌾' : '👨‍🌾'}
                   </span>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span
@@ -599,12 +585,12 @@ export const Navbar = ({
                     <span
                       style={{
                         fontSize: '0.64rem',
-                        color: currentUser.role === 'officer' ? 'var(--green-deep)' : 'var(--text-muted)',
+                        color: (currentUser.role === 'admin' || currentUser.role === 'officer') ? 'var(--green-deep)' : 'var(--text-muted)',
                         fontWeight: 700,
                         textTransform: 'uppercase',
                       }}
                     >
-                      {currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
+                      {currentUser.role === 'admin' ? 'Admin' : currentUser.role === 'officer' ? 'Officer' : 'Farmer'}
                     </span>
                   </div>
                   <ChevronDown
@@ -673,33 +659,35 @@ export const Navbar = ({
                       <span>{isGu ? 'વિગતો સુધારો (Edit Details)' : 'Edit Details / Profile'}</span>
                     </button>
 
-                    {/* Admin Telemetry Hub Action */}
-                    <button
-                      type="button"
-                      id="nav-dropdown-admin-btn"
-                      onClick={() => {
-                        setProfileMenuOpen(false);
-                        if (onNavigate) onNavigate('admin');
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.6rem',
-                        padding: '0.6rem 0.75rem',
-                        borderRadius: '8px',
-                        border: 'none',
-                        backgroundColor: '#d8f3dc',
-                        color: 'var(--green-deep)',
-                        fontSize: '0.84rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        width: '100%',
-                      }}
-                    >
-                      <Server size={15} color="var(--green-primary)" />
-                      <span>{isGu ? 'ઓપરેશન્સ & ટેલિમેટ્રી હબ' : 'Operations & Telemetry Hub'}</span>
-                    </button>
+                    {/* Admin Telemetry Hub Action - Only for Admin */}
+                    {currentUser?.role === 'admin' && (
+                      <button
+                        type="button"
+                        id="nav-dropdown-admin-btn"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          if (onNavigate) onNavigate('admin');
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.6rem',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: '#d8f3dc',
+                          color: 'var(--green-deep)',
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          width: '100%',
+                        }}
+                      >
+                        <Server size={15} color="var(--green-primary)" />
+                        <span>{isGu ? 'એડમિન કન્સોલ (Admin Console)' : 'Admin Operations Console'}</span>
+                      </button>
+                    )}
 
                     {/* Logout Action */}
                     <button
