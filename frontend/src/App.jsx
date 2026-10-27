@@ -9,6 +9,8 @@ import MandiPrices from './pages/MandiPrices';
 import HeatMap from './pages/HeatMap';
 import IrrigationTimer from './pages/IrrigationTimer';
 import Weather from './pages/Weather';
+import Marketplace from './pages/Marketplace';
+import AdminPanel from './pages/AdminPanel';
 import AuthModal from './components/AuthModal';
 import Chatbot from './components/Chatbot';
 import { getStoredUser, logout } from './services/authService';
@@ -148,6 +150,23 @@ export const App = () => {
           />
         )}
 
+        {activePage === 'marketplace' && (
+          <Marketplace
+            currentLang={currentLang}
+            currentUser={currentUser}
+            onNavigateHome={() => navigateTo('home')}
+          />
+        )}
+
+        {activePage === 'admin' && (
+          <AdminPanel
+            currentLang={currentLang}
+            currentUser={currentUser}
+            onUserChange={handleUserChange}
+            onNavigateHome={() => navigateTo('home')}
+          />
+        )}
+
         {activePage === 'home' && (
           <Home
             currentLang={currentLang}
@@ -156,6 +175,8 @@ export const App = () => {
             onNavigateToHeatMap={() => navigateTo('heatmap')}
             onNavigateToIrrigation={() => navigateTo('irrigation')}
             onNavigateToWeather={() => navigateTo('weather')}
+            onNavigateToMarketplace={() => navigateTo('marketplace')}
+            onNavigateToAdmin={() => navigateTo('admin')}
             onNavigateToProfile={() => navigateTo(currentUser ? 'profile' : 'login')}
           />
         )}

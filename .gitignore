@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 /.pnp
 .pnp.js
@@ -77,3 +77,6 @@ data/raw/*
 !data/raw/**/.gitkeep
 data/processed/*
 !data/processed/**/.gitkeep
+
+# Helper scripts
+push_commit_*.ps1

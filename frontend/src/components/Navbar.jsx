@@ -20,6 +20,8 @@ import {
   LogIn,
   Edit3,
   Droplets,
+  Wrench,
+  Server,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { getTranslation } from '../services/translationService';
@@ -166,6 +168,26 @@ export const Navbar = ({
       icon: Shield,
       status: 'active',
       statusText: isGu ? 'લાઈવ' : 'Live',
+    },
+    {
+      id: 'module-equipment-marketplace',
+      page: 'marketplace',
+      anchor: null,
+      title: isGu ? 'કૃષિ ઓજાર & સાધન બજાર' : 'Krishi Tools Marketplace',
+      subtitle: isGu ? 'સાધન ભાડા & i-ખેડૂત ૪૦-૬૦% સબસિડી' : 'Farm machinery rental & i-Khedut subsidies',
+      icon: Wrench,
+      status: 'active',
+      statusText: isGu ? 'સબસિડી' : 'Subsidy',
+    },
+    {
+      id: 'module-admin-telemetry',
+      page: 'admin',
+      anchor: null,
+      title: isGu ? 'સંચાલન & ટેલિમેટ્રી હબ' : 'Operations & Admin Telemetry',
+      subtitle: isGu ? 'Atlas લેટન્સી, AI ટોકન લેજર, મંડી & ચેતવણી' : 'Atlas latency, AI token ledger & alerts',
+      icon: Server,
+      status: 'active',
+      statusText: isGu ? 'ઓપરેશન્સ' : 'Admin',
     },
   ];
 
@@ -471,6 +493,38 @@ export const Navbar = ({
             <span>{isGu ? 'પ્રશ્નોત્તરી અને મદદ' : 'FAQs & Help'}</span>
           </button>
 
+          {/* Tools & Equipment Marketplace Link */}
+          <button
+            type="button"
+            id="nav-marketplace-link"
+            onClick={() => handleItemClick({ page: 'marketplace' })}
+            className={`nav-link-item ${activePage === 'marketplace' ? 'active' : ''}`}
+            style={{
+              fontWeight: 700,
+              backgroundColor: activePage === 'marketplace' ? 'var(--green-wash)' : 'transparent',
+              color: activePage === 'marketplace' ? 'var(--green-deep)' : 'var(--text-title)',
+            }}
+          >
+            <Wrench size={15} color="var(--green-primary)" />
+            <span>{isGu ? 'ઓજાર બજાર' : 'Tools Market'}</span>
+          </button>
+
+          {/* Operations & Admin Hub Link */}
+          <button
+            type="button"
+            id="nav-admin-link"
+            onClick={() => handleItemClick({ page: 'admin' })}
+            className={`nav-link-item ${activePage === 'admin' ? 'active' : ''}`}
+            style={{
+              fontWeight: 700,
+              backgroundColor: activePage === 'admin' ? 'var(--green-wash)' : 'transparent',
+              color: activePage === 'admin' ? 'var(--green-deep)' : 'var(--text-title)',
+            }}
+          >
+            <Server size={15} color="var(--green-primary)" />
+            <span>{isGu ? 'ઓપરેશન્સ હબ' : 'Operations Hub'}</span>
+          </button>
+
           {/* Farmer & Officer Desk Link */}
           <button
             type="button"
@@ -617,6 +671,34 @@ export const Navbar = ({
                     >
                       <Edit3 size={15} color="var(--green-primary)" />
                       <span>{isGu ? 'વિગતો સુધારો (Edit Details)' : 'Edit Details / Profile'}</span>
+                    </button>
+
+                    {/* Admin Telemetry Hub Action */}
+                    <button
+                      type="button"
+                      id="nav-dropdown-admin-btn"
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        if (onNavigate) onNavigate('admin');
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        padding: '0.6rem 0.75rem',
+                        borderRadius: '8px',
+                        border: 'none',
+                        backgroundColor: '#d8f3dc',
+                        color: 'var(--green-deep)',
+                        fontSize: '0.84rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        width: '100%',
+                      }}
+                    >
+                      <Server size={15} color="var(--green-primary)" />
+                      <span>{isGu ? 'ઓપરેશન્સ & ટેલિમેટ્રી હબ' : 'Operations & Telemetry Hub'}</span>
                     </button>
 
                     {/* Logout Action */}

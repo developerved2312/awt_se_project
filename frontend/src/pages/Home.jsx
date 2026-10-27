@@ -19,6 +19,8 @@ import {
   HelpCircle,
   Sparkles,
   Activity,
+  Wrench,
+  Server,
 } from 'lucide-react';
 import AlertCard from '../components/AlertCard';
 import { getTranslation } from '../services/translationService';
@@ -30,6 +32,8 @@ export const Home = ({
   onNavigateToHeatMap,
   onNavigateToIrrigation,
   onNavigateToWeather,
+  onNavigateToMarketplace,
+  onNavigateToAdmin,
   onNavigateToProfile,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -719,6 +723,136 @@ export const Home = ({
                   >
                     <Droplets size={16} />
                     <span>{isGu ? "સિંચાઈ ટાઈમર શરૂ કરો" : "Launch Irrigation Timer"}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Tools & Equipment Marketplace */}
+            <div id="module-marketplace" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid #16a34a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="badge" style={{ background: '#dcfce7', color: '#15803d', borderColor: '#bbf7d0' }}>
+                  {isGu ? "ઓજાર બજાર" : "Tools Marketplace"}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 700 }}>
+                  {isGu ? "i-ખેડૂત સબસિડી" : "i-Khedut 40-60%"}
+                </span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
+                {isGu ? "કૃષિ ઓજાર & સાધન બજાર" : "Krishi Tools & Equipment Marketplace"}
+              </h3>
+
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                {isGu
+                  ? "સ્પ્રે ડ્રોન, રોટાવેટર, લેસર લેવલર અને સોલાર પંપ સસ્તા દરે ખેતર ભાડે મેળવો અથવા સબસિડી સાથે ખરીદો."
+                  : "Rent precision spray drones, rotavators, and laser levelers or apply for 40-60% i-Khedut subsidies across Vadodara."}
+              </p>
+
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
+                <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
+                </h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#16a34a" />
+                    <span>{isGu ? "૭ તાલુકાઓમાં કસ્ટમ હાયરિંગ સેન્ટર્સ (CHC)" : "Custom Hiring Centers across all 7 Vadodara talukas"}</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#16a34a" />
+                    <span>{isGu ? "i-ખેડૂત પોર્ટલ સાથે સીધું જોડાણ અને માર્ગદર્શન" : "Direct linkage to state i-Khedut subsidy assistance"}</span>
+                  </li>
+                </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    type="button"
+                    id="home-open-marketplace-btn"
+                    onClick={() => onNavigateToMarketplace && onNavigateToMarketplace()}
+                    className="btn btn-outline"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '10px',
+                      padding: '0.65rem 1rem',
+                      fontWeight: 700,
+                      borderColor: '#16a34a',
+                      color: '#15803d',
+                      backgroundColor: '#f0fdf4',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Wrench size={16} />
+                    <span>{isGu ? "ઓજાર બજારમાં પ્રવેશ કરો" : "Explore Tools Marketplace"}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Operations & Admin Telemetry Hub */}
+            <div id="module-admin" className="organic-card" style={{ padding: '2rem', borderLeft: '4px solid #1b4332' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="badge" style={{ background: '#d8f3dc', color: '#1b4332', borderColor: '#74c69d' }}>
+                  {isGu ? "ઓપરેશન્સ હબ" : "Operations Hub"}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: '#1b4332', fontWeight: 700 }}>
+                  {isGu ? "જિલ્લા એડમિન" : "Admin Telemetry"}
+                </span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-title)' }}>
+                {isGu ? "સંચાલન અને AI ટેલિમેટ્રી હબ" : "District Operations & AI Telemetry Hub"}
+              </h3>
+
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-body)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                {isGu
+                  ? "MongoDB Atlas લાઈવ લેટન્સી, ડ્યુઅલ-એન્જિન AI ટોકન લેજર, મંડી ભાવ નિયંત્રણ અને હવામાન ચેતવણી બ્રોડકાસ્ટર."
+                  : "Real-time Atlas shard latency, Dual-Engine AI token consumption ledger, mandi rates override, and alert dispatcher."}
+              </p>
+
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
+                <h4 style={{ fontSize: '0.82rem', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '0.6rem' }}>
+                  {isGu ? "મુખ્ય વિશેષતાઓ:" : "Key Benefits:"}
+                </h4>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.86rem', color: 'var(--text-body)' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#1b4332" />
+                    <span>{isGu ? "ક્લાઉડ Gemini વિરુદ્ધ ઓફલાઇન TF.js ટોકન બચત ગણતરી" : "Dual-Engine cloud vs offline inference & cost ledger"}</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} color="#1b4332" />
+                    <span>{isGu ? "જિલ્લા કક્ષાએ તાત્કાલિક હીટવેવ નોટિસ પ્રસારણ" : "Official IMD heatwave and pest advisory broadcaster"}</span>
+                  </li>
+                </ul>
+
+                <div style={{ marginTop: '1.25rem' }}>
+                  <button
+                    type="button"
+                    id="home-open-admin-btn"
+                    onClick={() => onNavigateToAdmin && onNavigateToAdmin()}
+                    className="btn btn-outline"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '10px',
+                      padding: '0.65rem 1rem',
+                      fontWeight: 700,
+                      borderColor: '#1b4332',
+                      color: '#1b4332',
+                      backgroundColor: '#eef6f0',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Server size={16} />
+                    <span>{isGu ? "ઓપરેશન્સ કન્સોલ ખોલો" : "Open Operations Console"}</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>

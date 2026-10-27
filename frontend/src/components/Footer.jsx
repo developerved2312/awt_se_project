@@ -130,12 +130,36 @@ export const Footer = ({ currentLang = 'en', onNavigate }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('module-04')}
+                  onClick={() => (onNavigate ? onNavigate('weather') : scrollTo('module-04'))}
                   style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
                 >
                   • Weather Alerts & Advisory
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  id="footer-marketplace-btn"
+                  onClick={() => (onNavigate ? onNavigate('marketplace') : window.scrollTo({ top: 0 }))}
+                  style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
+                >
+                  • Krishi Tools & Machinery Market
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  id="footer-admin-btn"
+                  onClick={() => (onNavigate ? onNavigate('admin') : window.scrollTo({ top: 0 }))}
+                  style={{ color: 'inherit', textAlign: 'left', transition: 'color 0.15s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--green-primary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
+                >
+                  • Operations & Admin Telemetry Hub
                 </button>
               </li>
               <li>
