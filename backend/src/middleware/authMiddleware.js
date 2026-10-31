@@ -65,14 +65,14 @@ export const optionalAuth = async (req, res, next) => {
 };
 
 /**
- * Officer role guard - Ensures the authenticated user is an Agricultural Officer
+ * Officer role guard - Ensures the authenticated user is an Agricultural Officer or Admin
  */
 export const requireOfficer = (req, res, next) => {
-  if (req.user && req.user.role === 'officer') {
+  if (req.user && (req.user.role === 'officer' || req.user.role === 'admin')) {
     return next();
   }
   return res.status(403).json({
     success: false,
-    error: 'Access restricted: Agricultural Officer authorization required',
+    error: 'Access restricted: Agricultural Officer or Administrator authorization required',
   });
 };

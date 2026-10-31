@@ -6,14 +6,14 @@ import {
   respondToQuery,
   deleteQuery,
 } from '../controllers/queryController.js';
-import { protect, requireOfficer } from '../middleware/authMiddleware.js';
+import { protect, optionalAuth, requireOfficer } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router
   .route('/')
   .post(protect, createQuery)
-  .get(protect, getQueries);
+  .get(optionalAuth, getQueries);
 
 router
   .route('/:id')

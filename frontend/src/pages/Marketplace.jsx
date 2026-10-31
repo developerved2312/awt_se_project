@@ -17,6 +17,7 @@ import {
   X,
   Zap,
   Check,
+  PlusCircle,
 } from 'lucide-react';
 import { fetchEquipments, createEquipmentBooking } from '../services/equipmentService';
 
@@ -40,6 +41,7 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
   const [farmerTaluka, setFarmerTaluka] = useState(currentUser?.taluka || 'Padra');
   const [farmerVillage, setFarmerVillage] = useState(currentUser?.village || '');
   const [notes, setNotes] = useState('');
+  const [customEquipName, setCustomEquipName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [bookingSuccessData, setBookingSuccessData] = useState(null);
 
@@ -70,10 +72,11 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
     loadCatalog();
   };
 
-  const openBookingModal = (item, type = 'rental') => {
-    setBookingModalItem(item);
+  const openBookingModal = (item, type = 'rental', isCustom = false) => {
+    setBookingModalItem({ ...item, isCustom });
     setBookingType(type);
     setRentalHours(8);
+    setCustomEquipName(item?.name || '');
     setBookingSuccessData(null);
     if (currentUser) {
       setFarmerName(currentUser.name || '');
@@ -86,6 +89,7 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
   const closeBookingModal = () => {
     setBookingModalItem(null);
     setBookingSuccessData(null);
+    setCustomEquipName('');
   };
 
   const handleConfirmBooking = async (e) => {
@@ -95,17 +99,27 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
       return;
     }
 
+    if (bookingModalItem?.isCustom && !customEquipName.trim()) {
+      alert(isGu ? 'કૃપા કરીને સાધનનું નામ લખો.' : 'Please enter the name of the equipment needed.');
+      return;
+    }
+
     setSubmitting(true);
     try {
+      const resolvedName = bookingModalItem?.isCustom
+        ? customEquipName.trim()
+        : (bookingModalItem?.name || 'Custom Farm Machinery Request');
+
       const payload = {
-        equipmentId: bookingModalItem._id,
-        farmerName,
-        farmerPhone,
+        equipmentId: bookingModalItem?._id || undefined,
+        equipmentName: resolvedName,
+        farmerName: farmerName.trim(),
+        farmerPhone: farmerPhone.trim(),
         farmerTaluka,
         farmerVillage,
-        bookingType,
+        bookingType: bookingModalItem?.isCustom ? 'custom_request' : bookingType,
         rentalDurationHours: bookingType === 'rental' ? Number(rentalHours) : 0,
-        notes,
+        notes: notes.trim(),
       };
 
       const result = await createEquipmentBooking(payload);
@@ -445,6 +459,31 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
               <Tag size={14} color={subsidyOnly ? 'var(--green-deep)' : 'var(--text-muted)'} />
               <span>{isGu ? 'માત્ર સબસિડી વાળા સાધનો' : 'Subsidy Eligible Only'}</span>
               {subsidyOnly && <Check size={14} color="var(--green-deep)" />}
+            </button>
+
+            {/* Request Other Equipment Button */}
+            <button
+              type="button"
+              id="marketplace-custom-request-btn"
+              onClick={() => openBookingModal(null, 'rental', true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '8px 16px',
+                borderRadius: '10px',
+                backgroundColor: 'var(--green-primary)',
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '0.84rem',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(45, 106, 79, 0.2)',
+                marginLeft: 'auto',
+              }}
+            >
+              <PlusCircle size={15} />
+              <span>{isGu ? 'અન્ય સાધન માટે વિનંતી કરો' : 'Request Other Machinery'}</span>
             </button>
           </div>
 
@@ -905,7 +944,11 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
             >
               <div>
                 <div style={{ fontSize: '0.74rem', color: '#d8f3dc', fontWeight: 700, textTransform: 'uppercase' }}>
-                  {bookingType === 'rental'
+                  {bookingModalItem.isCustom
+                    ? isGu
+                      ? 'વિશેષ સાધન વિનંતી (Custom Request)'
+                      : 'Special Machinery Request'
+                    : bookingType === 'rental'
                     ? isGu
                       ? 'કસ્ટમ હાયરિંગ બુકિંગ વિનંતી'
                       : 'Equipment Rental Booking'
@@ -914,7 +957,13 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
                     : 'i-Khedut Subsidy Application'}
                 </div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                  {isGu ? bookingModalItem.nameGu : bookingModalItem.name}
+                  {bookingModalItem.isCustom
+                    ? isGu
+                      ? 'કૃષિ સાધનની વિશેષ વિનંતી'
+                      : 'Request Agricultural Machinery'
+                    : isGu
+                    ? bookingModalItem.nameGu
+                    : bookingModalItem.name}
                 </h3>
               </div>
               <button
@@ -1004,6 +1053,34 @@ export const Marketplace = ({ currentLang = 'en', onNavigateHome, currentUser })
               ) : (
                 /* Booking Form */
                 <form onSubmit={handleConfirmBooking} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {/* Custom Equipment Name Input */}
+                  {bookingModalItem.isCustom && (
+                    <div style={{ backgroundColor: '#f0fdf4', border: '1.5px solid #86efac', padding: '0.85rem 1rem', borderRadius: '10px' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#166534', display: 'block', marginBottom: '4px' }}>
+                        {isGu ? 'સાધન અથવા મશીનરીનું નામ *' : 'Equipment or Implement Needed *'}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={customEquipName}
+                        onChange={(e) => setCustomEquipName(e.target.value)}
+                        placeholder={isGu ? 'દા.ત. કમ્બાઈન હાર્વેસ્ટર, રોટરી વીડર, સ્ટ્રો રીપર...' : 'e.g. Combine Harvester, Straw Reaper, Bed Planter, Power Weeder...'}
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          borderRadius: '8px',
+                          border: '1px solid #bbf7d0',
+                          fontSize: '0.86rem',
+                          fontWeight: 600,
+                          backgroundColor: '#ffffff',
+                        }}
+                      />
+                      <div style={{ fontSize: '0.74rem', color: '#15803d', marginTop: '4px' }}>
+                        {isGu ? 'તમને જોઈતા સાધનની વિગત લખો. કૃષિ કેન્દ્ર આ સાધન ઉપલબ્ધ કરાવવા સંપર્ક કરશે.' : 'Specify the machinery required. Your local Custom Hiring Center will arrange availability.'}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Booking Type Switcher */}
                   <div
                     style={{

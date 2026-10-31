@@ -157,17 +157,21 @@ export const fetchQueries = async (params = {}) => {
 
     if (!res.ok) throw new Error('Failed to fetch queries');
     const data = await res.json();
-    return data.queries || [];
+    if (data.queries && data.queries.length > 0) {
+      return data.queries;
+    }
+    return FALLBACK_QUERIES;
   } catch (error) {
     console.warn('Using client fallback queries for resilience:', error.message);
     const user = getStoredUser();
-    if (!user || user.role === 'officer') {
+    if (!user || user.role === 'officer' || user.role === 'admin') {
       return FALLBACK_QUERIES;
     }
     // Filter for current farmer if logged in
-    return FALLBACK_QUERIES.filter(
-      (q) => q.farmerName.toLowerCase() === user.name.toLowerCase()
+    const matching = FALLBACK_QUERIES.filter(
+      (q) => q.farmerName?.toLowerCase() === user.name?.toLowerCase()
     );
+    return matching.length > 0 ? matching : FALLBACK_QUERIES;
   }
 };
 

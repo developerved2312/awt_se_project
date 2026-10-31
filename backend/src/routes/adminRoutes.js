@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Scan from '../models/Scan.js';
 import MandiPrice from '../models/MandiPrice.js';
@@ -365,6 +366,118 @@ router.get('/recent-activity', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching admin recent activity:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * 7. GET /api/admin/users
+ * Returns live list of registered platform users with roles and details
+ */
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    return res.json({
+      success: true,
+      count: users.length,
+      users,
+    });
+  } catch (err) {
+    console.error('Error fetching admin users:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * 8. POST /api/admin/users
+ * Administrator creates a new user directly (farmer, officer, or admin)
+ */
+router.post('/users', async (req, res) => {
+  try {
+    const {
+      name,
+      nameGu,
+      email,
+      password,
+      role,
+      phone,
+      taluka,
+      village,
+      farmSizeAcres,
+      primaryCrops,
+      designation,
+      department,
+      badgeNumber,
+    } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name, email, and password are required',
+      });
+    }
+
+    const existing = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        error: 'A user with this email address already exists',
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({
+      name: name.trim(),
+      nameGu: nameGu || '',
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      role: ['farmer', 'officer', 'admin'].includes(role) ? role : 'farmer',
+      phone: phone || '',
+      district: 'Vadodara',
+      districtGu: 'વડોદરા',
+      taluka: taluka || 'Padra',
+      village: village || '',
+      farmSizeAcres: Number(farmSizeAcres) || 0,
+      primaryCrops: Array.isArray(primaryCrops) ? primaryCrops : (primaryCrops ? [primaryCrops] : []),
+      designation: designation || (role === 'officer' ? 'Taluka Extension Officer' : role === 'admin' ? 'District Operations Administrator' : ''),
+      department: department || (role === 'officer' ? 'Gujarat Dept of Agriculture' : role === 'admin' ? 'Operations Control Center' : ''),
+      badgeNumber: badgeNumber || (role === 'officer' ? `GJ-AGRI-${Math.floor(100 + Math.random() * 900)}` : role === 'admin' ? `BRD-ADM-${Math.floor(100 + Math.random() * 900)}` : ''),
+    });
+
+    await user.save();
+
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    return res.status(201).json({
+      success: true,
+      message: 'User created successfully in database',
+      user: userObj,
+    });
+  } catch (err) {
+    console.error('Error creating user:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * 9. DELETE /api/admin/users/:id
+ * Administrator deletes a user from MongoDB
+ */
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    return res.json({
+      success: true,
+      message: `User ${user.name} (${user.email}) deleted successfully`,
+    });
+  } catch (err) {
+    console.error('Error deleting user:', err);
     return res.status(500).json({ success: false, error: err.message });
   }
 });

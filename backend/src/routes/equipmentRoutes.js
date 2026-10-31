@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Equipment from '../models/Equipment.js';
 import EquipmentBooking from '../models/EquipmentBooking.js';
 
@@ -222,7 +223,7 @@ const DEFAULT_EQUIPMENT_SEED = [
   },
 ];
 
-// Helper to seed catalog if empty
+// Helper to seed catalog and initial bookings if empty
 async function ensureSeedCatalog() {
   try {
     const count = await Equipment.countDocuments();
@@ -230,6 +231,81 @@ async function ensureSeedCatalog() {
       console.log('[Equipment] Catalog is empty. Seeding initial regional machinery...');
       await Equipment.insertMany(DEFAULT_EQUIPMENT_SEED);
       console.log('[Equipment] Seeded 6 regional equipment records with i-Khedut subsidies.');
+    }
+
+    const bookingCount = await EquipmentBooking.countDocuments();
+    if (bookingCount === 0) {
+      console.log('[Equipment] Booking registry is empty. Seeding initial farmer bookings...');
+      const allEquips = await Equipment.find().limit(5);
+      const droneEquip = allEquips.find((e) => e.category === 'drone_tech') || allEquips[0];
+      const tillerEquip = allEquips.find((e) => e.category === 'land_prep') || allEquips[1] || allEquips[0];
+      const pumpEquip = allEquips.find((e) => e.category === 'solar_pumping') || allEquips[2] || allEquips[0];
+
+      const seedBookings = [
+        {
+          equipmentId: droneEquip?._id,
+          equipmentName: droneEquip?.name || 'Precision Agricultural Spray Drone (16L)',
+          farmerName: 'Rameshbhai Patel',
+          farmerPhone: '+91 98251 44021',
+          farmerTaluka: 'Padra',
+          farmerVillage: 'Chokari',
+          bookingType: 'rental',
+          rentalDurationHours: 6,
+          startDate: new Date(Date.now() - 3600000 * 4),
+          totalCostEstimate: 2700,
+          subsidyBenefitEstimate: 0,
+          status: 'pending',
+          notes: 'Emergency foliar spray needed for 8 acres cotton plot against whitefly infestation.',
+        },
+        {
+          equipmentId: pumpEquip?._id,
+          equipmentName: pumpEquip?.name || '5HP DC Solar Photovoltaic Submersible Water Pump',
+          farmerName: 'Bhaveshbhai Solanki',
+          farmerPhone: '+91 94288 12390',
+          farmerTaluka: 'Karjan',
+          farmerVillage: 'Kandari',
+          bookingType: 'subsidy_guidance',
+          rentalDurationHours: 0,
+          startDate: new Date(Date.now() - 3600000 * 24),
+          totalCostEstimate: 0,
+          subsidyBenefitEstimate: 156000,
+          status: 'confirmed',
+          notes: 'i-Khedut application verification and borehole site inspection scheduled.',
+        },
+        {
+          equipmentId: tillerEquip?._id,
+          equipmentName: tillerEquip?.name || 'Mini Tractor Rotary Tiller / Rotavator (24HP)',
+          farmerName: 'Kanubhai Bharwad',
+          farmerPhone: '+91 97245 67812',
+          farmerTaluka: 'Dabhoi',
+          farmerVillage: 'Vaghodia Road Hub',
+          bookingType: 'rental',
+          rentalDurationHours: 8,
+          startDate: new Date(Date.now() - 3600000 * 48),
+          totalCostEstimate: 4400,
+          subsidyBenefitEstimate: 0,
+          status: 'confirmed',
+          notes: 'Seed bed preparation for upcoming Rabi wheat and pigeon pea planting.',
+        },
+        {
+          equipmentId: allEquips[0]?._id,
+          equipmentName: 'Combine Harvester Custom Rental (Special Request)',
+          farmerName: 'Govindbhai Parmar',
+          farmerPhone: '+91 99092 34156',
+          farmerTaluka: 'Savli',
+          farmerVillage: 'Manjusar',
+          bookingType: 'custom_request',
+          rentalDurationHours: 12,
+          startDate: new Date(Date.now() + 3600000 * 24),
+          totalCostEstimate: 9600,
+          subsidyBenefitEstimate: 0,
+          status: 'pending',
+          notes: 'Requesting custom combine harvester with straw reaper for 15 acres paddy field.',
+        },
+      ];
+
+      await EquipmentBooking.insertMany(seedBookings);
+      console.log(`[Equipment] Seeded ${seedBookings.length} initial equipment bookings in MongoDB Atlas.`);
     }
   } catch (err) {
     console.warn('[Equipment] Seed check error:', err.message);
@@ -292,11 +368,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 3. POST /api/equipment/book - Create rental booking or subsidy inquiry
+// 3. POST /api/equipment/book - Create rental booking, subsidy inquiry, or custom request
 router.post('/book', async (req, res) => {
   try {
     const {
       equipmentId,
+      equipmentName,
       farmerName,
       farmerPhone,
       farmerTaluka,
@@ -307,32 +384,55 @@ router.post('/book', async (req, res) => {
       notes,
     } = req.body;
 
-    if (!equipmentId || !farmerName || !farmerPhone) {
+    if (!farmerName || !farmerPhone) {
       return res.status(400).json({
         success: false,
-        error: 'Equipment ID, farmer name, and contact phone are required.',
+        error: 'Farmer name and contact phone number are required.',
       });
     }
 
-    const equip = await Equipment.findById(equipmentId);
-    if (!equip) {
-      return res.status(404).json({ success: false, error: 'Equipment not found' });
+    let resolvedEquip = null;
+    let resolvedName = equipmentName || '';
+    let ratePerHour = 0;
+    let salePrice = 0;
+    let subsidyPct = 0;
+
+    if (equipmentId && mongoose.isValidObjectId(equipmentId)) {
+      resolvedEquip = await Equipment.findById(equipmentId);
+    }
+
+    if (!resolvedEquip && equipmentName) {
+      resolvedEquip = await Equipment.findOne({
+        $or: [
+          { name: { $regex: equipmentName, $options: 'i' } },
+          { nameGu: { $regex: equipmentName, $options: 'i' } },
+        ],
+      });
+    }
+
+    if (resolvedEquip) {
+      resolvedName = resolvedEquip.name;
+      ratePerHour = resolvedEquip.rentalRatePerHour || 0;
+      salePrice = resolvedEquip.salePrice || 0;
+      subsidyPct = resolvedEquip.subsidyPercentage || 0;
+    } else if (!resolvedName) {
+      resolvedName = 'Custom Agricultural Machinery Request';
     }
 
     const hours = Number(rentalDurationHours) || 8;
-    const totalCostEstimate = equip.rentalRatePerHour ? equip.rentalRatePerHour * hours : 0;
-    const subsidyBenefitEstimate = equip.salePrice
-      ? Math.round(equip.salePrice * (equip.subsidyPercentage / 100))
+    const totalCostEstimate = ratePerHour > 0 ? ratePerHour * hours : (hours * 500);
+    const subsidyBenefitEstimate = salePrice > 0
+      ? Math.round(salePrice * (subsidyPct / 100))
       : 0;
 
     const newBooking = new EquipmentBooking({
-      equipmentId,
-      equipmentName: equip.name,
-      farmerName,
-      farmerPhone,
+      equipmentId: resolvedEquip?._id || null,
+      equipmentName: resolvedName,
+      farmerName: farmerName.trim(),
+      farmerPhone: farmerPhone.trim(),
       farmerTaluka: farmerTaluka || 'Padra',
       farmerVillage: farmerVillage || '',
-      bookingType: bookingType || 'rental',
+      bookingType: bookingType || (resolvedEquip ? 'rental' : 'custom_request'),
       rentalDurationHours: hours,
       startDate: startDate ? new Date(startDate) : new Date(),
       totalCostEstimate,
@@ -345,7 +445,7 @@ router.post('/book', async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Booking request registered successfully. Krishi Kendra will confirm dispatch.',
+      message: 'Booking request registered successfully in database. Krishi Kendra will confirm dispatch.',
       booking: newBooking,
     });
   } catch (err) {
@@ -357,7 +457,8 @@ router.post('/book', async (req, res) => {
 // 4. GET /api/equipment/bookings/all - Fetch all bookings
 router.get('/bookings/all', async (req, res) => {
   try {
-    const bookings = await EquipmentBooking.find().sort({ createdAt: -1 }).limit(50);
+    await ensureSeedCatalog();
+    const bookings = await EquipmentBooking.find().sort({ createdAt: -1 }).limit(100);
     return res.json({ success: true, count: bookings.length, bookings });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });

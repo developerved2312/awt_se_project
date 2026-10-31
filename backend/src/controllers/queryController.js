@@ -70,8 +70,8 @@ export const getQueries = async (req, res) => {
     const { status, crop, urgency, all } = req.query;
     const filter = {};
 
-    // If caller is an officer, or requested all, let officer view all queries
-    if (req.user && req.user.role === 'officer') {
+    // Officers, Admins, or Overview mode can view all district queries
+    if (!req.user || req.user.role === 'officer' || req.user.role === 'admin' || all === 'true') {
       if (status) filter.status = status;
       if (crop) filter.crop = crop;
       if (urgency) filter.urgency = urgency;

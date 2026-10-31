@@ -22,6 +22,14 @@ import {
   Layers,
   ChevronRight,
   Sparkles,
+  Users,
+  UserPlus,
+  Trash2,
+  Mail,
+  Phone,
+  MapPin,
+  Search,
+  Key,
 } from 'lucide-react';
 import {
   fetchAdminMetrics,
@@ -30,6 +38,9 @@ import {
   overrideMandiPrice,
   syncMandiPrices,
   fetchRecentActivity,
+  fetchAdminUsers,
+  createAdminUser,
+  deleteAdminUser,
 } from '../services/adminService';
 import { fetchAllBookings, updateBookingStatus } from '../services/equipmentService';
 import { fetchQueries, submitOfficerResponse } from '../services/queryService';
@@ -51,6 +62,30 @@ export const AdminPanel = ({ currentLang = 'en', onNavigateHome, currentUser, on
   const [equipmentBookings, setEquipmentBookings] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [consultations, setConsultations] = useState([]);
+
+  // Live Users Management State
+  const [usersList, setUsersList] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [userRoleFilter, setUserRoleFilter] = useState('all'); // 'all' | 'farmer' | 'officer' | 'admin'
+  const [userSearch, setUserSearch] = useState('');
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const [newUserForm, setNewUserForm] = useState({
+    name: '',
+    nameGu: '',
+    email: '',
+    password: 'Password@123',
+    role: 'farmer',
+    phone: '',
+    taluka: 'Padra',
+    village: '',
+    farmSizeAcres: 3,
+    primaryCrops: 'Cotton, Banana',
+    designation: '',
+    department: '',
+    badgeNumber: '',
+  });
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [deletingUserId, setDeletingUserId] = useState(null);
 
   // Alert Broadcaster Form State
   const [alertForm, setAlertForm] = useState({
@@ -94,25 +129,101 @@ export const AdminPanel = ({ currentLang = 'en', onNavigateHome, currentUser, on
     loadAllAdminData();
   }, []);
 
+  // Re-fetch when switching to User Management or Agronomist Desk to ensure fresh live data
+  useEffect(() => {
+    if (activeTab === 'user_management') {
+      fetchAdminUsers().then((usrs) => {
+        if (Array.isArray(usrs) && usrs.length > 0) {
+          setUsersList(usrs);
+        }
+      }).catch((err) => console.warn('Could not refresh users:', err));
+    } else if (activeTab === 'agronomist_desk') {
+      fetchQueries().then((qrs) => {
+        if (Array.isArray(qrs) && qrs.length > 0) {
+          setConsultations(qrs);
+        }
+      }).catch((err) => console.warn('Could not refresh queries:', err));
+    }
+  }, [activeTab]);
+
   const loadAllAdminData = async () => {
     setLoading(true);
     try {
-      const [m, ai, bks, act, qrs] = await Promise.all([
+      const [m, ai, bks, act, qrs, usrs] = await Promise.all([
         fetchAdminMetrics(),
         fetchAiTelemetry(),
         fetchAllBookings(),
         fetchRecentActivity(),
         fetchQueries().catch(() => []),
+        fetchAdminUsers().catch(() => []),
       ]);
       setMetrics(m);
       setAiTelemetry(ai);
       setEquipmentBookings(bks);
       setRecentActivity(act);
       setConsultations(Array.isArray(qrs) ? qrs : []);
+      setUsersList(Array.isArray(usrs) ? usrs : []);
     } catch (err) {
       console.error('Error loading admin telemetry:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    if (!newUserForm.name || !newUserForm.email || !newUserForm.password) {
+      alert(isGu ? 'નામ, ઈમેઈલ અને પાસવર્ડ આવશ્યક છે' : 'Name, email, and password are required');
+      return;
+    }
+    setCreatingUser(true);
+    try {
+      const payload = {
+        ...newUserForm,
+        primaryCrops: newUserForm.primaryCrops ? newUserForm.primaryCrops.split(',').map((c) => c.trim()) : [],
+      };
+      await createAdminUser(payload);
+      showToast(isGu ? `યુઝર ${newUserForm.name} સફળતાપૂર્વક ઉમેરાયો` : `User ${newUserForm.name} created successfully`);
+      setShowCreateUserModal(false);
+      setNewUserForm({
+        name: '',
+        nameGu: '',
+        email: '',
+        password: 'Password@123',
+        role: 'farmer',
+        phone: '',
+        taluka: 'Padra',
+        village: '',
+        farmSizeAcres: 3,
+        primaryCrops: 'Cotton, Banana',
+        designation: '',
+        department: '',
+        badgeNumber: '',
+      });
+      const updatedUsers = await fetchAdminUsers();
+      setUsersList(updatedUsers);
+    } catch (err) {
+      alert(err.message || 'Failed to create user');
+    } finally {
+      setCreatingUser(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId, userName) => {
+    const confirmMsg = isGu
+      ? `શું તમે ખરેખર યુઝર "${userName}" ને ડિલીટ કરવા માંગો છો? આ ક્રિયા રદ કરી શકાશે નહીં.`
+      : `Are you sure you want to permanently delete user "${userName}"? This cannot be undone.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    setDeletingUserId(userId);
+    try {
+      await deleteAdminUser(userId);
+      showToast(isGu ? `યુઝર "${userName}" ડિલીટ થઈ ગયો` : `User "${userName}" deleted successfully`);
+      setUsersList((prev) => prev.filter((u) => u._id !== userId));
+    } catch (err) {
+      alert(err.message || 'Failed to delete user');
+    } finally {
+      setDeletingUserId(null);
     }
   };
 
@@ -477,6 +588,7 @@ export const AdminPanel = ({ currentLang = 'en', onNavigateHome, currentUser, on
               { id: 'alert_dispatcher', icon: Radio, en: 'Emergency Alerts', gu: 'હવામાન ચેતવણી' },
               { id: 'mandi_desk', icon: BarChart3, en: 'APMC Mandi Rates', gu: 'APMC મંડી ભાવ' },
               { id: 'agronomist_desk', icon: FileText, en: 'Agronomist Desk', gu: 'ખેડૂત સલાહ ડેસ્ક' },
+              { id: 'user_management', icon: Users, en: 'Users & Roles', gu: 'વપરાશકર્તાઓ & ભૂમિકાઓ' },
             ].map((tab) => {
               const TabIcon = tab.icon;
               const active = activeTab === tab.id;
@@ -1719,6 +1831,653 @@ export const AdminPanel = ({ currentLang = 'en', onNavigateHome, currentUser, on
                     >
                       {respondingToQuery ? 'Submitting...' : 'Dispatch Verified Advisory'}
                     </button>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 7: LIVE USER MANAGEMENT & ROLES */}
+        {/* ========================================================= */}
+        {activeTab === 'user_management' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Summary Statistics */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem' }}>
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#e8f5e9', color: '#1b4332', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Users size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1b4332', lineHeight: 1 }}>{usersList.length}</div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>
+                    {isGu ? 'કુલ નોંધાયેલા વપરાશકર્તાઓ' : 'Total Registered Users'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#d8f3dc', color: '#2d6a4f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#2d6a4f', lineHeight: 1 }}>
+                    {usersList.filter((u) => u.role === 'farmer').length}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>
+                    {isGu ? 'જિલ્લા ખેડૂતો (Farmers)' : 'Active District Farmers'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#e0f2fe', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Shield size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0369a1', lineHeight: 1 }}>
+                    {usersList.filter((u) => u.role === 'officer').length}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>
+                    {isGu ? 'કૃષિ અધિકારીઓ (Officers)' : 'Extension Officers'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#fef3c7', color: '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Key size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#b45309', lineHeight: 1 }}>
+                    {usersList.filter((u) => u.role === 'admin').length}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>
+                    {isGu ? 'સિસ્ટમ એડમિનિસ્ટ્રેટર' : 'Operations Admins'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter & Action Toolbar */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid var(--border-medium)',
+                borderRadius: '12px',
+                padding: '1rem 1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem',
+              }}
+            >
+              {/* Search input */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 280px', maxWidth: '400px', position: 'relative' }}>
+                <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '10px' }} />
+                <input
+                  type="text"
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  placeholder={isGu ? 'નામ, ઈમેઈલ કે તાલુકો શોધો...' : 'Search users by name, email, taluka...'}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px 8px 34px',
+                    borderRadius: '8px',
+                    border: '1.5px solid var(--border-medium)',
+                    fontSize: '0.84rem',
+                  }}
+                />
+              </div>
+
+              {/* Role Filter Pills */}
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                {[
+                  { id: 'all', labelEn: 'All', labelGu: 'બધા' },
+                  { id: 'farmer', labelEn: 'Farmers', labelGu: 'ખેડૂતો' },
+                  { id: 'officer', labelEn: 'Officers', labelGu: 'અધિકારીઓ' },
+                  { id: 'admin', labelEn: 'Admins', labelGu: 'એડમિન' },
+                ].map((rf) => (
+                  <button
+                    key={rf.id}
+                    type="button"
+                    onClick={() => setUserRoleFilter(rf.id)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      backgroundColor: userRoleFilter === rf.id ? 'var(--green-primary)' : 'var(--bg-card-soft)',
+                      color: userRoleFilter === rf.id ? '#ffffff' : 'var(--text-body)',
+                    }}
+                  >
+                    {isGu ? rf.labelGu : rf.labelEn}
+                  </button>
+                ))}
+              </div>
+
+              {/* Add User Button */}
+              <button
+                type="button"
+                id="admin-open-create-user-btn"
+                onClick={() => setShowCreateUserModal(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--green-primary)',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(45, 106, 79, 0.25)',
+                }}
+              >
+                <UserPlus size={16} />
+                <span>{isGu ? 'નવો યુઝર ઉમેરો' : 'Add New User'}</span>
+              </button>
+            </div>
+
+            {/* Users Data Grid */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid var(--border-medium)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+            >
+              <div
+                style={{
+                  padding: '1rem 1.25rem',
+                  borderBottom: '1px solid var(--border-medium)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: '#fafbfc',
+                }}
+              >
+                <div style={{ fontWeight: 800, color: 'var(--green-deep)', fontSize: '0.94rem' }}>
+                  {isGu ? 'જીવંત વપરાશકર્તા રજિસ્ટર (MongoDB Atlas)' : 'Live Registered Users Directory (MongoDB Atlas)'}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  {usersList.length} {isGu ? 'કુલ વપરાશકર્તાઓ' : 'total accounts'}
+                </div>
+              </div>
+
+              {/* Table */}
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid var(--border-medium)' }}>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>User & Identity</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>Role</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>Contact</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>Taluka / Region</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>Role Details</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569' }}>Registered</th>
+                      <th style={{ padding: '10px 14px', fontWeight: 700, color: '#475569', textAlign: 'center' }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usersList
+                      .filter((u) => {
+                        if (userRoleFilter !== 'all' && u.role !== userRoleFilter) return false;
+                        if (userSearch.trim()) {
+                          const q = userSearch.toLowerCase();
+                          const matchName = (u.name || '').toLowerCase().includes(q) || (u.nameGu || '').includes(q);
+                          const matchEmail = (u.email || '').toLowerCase().includes(q);
+                          const matchPhone = (u.phone || '').includes(q);
+                          const matchTaluka = (u.taluka || '').toLowerCase().includes(q);
+                          return matchName || matchEmail || matchPhone || matchTaluka;
+                        }
+                        return true;
+                      })
+                      .map((u) => {
+                        const isUserFarmer = u.role === 'farmer';
+                        const isUserOfficer = u.role === 'officer';
+                        const isUserAdmin = u.role === 'admin';
+                        const isSelf = currentUser?.email === u.email;
+
+                        return (
+                          <tr
+                            key={u._id}
+                            style={{
+                              borderBottom: '1px solid var(--border-soft)',
+                              transition: 'background-color 0.15s ease',
+                            }}
+                          >
+                            {/* User & Identity */}
+                            <td style={{ padding: '12px 14px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                                <div
+                                  style={{
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    backgroundColor: isUserAdmin ? '#fef3c7' : isUserOfficer ? '#e0f2fe' : '#d8f3dc',
+                                    color: isUserAdmin ? '#b45309' : isUserOfficer ? '#0369a1' : '#1b4332',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 800,
+                                    fontSize: '0.88rem',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div>
+                                  <div style={{ fontWeight: 700, color: '#0f291e' }}>
+                                    {u.name}
+                                    {isSelf && (
+                                      <span style={{ marginLeft: '6px', fontSize: '0.68rem', backgroundColor: '#e2e8f0', padding: '1px 5px', borderRadius: '4px', color: '#475569' }}>
+                                        (You)
+                                      </span>
+                                    )}
+                                  </div>
+                                  {u.nameGu && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{u.nameGu}</div>}
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Role Badge */}
+                            <td style={{ padding: '12px 14px' }}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.04em',
+                                  backgroundColor: isUserAdmin ? '#fef3c7' : isUserOfficer ? '#e0f2fe' : '#d8f3dc',
+                                  color: isUserAdmin ? '#92400e' : isUserOfficer ? '#0369a1' : '#1b4332',
+                                  border: `1px solid ${isUserAdmin ? '#fde68a' : isUserOfficer ? '#bae6fd' : '#b7e4c7'}`,
+                                }}
+                              >
+                                {isUserAdmin ? <Key size={11} /> : isUserOfficer ? <Shield size={11} /> : <Sparkles size={11} />}
+                                {u.role}
+                              </span>
+                            </td>
+
+                            {/* Contact */}
+                            <td style={{ padding: '12px 14px' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#1e293b' }}>
+                                  <Mail size={12} color="var(--text-muted)" />
+                                  <span>{u.email}</span>
+                                </div>
+                                {u.phone && (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+                                    <Phone size={12} color="var(--text-muted)" />
+                                    <span>{u.phone}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+
+                            {/* Taluka / Region */}
+                            <td style={{ padding: '12px 14px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#334155' }}>
+                                <MapPin size={13} color="var(--green-primary)" />
+                                <span>{u.taluka || 'Vadodara'}</span>
+                                {u.village && <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>({u.village})</span>}
+                              </div>
+                            </td>
+
+                            {/* Role Details */}
+                            <td style={{ padding: '12px 14px' }}>
+                              {isUserFarmer && (
+                                <div style={{ fontSize: '0.78rem', color: '#475569' }}>
+                                  <div>Farm: <strong>{u.farmSizeAcres || 0} Acres</strong></div>
+                                  <div style={{ color: 'var(--text-muted)' }}>
+                                    {Array.isArray(u.primaryCrops) && u.primaryCrops.length > 0 ? u.primaryCrops.join(', ') : 'Cotton, Castor'}
+                                  </div>
+                                </div>
+                              )}
+                              {isUserOfficer && (
+                                <div style={{ fontSize: '0.78rem', color: '#475569' }}>
+                                  <div><strong>{u.designation || 'Extension Officer'}</strong></div>
+                                  <div style={{ color: 'var(--text-muted)' }}>Badge: {u.badgeNumber || 'GJ-AGRI-BRD'}</div>
+                                </div>
+                              )}
+                              {isUserAdmin && (
+                                <div style={{ fontSize: '0.78rem', color: '#475569' }}>
+                                  <div><strong>Operations Control</strong></div>
+                                  <div style={{ color: 'var(--text-muted)' }}>Full System Privileges</div>
+                                </div>
+                              )}
+                            </td>
+
+                            {/* Registered Date */}
+                            <td style={{ padding: '12px 14px', color: 'var(--text-muted)', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Demo Seed'}
+                            </td>
+
+                            {/* Action: Delete */}
+                            <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                              <button
+                                type="button"
+                                title={isSelf ? 'Cannot delete your own active account' : 'Delete user from database'}
+                                disabled={isSelf || deletingUserId === u._id}
+                                onClick={() => handleDeleteUser(u._id, u.name)}
+                                style={{
+                                  padding: '6px 10px',
+                                  borderRadius: '6px',
+                                  border: '1px solid #fee2e2',
+                                  backgroundColor: isSelf ? '#f1f5f9' : '#fef2f2',
+                                  color: isSelf ? '#94a3b8' : '#dc2626',
+                                  cursor: isSelf ? 'not-allowed' : 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                <Trash2 size={13} />
+                                <span>{deletingUserId === u._id ? 'Deleting...' : 'Delete'}</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    {usersList.length === 0 && (
+                      <tr>
+                        <td colSpan={7} style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                          {isGu ? 'કોઈ વપરાશકર્તા મળ્યા નથી.' : 'No registered users found. Click "Add New User" to register one.'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* CREATE USER MODAL */}
+            {showCreateUserModal && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 1000,
+                  padding: '1rem',
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '16px',
+                    maxWidth: '560px',
+                    width: '100%',
+                    maxHeight: '90vh',
+                    overflowY: 'auto',
+                    padding: '1.75rem',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#e8f5e9', color: '#1b4332', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <UserPlus size={20} />
+                      </div>
+                      <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#0f291e' }}>
+                        {isGu ? 'નવો વપરાશકર્તા ઉમેરો' : 'Add New Platform User'}
+                      </h3>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateUserModal(false)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {/* Role Selector */}
+                    <div>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
+                        Role / ભૂમિકા *
+                      </label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                        {[
+                          { id: 'farmer', label: 'Farmer (ખેડૂત)' },
+                          { id: 'officer', label: 'Officer (અધિકારી)' },
+                          { id: 'admin', label: 'Admin (એડમિન)' },
+                        ].map((r) => (
+                          <button
+                            key={r.id}
+                            type="button"
+                            onClick={() => setNewUserForm({ ...newUserForm, role: r.id })}
+                            style={{
+                              padding: '8px 10px',
+                              borderRadius: '8px',
+                              border: newUserForm.role === r.id ? '2px solid var(--green-primary)' : '1px solid var(--border-medium)',
+                              backgroundColor: newUserForm.role === r.id ? '#e8f5e9' : '#ffffff',
+                              color: newUserForm.role === r.id ? '#1b4332' : 'var(--text-body)',
+                              fontWeight: 700,
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {r.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Name & Gujarati Name */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          Full Name (English) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newUserForm.name}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, name: e.target.value })}
+                          placeholder="e.g. Ramesh Patel"
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          નામ (ગુજરાતીમાં)
+                        </label>
+                        <input
+                          type="text"
+                          value={newUserForm.nameGu}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, nameGu: e.target.value })}
+                          placeholder="દા.ત. રમેશભાઈ પટેલ"
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Email & Password */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={newUserForm.email}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                          placeholder="farmer@haritayan.in"
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          Password *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newUserForm.password}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                          placeholder="Password@123"
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone & Taluka */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={newUserForm.phone}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, phone: e.target.value })}
+                          placeholder="+91 98250 12345"
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                          Taluka (તાલુકો)
+                        </label>
+                        <select
+                          value={newUserForm.taluka}
+                          onChange={(e) => setNewUserForm({ ...newUserForm, taluka: e.target.value })}
+                          style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1.5px solid var(--border-medium)', fontSize: '0.84rem' }}
+                        >
+                          <option value="Padra">Padra (પાદરા)</option>
+                          <option value="Karjan">Karjan (કરજણ)</option>
+                          <option value="Dabhoi">Dabhoi (ડભોઈ)</option>
+                          <option value="Savli">Savli (સાવલી)</option>
+                          <option value="Waghodia">Waghodia (વાઘોડિયા)</option>
+                          <option value="Shinor">Shinor (શિનોર)</option>
+                          <option value="Vadodara City">Vadodara City (વડોદરા શહેર)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Role-Specific Fields */}
+                    {newUserForm.role === 'farmer' && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', backgroundColor: '#f8fafc', padding: '10px', borderRadius: '8px' }}>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                            Farm Size (Acres)
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.5"
+                            value={newUserForm.farmSizeAcres}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, farmSizeAcres: e.target.value })}
+                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.82rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                            Primary Crops (Comma separated)
+                          </label>
+                          <input
+                            type="text"
+                            value={newUserForm.primaryCrops}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, primaryCrops: e.target.value })}
+                            placeholder="Cotton, Banana, Tomato"
+                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.82rem' }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {(newUserForm.role === 'officer' || newUserForm.role === 'admin') && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', backgroundColor: '#f8fafc', padding: '10px', borderRadius: '8px' }}>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                            Official Designation
+                          </label>
+                          <input
+                            type="text"
+                            value={newUserForm.designation}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, designation: e.target.value })}
+                            placeholder={newUserForm.role === 'admin' ? 'District Admin' : 'Taluka Extension Officer'}
+                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.82rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                            Badge / ID Number
+                          </label>
+                          <input
+                            type="text"
+                            value={newUserForm.badgeNumber}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, badgeNumber: e.target.value })}
+                            placeholder="GJ-AGRI-BRD-42"
+                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-medium)', fontSize: '0.82rem' }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowCreateUserModal(false)}
+                        style={{
+                          padding: '9px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-medium)',
+                          backgroundColor: '#ffffff',
+                          fontWeight: 700,
+                          fontSize: '0.84rem',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={creatingUser}
+                        style={{
+                          padding: '9px 20px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: 'var(--green-primary)',
+                          color: '#ffffff',
+                          fontWeight: 800,
+                          fontSize: '0.84rem',
+                          cursor: creatingUser ? 'not-allowed' : 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                        }}
+                      >
+                        {creatingUser ? <RefreshCw size={15} className="animate-spin" /> : <UserPlus size={15} />}
+                        <span>{creatingUser ? 'Creating...' : 'Register User'}</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>

@@ -4,7 +4,145 @@
  * IMD emergency alerts broadcast, APMC mandi override, and recent activity.
  */
 
-const API_BASE = '/api/admin';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE = `${API_BASE_URL}/admin`;
+
+export const FALLBACK_USERS = [
+  {
+    _id: 'usr-admin-1',
+    name: 'District Operations Administrator',
+    nameGu: 'જિલ્લા ઓપરેશન્સ સંચાલક',
+    email: 'admin.operations@haritayan.in',
+    role: 'admin',
+    phone: '+91 94299 88102',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Vadodara Urban',
+    talukaGu: 'વડોદરા શહેર',
+    village: 'District Collectorate Operations Center',
+    villageGu: 'કલેક્ટર કચેરી સંચાલન કક્ષ',
+    designation: 'Superintending Operations Officer & Admin',
+    designationGu: 'મુખ્ય જિલ્લા વહીવટી અધિકારી',
+    department: 'Revenue & Agriculture Department, Vadodara',
+    badgeNumber: 'GJ-VAD-ADM-001',
+    officeLocation: '2nd Floor, Operations Command, Collectorate, Vadodara',
+    farmSizeAcres: 0,
+    primaryCrops: [],
+    createdAt: '2026-10-20T08:00:00.000Z',
+  },
+  {
+    _id: 'usr-officer-1',
+    name: 'Dr. Hitesh Trivedi',
+    nameGu: 'ડૉ. હિતેશ ત્રિવેદી',
+    email: 'dr.hitesh.agri@haritayan.in',
+    role: 'officer',
+    phone: '+91 94270 91823',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Vadodara Urban',
+    talukaGu: 'વડોદરા શહેર',
+    village: 'Krishi Bhavan Compound',
+    villageGu: 'કૃષિ ભવન સંકુલ',
+    designation: 'Senior District Agricultural Officer & Plant Pathologist',
+    designationGu: 'વરિષ્ઠ જિલ્લા કૃષિ અધિકારી & પાક રોગ નિષ્ણાત',
+    department: 'Dept of Agriculture, Govt of Gujarat & AAU Extension',
+    badgeNumber: 'GJ-VAD-AGRI-042',
+    officeLocation: 'Room 204, Krishi Bhavan, Kothi Road, Vadodara - 390001',
+    farmSizeAcres: 0,
+    primaryCrops: [],
+    createdAt: '2026-10-20T08:30:00.000Z',
+  },
+  {
+    _id: 'usr-farmer-1',
+    name: 'Ramesh Patel',
+    nameGu: 'રમેશભાઈ પટેલ',
+    email: 'ramesh.patel@haritayan.in',
+    role: 'farmer',
+    phone: '+91 98250 84721',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Padra',
+    talukaGu: 'પાદરા',
+    village: 'Samiyala',
+    villageGu: 'સામિયાલા',
+    farmSizeAcres: 6.5,
+    primaryCrops: ['Cotton (કપાસ)', 'Pigeon Pea (તુવેર)', 'Padra Banana (કેળ)'],
+    primaryCropsGu: ['કપાસ', 'તુવેર', 'કેળ'],
+    createdAt: '2026-10-20T09:00:00.000Z',
+  },
+  {
+    _id: 'usr-farmer-2',
+    name: 'Ramesh Patel (Padra Field)',
+    nameGu: 'રમેશભાઈ પટેલ',
+    email: 'ramesh@haritayan.in',
+    role: 'farmer',
+    phone: '+91 98251 44021',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Padra',
+    talukaGu: 'પાદરા',
+    village: 'Samiyala',
+    villageGu: 'સામિયાલા',
+    farmSizeAcres: 5.0,
+    primaryCrops: ['Bt Cotton (બીટી કપાસ)', 'Banana (કેળ)'],
+    primaryCropsGu: ['કપાસ', 'કેળ'],
+    createdAt: '2026-10-26T06:54:28.467Z',
+  },
+  {
+    _id: 'usr-farmer-3',
+    name: 'Bhavesh Solanki',
+    nameGu: 'ભાવેશભાઈ સોલંકી',
+    email: 'bhavesh.solanki@haritayan.in',
+    role: 'farmer',
+    phone: '+91 94280 61942',
+    district: 'Anand',
+    districtGu: 'આણંદ',
+    taluka: 'Anklav',
+    talukaGu: 'આંકલાવ',
+    village: 'Asodar',
+    villageGu: 'અસોદર',
+    farmSizeAcres: 4.2,
+    primaryCrops: ['Tomato (ટામેટા)', 'Okra (ભીંડા)', 'Chili (મરચાં)'],
+    primaryCropsGu: ['ટામેટા', 'ભીંડા', 'મરચાં'],
+    createdAt: '2026-10-20T10:15:00.000Z',
+  },
+  {
+    _id: 'usr-farmer-4',
+    name: 'Kanubhai Bharwad',
+    nameGu: 'કાનુભાઈ ભરવાડ',
+    email: 'kanubhai.bharwad@haritayan.in',
+    role: 'farmer',
+    phone: '+91 97140 33819',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Karjan',
+    talukaGu: 'કરજણ',
+    village: 'Vemar',
+    villageGu: 'વેમર',
+    farmSizeAcres: 8.5,
+    primaryCrops: ['Castor (દિવેલા)', 'Cotton (કપાસ)', 'Wheat (ઘઉં)'],
+    primaryCropsGu: ['દિવેલા', 'કપાસ', 'ઘઉં'],
+    createdAt: '2026-10-20T11:00:00.000Z',
+  },
+  {
+    _id: 'usr-farmer-5',
+    name: 'Govindbhai Parmar',
+    nameGu: 'ગોવિંદભાઈ પરમાર',
+    email: 'govind.parmar@haritayan.in',
+    role: 'farmer',
+    phone: '+91 99092 34156',
+    district: 'Vadodara',
+    districtGu: 'વડોદરા',
+    taluka: 'Savli',
+    talukaGu: 'સાવલી',
+    village: 'Manjusar',
+    villageGu: 'મંજુસર',
+    farmSizeAcres: 11.0,
+    primaryCrops: ['Paddy (ડાંગર)', 'Wheat (ઘઉં)', 'Mustard (રાયડો)'],
+    primaryCropsGu: ['ડાંગર', 'ઘઉં', 'રાયડો'],
+    createdAt: '2026-10-29T10:25:31.089Z',
+  },
+];
 
 export async function fetchAdminMetrics() {
   try {
@@ -222,4 +360,52 @@ export async function fetchRecentActivity() {
       },
     ];
   }
+}
+
+/**
+ * Fetch all platform users for live administration
+ */
+export async function fetchAdminUsers() {
+  try {
+    const res = await fetch(`${API_BASE}/users`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (Array.isArray(data.users) && data.users.length > 0) {
+      return data.users;
+    }
+    return FALLBACK_USERS;
+  } catch (err) {
+    console.warn('[AdminService] Users fallback:', err.message);
+    return FALLBACK_USERS;
+  }
+}
+
+/**
+ * Create a new user from Admin Panel
+ */
+export async function createAdminUser(userData) {
+  const res = await fetch(`${API_BASE}/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+  return data;
+}
+
+/**
+ * Delete a user from Admin Panel
+ */
+export async function deleteAdminUser(userId) {
+  const res = await fetch(`${API_BASE}/users/${userId}`, {
+    method: 'DELETE',
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+  return data;
 }

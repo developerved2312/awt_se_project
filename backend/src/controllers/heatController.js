@@ -186,15 +186,23 @@ export const simulateTreeCooling = (req, res) => {
 
     const count = Math.max(1, Math.min(1000, Number(treeCount) || 50));
     
-    // Formula: ΔT = - (count / 10) * coolingEffectPer10Trees * 0.45, capped at -4.5°C
-    const baseDrop = ((count / 10) * (tree.coolingEffectPer10Trees || 0.8) * 0.35);
+    // Parse cooling effect number (handles "-1.4°C" strings or raw numbers)
+    const rawCooling = tree.coolingEffectPer10Trees;
+    const coolingPer10 = typeof rawCooling === 'number'
+      ? rawCooling
+      : Math.abs(parseFloat(String(rawCooling).replace(/[^\d.-]/g, ''))) || 0.8;
+
+    // Formula: ΔT = - (count / 10) * coolingPer10 * 0.35, capped at -4.5°C
+    const baseDrop = ((count / 10) * coolingPer10 * 0.35);
     const tempReductionC = Number(Math.min(4.5, baseDrop).toFixed(1));
     const projectedAmbientTemp = Number((ward.ambientTempC - tempReductionC).toFixed(1));
     const projectedSurfaceTemp = Number((ward.surfaceTempC - tempReductionC * 1.6).toFixed(1));
     
     // Canopy area calculation: π * r² * count
-    const shadeAreaM2 = Math.round(Math.PI * Math.pow(tree.shadeRadiusMeters, 2) * (count * 0.7));
-    const oxygenProductionKg = Number(((tree.oxygenKgDay || 3) * count).toFixed(1));
+    const shadeRadius = Number(tree.shadeRadiusMeters) || 10;
+    const shadeAreaM2 = Math.round(Math.PI * Math.pow(shadeRadius, 2) * (count * 0.7));
+    const oxygenPerDay = Number(tree.oxygenProductionKgDay || tree.oxygenKgDay || 3.0);
+    const oxygenProductionKg = Number((oxygenPerDay * count).toFixed(1));
 
     return res.status(200).json({
       success: true,

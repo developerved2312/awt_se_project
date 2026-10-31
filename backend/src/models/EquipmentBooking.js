@@ -5,7 +5,7 @@ const equipmentBookingSchema = new mongoose.Schema(
     equipmentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Equipment',
-      required: true,
+      required: false,
     },
     equipmentName: {
       type: String,
@@ -37,7 +37,7 @@ const equipmentBookingSchema = new mongoose.Schema(
     },
     bookingType: {
       type: String,
-      enum: ['rental', 'subsidy_guidance', 'purchase_inquiry'],
+      enum: ['rental', 'subsidy_guidance', 'purchase_inquiry', 'custom_request'],
       default: 'rental',
     },
     rentalDurationHours: {

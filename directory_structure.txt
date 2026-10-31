@@ -1,91 +1,118 @@
 HaritAyan/
+├── .env.example                          # Root environment variables template
+├── .gitignore                             # Git exclusions for dependencies and sensitive files
+├── README.md                              # Project documentation and setup guide
+├── directory_structure.txt                # Workspace file registry
+├── package.json                           # Root scripts and workspace metadata
+├── HaritAyan_Modules_Working_Architecture.pdf # Comprehensive technical module architecture PDF
 │
-├── README.md
-├── .gitignore
-├── .env.example
-├── package.json
-├── directory_structure.txt
-├── chatlogs.txt
-│
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── index.html
+├── frontend/                              # Client-side React 18 + Vite 6 web application
+│   ├── .gitignore
+│   ├── index.html                         # HTML5 root template with Google Fonts
+│   ├── package.json                       # Frontend dependencies (React, Lucide, TensorFlow.js)
+│   ├── vite.config.js                     # Vite build and dev configuration
 │   │
-│   ├── public/
-│   │   ├── images/
-│   │   │   ├── hero-banner.jpg
-│   │   │   ├── leaf-scanner.jpg
-│   │   │   └── vadodara-heatmap.jpg
-│   │   ├── icons/
-│   │   └── favicon.svg
+│   ├── public/                            # Static visual and branding assets
+│   │   ├── favicon.svg                    # Sprout brand emblem
+│   │   └── images/                        # High-resolution regional images
+│   │       ├── hero-banner.jpg            # Agricultural showcase banner
+│   │       ├── leaf-scanner.jpg           # Diagnostic leaf sample illustration
+│   │       └── vadodara-heatmap.jpg       # Vadodara thermal grid imagery
 │   │
-│   └── src/
-│       ├── assets/
-│       │   ├── images/
-│       │   ├── icons/
-│       │   └── logos/
+│   └── src/                               # Application source code
+│       ├── main.jsx                       # React DOM entry point
+│       ├── App.jsx                        # Top-level coordinator: routing, language, and user session
+│       ├── index.css                      # Complete Light Green & Dry Leaf design system & tokens
 │       │
-│       ├── components/
-│       │   ├── Navbar.jsx
-│       │   ├── Footer.jsx
-│       │   ├── LanguageSelector.jsx
-│       │   └── AlertCard.jsx
+│       ├── components/                    # Reusable modular UI components
+│       │   ├── Navbar.jsx                 # Dynamic responsive header with role-adaptive desk & language toggle
+│       │   ├── Footer.jsx                 # Institutional footer with regional hubs & navigation
+│       │   ├── AlertCard.jsx              # Weather & microclimatic notification banner
+│       │   ├── AuthModal.jsx              # 1-Click live demo personas & account registration modal
+│       │   ├── Chatbot.jsx                # HaritAyan Sahayak bilingual agrarian assistant
+│       │   ├── LanguageSelector.jsx       # English / Gujarati language toggle
+│       │   ├── TensorFlowLabModal.jsx     # In-browser AI hardware benchmark & telemetry lab
+│       │   ├── TreeCanopy3D.jsx           # Interactive 3D tree canopy cooling simulation widget
+│       │   └── UrbanHeat2DMap.jsx         # Interactive 2D thermal polygon heat overlay map
 │       │
-│       ├── pages/
-│       │   ├── Home.jsx
-│       │   └── PlantScanner.jsx
+│       ├── pages/                         # Core platform pages
+│       │   ├── Home.jsx                   # Platform overview, mission, feature cards & regional FAQs
+│       │   ├── PlantScanner.jsx           # Dual-Engine crop disease scanner with camera & remedy guide
+│       │   ├── HeatMap.jsx                # Vadodara ward urban heat observatory & canopy cooling simulator
+│       │   ├── MandiPrices.jsx            # Real-time APMC mandi commodity rates & price trends
+│       │   ├── Weather.jsx                # Agro-weather observatory, 7-day forecast & IMD alerts
+│       │   ├── IrrigationTimer.jsx        # Smart root-zone watering timer & MGVCL power roster
+│       │   ├── Marketplace.jsx            # Krishi tools rental portal with i-Khedut subsidy calculator
+│       │   ├── AdminPanel.jsx             # District Admin Operations & AI telemetry console
+│       │   ├── LoginPage.jsx              # Dedicated login & role-based signup page (Farmer / Admin / Officer)
+│       │   └── UserProfile.jsx            # User profile, query desk & agricultural officer response workspace
 │       │
-│       ├── services/
-│       │   ├── translationService.js
-│       │   └── scanService.js
+│       ├── services/                      # Client API & offline business logic services
+│       │   ├── adminService.js            # Operations telemetry & emergency alert API client
+│       │   ├── authService.js             # Session management, JWT storage, and demo persona switcher
+│       │   ├── equipmentService.js        # Machinery catalog and rental booking API client
+│       │   ├── mandiService.js            # APMC price fetcher with offline regional fallbacks
+│       │   ├── queryService.js            # Farmer-officer query communication API client
+│       │   ├── scanService.js             # Leaf diagnostic upload & history API client
+│       │   ├── tfjsModelService.js        # Client-side offline TensorFlow.js inference & benchmark engine
+│       │   └── translationService.js      # English & Gujarati translation dictionaries
 │       │
-│       ├── utils/
-│       │   ├── constants.js
-│       │   └── formatters.js
-│       │
-│       ├── App.jsx
-│       ├── main.jsx
-│       └── index.css
+│       └── utils/                         # Formatting & constants helpers
+│           ├── constants.js               # Ward coordinates, crop lists, and default thresholds
+│           └── formatters.js              # Currency, date, and unit formatters
 │
-│
-├── backend/
-│   ├── package.json
-│   ├── .env.example
-│   │
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── db.js
-│   │   ├── controllers/
-│   │   │   └── scanController.js
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   │   └── Scan.js
-│   │   ├── routes/
-│   │   │   └── scanRoutes.js
-│   │   ├── services/
-│   │   │   └── geminiService.js
-│   │   ├── utils/
-│   │   ├── uploads/
-│   │   └── server.js
-│   │
-│   └── tests/
-│
-│
-├── ai/
-│   ├── gemini/
-│   ├── recommendations/
-│   └── vision/
-│
-│
-├── data/
-│   ├── processed/
-│   ├── raw/
-│   └── sample/
-│
-│
-├── scripts/
-│
-├── docs/
-│
-└── deployment/
+└── backend/                               # Server-side REST API application (Node.js + Express)
+    ├── .env                               # Local backend environment credentials
+    ├── .env.example                       # Backend environment template
+    ├── package.json                       # Backend dependencies (Express, Mongoose, Multer, JWT, etc.)
+    │
+    ├── public/                            # Static asset directory
+    │   └── uploads/                       # Leaf diagnostic photo uploads & crop sample media
+    │
+    └── src/                               # Backend server source code
+        ├── server.js                      # Express app initialization, middleware, routes, and MongoDB Atlas connection
+        │
+        ├── config/                        # Database & runtime configuration
+        │   └── db.js                      # Mongoose connection to MongoDB Atlas with auto-retry
+        │
+        ├── controllers/                   # REST controller business logic
+        │   ├── authController.js          # User registration (Farmer, Admin, Officer), login, and demo switcher
+        │   ├── scanController.js          # Leaf image upload handler & Gemini AI multimodal diagnostics
+        │   ├── mandiController.js         # APMC market rates query, caching, and trend calculation
+        │   ├── queryController.js         # Farmer query creation & officer resolution workflow
+        │   └── heatController.js          # Urban heat thermal calculations & canopy cooling simulation
+        │
+        ├── middleware/                    # HTTP interceptors & security
+        │   ├── authMiddleware.js          # JWT token verification and role-based access gating
+        │   └── uploadMiddleware.js        # Multer disk storage and file filter for image uploads
+        │
+        ├── models/                        # Mongoose NoSQL document schemas
+        │   ├── User.js                    # User account (Farmer, Officer, Admin) with bcrypt hashing
+        │   ├── Scan.js                    # Diagnostic scan records, symptoms, remedies, and confidence
+        │   ├── MandiPrice.js              # APMC commodity prices, arrivals, and 24h market trends
+        │   ├── Equipment.js               # Agricultural machinery specifications & daily rental rates
+        │   ├── EquipmentBooking.js        # Equipment rental reservations with i-Khedut subsidy calculations
+        │   ├── Query.js                   # Farmer questions and agricultural officer responses
+        │   ├── IrrigationLog.js           # Water conservation sessions and pump runtime logs
+        │   └── WeatherAlert.js            # IMD Vadodara weather advisories and emergency notices
+        │
+        ├── routes/                        # Express API route endpoints
+        │   ├── authRoutes.js              # /api/auth (register, login, demo-login, me)
+        │   ├── scanRoutes.js              # /api/scan (upload, diagnose, history)
+        │   ├── mandiRoutes.js             # /api/mandi (market rates, trends, updates)
+        │   ├── queryRoutes.js             # /api/queries (farmer queries, officer replies)
+        │   ├── weatherRoutes.js           # /api/weather (real-time agro-weather & alerts)
+        │   ├── heatRoutes.js              # /api/heat (ward temperatures, cooling simulator)
+        │   ├── irrigationRoutes.js        # /api/irrigation (moisture calculations & logs)
+        │   ├── equipmentRoutes.js         # /api/equipment (catalog, bookings, subsidy calculator)
+        │   └── adminRoutes.js             # /api/admin (telemetry ping, AI ledger, alert dispatcher)
+        │
+        ├── services/                      # External service integrations
+        │   └── geminiService.js           # Google Gemini 3.8 Flash multimodal vision prompt engineering
+        │
+        └── utils/                         # Seed data and cryptographic utilities
+            ├── generateToken.js           # JWT token generation helper
+            ├── mandiData.js               # Regional Vadodara APMC commodity dataset
+            ├── seedData.js                # Database seeder for demo personas and sample queries
+            ├── seedMandiData.js           # Database seeder for live mandi prices
+            └── testAuth.js                # Authentication testing utility

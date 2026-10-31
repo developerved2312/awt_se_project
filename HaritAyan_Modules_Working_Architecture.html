@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HaritAyan - Technical Module Working Architecture & Data Flow</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm 10mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1a2a22;
+      background-color: #ffffff;
+      line-height: 1.48;
+      font-size: 8.8pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Outfit', sans-serif;
+      color: #0f291e;
+      margin-top: 0;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 19pt;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 12.5pt;
+      font-weight: 700;
+      border-bottom: 2px solid #2d6a4f;
+      padding-bottom: 3.5px;
+      margin-top: 11pt;
+      margin-bottom: 7pt;
+      color: #1b4332;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #2d6a4f;
+      margin-top: 7pt;
+      margin-bottom: 3pt;
+    }
+
+    p {
+      margin: 0 0 5pt 0;
+      text-align: justify;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    .avoid-break {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Cover Banner */
+    .cover-banner {
+      background: linear-gradient(135deg, #092017 0%, #1b4332 55%, #2d6a4f 100%);
+      color: #ffffff;
+      padding: 16pt 16pt 14pt 16pt;
+      border-radius: 10px;
+      margin-bottom: 10pt;
+      border-left: 6px solid #52b788;
+      box-shadow: 0 3px 10px rgba(9, 32, 23, 0.12);
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(216, 243, 220, 0.22);
+      border: 1px solid rgba(216, 243, 220, 0.45);
+      color: #d8f3dc;
+      font-size: 7.2pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2pt 7pt;
+      border-radius: 5px;
+      margin-bottom: 5pt;
+    }
+
+    .cover-title {
+      color: #ffffff;
+      font-size: 17.5pt;
+      font-weight: 800;
+      margin-bottom: 2pt;
+      letter-spacing: -0.02em;
+    }
+
+    .cover-subtitle {
+      color: #d8f3dc;
+      font-size: 9.2pt;
+      font-weight: 500;
+      margin-bottom: 8pt;
+      line-height: 1.35;
+    }
+
+    .cover-meta {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      padding-top: 5pt;
+      font-size: 7.6pt;
+      color: #d8f3dc;
+      gap: 4pt;
+    }
+
+    /* Intro Summary Card */
+    .intro-card {
+      background: #f4f9f4;
+      border: 1px solid #d8f3dc;
+      border-radius: 8px;
+      padding: 7pt 9pt;
+      margin-bottom: 8pt;
+    }
+
+    .intro-pipeline {
+      text-align: center;
+      font-weight: 700;
+      color: #1b4332;
+      background: #eaf5ec;
+      padding: 5pt;
+      border-radius: 6px;
+      border: 1px solid #95d5b2;
+      font-size: 8pt;
+      margin-top: 4pt;
+    }
+
+    /* Module Card */
+    .module-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+      padding: 8pt 10pt;
+      margin-bottom: 9pt;
+      background: #ffffff;
+      border-left: 4.5px solid #2d6a4f;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #edf2f7;
+      padding-bottom: 3.5pt;
+      margin-bottom: 5pt;
+    }
+
+    .module-title {
+      font-size: 10.8pt;
+      font-weight: 800;
+      color: #1b4332;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .module-tag {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+      font-size: 7pt;
+      font-weight: 700;
+      padding: 1.5pt 5.5pt;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* Simple Explainer Box */
+    .simple-summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 4.5pt 7pt;
+      margin-bottom: 5pt;
+      font-size: 8.3pt;
+      color: #14532d;
+      line-height: 1.4;
+    }
+
+    .simple-summary-title {
+      font-weight: 700;
+      color: #166534;
+      font-size: 7.6pt;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2pt;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 4-Box Technical Grid */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5pt;
+      margin-top: 4pt;
+      margin-bottom: 5pt;
+    }
+
+    .tech-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 4.5pt 6.5pt;
+      background: #fafbfc;
+    }
+
+    .tech-box-title {
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #2d6a4f;
+      margin-bottom: 2.5pt;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 1.5pt;
+    }
+
+    .tech-box-content {
+      font-size: 8pt;
+      color: #1e293b;
+      line-height: 1.38;
+    }
+
+    .tech-box-content ul {
+      margin: 0;
+      padding-left: 10pt;
+    }
+
+    .tech-box-content li {
+      margin-bottom: 1.5pt;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.3pt;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.5pt 3pt;
+      border-radius: 3pt;
+      border: 1px solid #e2e8f0;
+      word-break: break-word;
+    }
+
+    /* Data Flow Sequence Box */
+    .flow-box {
+      background: #fdfefe;
+      border: 1px solid #cbd5e1;
+      border-left: 3.5px solid #c47335;
+      border-radius: 5px;
+      padding: 4.5pt 7pt;
+      margin-top: 4pt;
+      font-size: 7.8pt;
+      line-height: 1.38;
+    }
+
+    .flow-title {
+      font-weight: 700;
+      color: #9a3412;
+      margin-bottom: 3pt;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 4.5pt;
+      margin-bottom: 2pt;
+    }
+
+    .flow-step-num {
+      background: #2d6a4f;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 6.5pt;
+      min-width: 11pt;
+      height: 11pt;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1pt;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5pt;
+      margin-bottom: 7pt;
+      font-size: 7.6pt;
+    }
+
+    th,
+    td {
+      padding: 3.5pt 5pt;
+      border: 1px solid #cbd5e1;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.32;
+    }
+
+    th {
+      background: #1b4332;
+      color: #ffffff;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      font-size: 7.6pt;
+      letter-spacing: 0.02em;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* Badges */
+    .badge-cloud {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      font-weight: 700;
+      padding: 1pt 3.5pt;
+      border-radius: 3pt;
+      font-size: 6.6pt;
+    }
+
+    .badge-edge {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      font-weight: 700;
+      padding: 1pt 3.5pt;
+      border-radius: 3pt;
+      font-size: 6.6pt;
+    }
+
+    .badge-db {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      font-weight: 700;
+      padding: 1pt 3.5pt;
+      border-radius: 3pt;
+      font-size: 6.6pt;
+    }
+
+    .badge-api {
+      background: #f3e8ff;
+      color: #6b21a8;
+      border: 1px solid #e9d5ff;
+      font-weight: 700;
+      padding: 1pt 3.5pt;
+      border-radius: 3pt;
+      font-size: 6.6pt;
+    }
+
+    .footer-stamp {
+      text-align: center;
+      font-size: 7.2pt;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 5pt;
+      margin-top: 9pt;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        color: #000000;
+        font-size: 8.4pt;
+      }
+
+      .module-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        border-left: 4.5pt solid #2d6a4f !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 8pt !important;
+        padding: 7pt 9pt !important;
+      }
+
+      table {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .avoid-break {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      .cover-banner {
+        box-shadow: none !important;
+        padding: 13pt 15pt !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- COVER / TITLE BANNER -->
+  <div class="cover-banner">
+    <div class="cover-badge">Academic Engineering Specification • Advanced Web Technologies (AWT)</div>
+    <div class="cover-title">HaritAyan</div>
+    <div class="cover-subtitle">Complete Module Working Architecture, Data Ingestion & End-to-End Pipeline<br>
+      <i>A Clear, Plain-Language Technical Guide Explaining Where Data Originates, Backend Route Execution, MongoDB
+        Atlas Storage & Frontend Presentation</i>
+    </div>
+    <div class="cover-meta">
+      <span><strong>Geographic Scope:</strong> Vadodara District, Gujarat (7 Talukas)</span>
+      <span><strong>Stack:</strong> React 18 + Node.js / Express + MongoDB Atlas</span>
+      <span><strong>AI Systems:</strong> Dual-Engine (In-Browser TF.js + Cloud Gemini 1.5 Pro)</span>
+      <span><strong>Languages:</strong> Bilingual English & Gujarati (ગુજરાતી)</span>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE ARCHITECTURAL SUMMARY -->
+  <div class="avoid-break">
+    <h2>1. System Architecture & Plain-Language Overview</h2>
+    <div class="intro-card">
+      <p>
+        <strong>HaritAyan</strong> is an all-in-one smart agriculture and city cooling platform built specifically for
+        farmers and urban planners in <strong>Vadodara District, Gujarat</strong>. Instead of forcing farmers to
+        navigate complicated, separate government portals, HaritAyan connects everything into a single, straightforward
+        system:
+      </p>
+      <ul style="margin: 0; padding-left: 14pt; font-size: 8.4pt; color: #1a2a22;">
+        <li><strong>Farming Tools:</strong> Leaf disease scanner with organic remedies, live APMC mandi market crop
+          prices, smart irrigation timers timed to electricity hours, weather alerts, and 50% subsidized machinery
+          rentals.</li>
+        <li><strong>Urban Environment Tools:</strong> Interactive city maps showing neighborhood heat hotspots and 3D
+          simulations showing how planting native shade trees cools down streets.</li>
+      </ul>
+      <div class="intro-pipeline">
+        📥 User Inputs & Sensors &nbsp;➔&nbsp; ⚙️ Node.js / Express Controllers &nbsp;➔&nbsp; 💾 MongoDB Atlas Cloud
+        &nbsp;➔&nbsp; 🖥️ React 18 High-Contrast UI
+      </div>
+    </div>
+  </div>
+
+  <!-- MASTER DATA TOPOLOGY MATRIX -->
+  <div class="avoid-break">
+    <h2>2. Master Data Topology Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 17%;">Module Name</th>
+          <th style="width: 21%;">📥 Where Data Comes From</th>
+          <th style="width: 21%;">⚙️ Backend Processing Files</th>
+          <th style="width: 21%;">💾 Where Data is Stored</th>
+          <th style="width: 20%;">🖥️ Frontend UI Display</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Plant Disease Vision Scanner</strong></td>
+          <td>Farmer leaf photo (camera/upload), offline MobileNetV2 edge AI, Google Gemini 1.5 Pro API</td>
+          <td>
+            <code>routes/scanRoutes.js</code><br><code>controllers/scanController.js</code><br><code>services/geminiService.js</code>
+          </td>
+          <td>MongoDB Atlas <code>scans</code> collection (Scan model) + browser <code>localStorage</code></td>
+          <td><code>pages/PlantScanner.jsx</code><br>Confidence meter, disease cards, organic treatments in EN/GU</td>
+        </tr>
+        <tr>
+          <td><strong>2. Urban Heat & Canopy Simulator</strong></td>
+          <td>Satellite heat readings for 8 Vadodara wards, Open-Meteo live air temperature, user tree sliders</td>
+          <td><code>routes/heatRoutes.js</code><br><code>controllers/heatController.js</code> (cooling formulas)</td>
+          <td>In-memory thermal registry in controller + MongoDB <code>systemmetrics</code></td>
+          <td><code>pages/HeatMap.jsx</code><br><code>UrbanHeat2DMap.jsx</code>
+            (Leaflet)<br><code>TreeCanopy3D.jsx</code> (Three.js)</td>
+        </tr>
+        <tr>
+          <td><strong>3. Real-Time APMC Mandi Engine</strong></td>
+          <td>Government Agmarknet portal, Sayajigunj, Padra, Karjan, Dabhoi, Savli trade slips, admin updates</td>
+          <td>
+            <code>routes/mandiRoutes.js</code><br><code>controllers/mandiController.js</code><br><code>utils/seedMandiData.js</code>
+          </td>
+          <td>MongoDB Atlas <code>mandiprices</code> collection (MandiPrice model)</td>
+          <td><code>pages/MandiPrices.jsx</code> (and Mandi dashboard)<br>Live price ticker, trend badges, ₹/Qtl & ₹/Man
+          </td>
+        </tr>
+        <tr>
+          <td><strong>4. Smart Irrigation & Power Timer</strong></td>
+          <td>Crop water needs ($K_c$), Goradu Sandy Loam vs Black soil moisture rates, MGVCL 3-phase power roster</td>
+          <td>
+            <code>routes/irrigationRoutes.js</code><br><code>controllers/irrigationController.js</code><br><code>models/IrrigationLog.js</code>
+          </td>
+          <td>MongoDB Atlas <code>irrigationlogs</code> collection (IrrigationLog model)</td>
+          <td><code>pages/IrrigationTimer.jsx</code><br>Circular countdown timer, pump chime, water saved counter</td>
+        </tr>
+        <tr>
+          <td><strong>5. Agro-Weather & IMD Alerts</strong></td>
+          <td>Open-Meteo API (22.3072°N, 73.1812°E), IMD Ahmedabad radar alerts, admin emergency broadcast</td>
+          <td>
+            <code>routes/weatherRoutes.js</code><br><code>controllers/weatherController.js</code><br><code>models/WeatherAlert.js</code>
+          </td>
+          <td>MongoDB Atlas <code>weatheralerts</code> collection (WeatherAlert model)</td>
+          <td><code>pages/Weather.jsx</code><br><code>components/AlertCard.jsx</code><br>7-day hourly curve, pesticide
+            spray advice</td>
+        </tr>
+        <tr>
+          <td><strong>6. Krishi Tools Marketplace</strong></td>
+          <td>Vadodara 7-Taluka Custom Hiring Centers (CHCs), Gujarat i-Khedut 40-60% state subsidy rates</td>
+          <td>
+            <code>routes/equipmentRoutes.js</code><br><code>controllers/equipmentController.js</code><br><code>models/Equipment.js</code>
+          </td>
+          <td>MongoDB Atlas <code>equipments</code> & <code>equipmentbookings</code> collections</td>
+          <td><code>pages/Marketplace.jsx</code><br>6 machinery cards, booking modal with instant 50% subsidy cut</td>
+        </tr>
+        <tr>
+          <td><strong>7. District Admin Operations Hub</strong></td>
+          <td>MongoDB Atlas live cloud ping latency, Node.js memory heap usage, dual-engine AI token ledger</td>
+          <td>
+            <code>routes/adminRoutes.js</code><br><code>controllers/adminController.js</code><br><code>server.js</code>
+          </td>
+          <td>Live memory telemetry buffers + MongoDB collections for alerts and prices</td>
+          <td><code>pages/AdminPanel.jsx</code><br>Live latency ping card, RAM chart, AI cost ledger, alert broadcast
+          </td>
+        </tr>
+        <tr>
+          <td><strong>8. Multi-Role Auth & User Desks</strong></td>
+          <td>Signup role selector (Farmer, Officer, Admin), 1-click demo switcher, farmer agronomic questions</td>
+          <td>
+            <code>routes/authRoutes.js</code><br><code>routes/queryRoutes.js</code><br><code>middleware/authMiddleware.js</code>
+          </td>
+          <td>MongoDB Atlas <code>users</code> & <code>queries</code> collections (User & Query models, bcrypt hash)
+          </td>
+          <td><code>pages/LoginPage.jsx</code><br><code>pages/UserProfile.jsx</code><br>Role-based Farmer Desk and
+            Officer Workspace</td>
+        </tr>
+        <tr>
+          <td><strong>9. HaritAyan Sahayak Chatbot</strong></td>
+          <td>Bilingual agricultural rules, Gujarati botanical vocabulary, instant navigation shortcuts</td>
+          <td>Client-side keyword matcher and intent parser in React bundle</td>
+          <td>Browser React component state + <code>sessionStorage</code> for chat history</td>
+          <td><code>components/Chatbot.jsx</code><br>Floating leaf widget, quick query chips, direct tool buttons</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- MODULE 1 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">🌿 Module 1: Plant Disease Vision Scanner (Dual-Engine AI)</div>
+      <span class="module-tag">AI Computer Vision • Edge & Cloud</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      A farmer takes a photo of an unhealthy crop leaf (Cotton, Castor, Pigeon Pea/Tuver, Tomato, or Okra). The system
+      immediately identifies the disease (fungal spots, blight, virus, or insect damage) and provides simple, low-cost
+      organic remedies (such as Neem oil or sour buttermilk spray) in both English and Gujarati. It works completely
+      offline using an in-browser edge AI model, and automatically connects to Google Gemini 1.5 Pro AI when internet is
+      available for in-depth agronomic advice.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Leaf Photo:</strong> Captured directly via smartphone camera or uploaded from gallery (JPEG/PNG
+              up to 10MB).</li>
+            <li><strong>Target Crop:</strong> Farmer selects crop name (Cotton, Castor, Pigeon Pea, Tomato, Okra).</li>
+            <li><strong>Offline Edge AI:</strong> MobileNetV2 neural network runs inside the browser with TensorFlow.js
+              (zero internet required).</li>
+            <li><strong>Cloud AI:</strong> Image buffer sent to Google Gemini 1.5 Pro API when online.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/scanRoutes.js</code>: Maps <code>POST /api/scan</code> and
+              <code>GET /api/scan/history</code>.</li>
+            <li><code>backend/src/middleware/uploadMiddleware.js</code>: Multer middleware verifies file type and
+              buffers the image.</li>
+            <li><code>backend/src/controllers/scanController.js</code>: Calls Gemini API or offline rules to classify
+              the disease and extract treatments.</li>
+            <li><code>backend/src/services/geminiService.js</code>: Prompts Gemini to respond in clean JSON with English
+              and Gujarati remedies.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collection:</strong> <code>scans</code></li>
+            <li><strong>Mongoose Model:</strong> <code>backend/src/models/Scan.js</code></li>
+            <li><strong>Stored Schema Fields:</strong> <code>userId</code>, <code>crop</code>, <code>disease</code>,
+              <code>confidence</code>, <code>severity</code>, <code>symptoms</code> (EN/GU),
+              <code>organicRemedies</code> (EN/GU), <code>imageUrl</code>, <code>diagnosedAt</code>,
+              <code>inferenceEngine</code>.</li>
+            <li><strong>Offline Fallback:</strong> Scans saved in browser
+              <code>localStorage('haritayan_scan_history')</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/PlantScanner.jsx</code>: Upload box, camera viewfinder, engine toggle switch
+              (Offline Edge vs Cloud Gemini), circular confidence gauge.</li>
+            <li>Diagnosis Card: Shows disease name in English & Gujarati, severity badge (Low/Medium/High), and natural
+              step-by-step remedies.</li>
+            <li><code>frontend/src/services/tfjsModelService.js</code>: Runs MobileNet neural weights directly in the
+              client browser.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer snaps a photo of a spotted cotton leaf on
+          <code>PlantScanner.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>If offline, <code>tfjsModelService.js</code>
+          classifies it in-browser; if online, <code>scanService.js</code> sends it to
+          <code>POST /api/scan</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span><code>scanController.js</code> sends the image
+          to Gemini 1.5 Pro, receiving structured disease data and remedies in English and Gujarati.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>The result is saved to MongoDB Atlas collection
+          <code>scans</code> using <code>Scan.create()</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>The screen displays the disease name
+          ("Cercospora Leaf Spot / પાનના ટપકાનો રોગ"), 94% confidence, and instructions to spray 5% Neem oil.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">🌳 Module 2: Urban Heat & 3D Tree Canopy Simulator</div>
+      <span class="module-tag">Thermal Simulation & Three.js 3D</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      Shows summer surface temperatures across 8 city wards in Vadodara (Sayajigunj, Alkapuri, Makarpura, Manjalpur,
+      Karelibaug, Gotri, Gorwa, Waghodia Road). Citizens and municipal planners can drag a tree-planting slider to
+      simulate planting native shade trees (Neem, Peepal, Banyan, Jamun) and instantly see the simulated cooling effect
+      (up to 3.4°C cooler) on both an interactive 2D map and an animated 3D tree canopy view.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Satellite Heat Baselines:</strong> Measured surface heat baselines for Vadodara municipal wards
+              (calibrated from Landsat thermal sensors).</li>
+            <li><strong>Live Weather:</strong> Real-time air temperature, humidity, and solar radiation from the
+              Open-Meteo API.</li>
+            <li><strong>Tree Cooling Multipliers:</strong> Natural cooling power (evapotranspiration and shade index) of
+              native Gujarat trees.</li>
+            <li><strong>User Inputs:</strong> Ward selector, tree slider (0 to 50,000 trees), and species dropdown.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/heatRoutes.js</code>: Exposes endpoints <code>GET /api/heat/wards</code> and
+              <code>POST /api/heat/simulate</code>.</li>
+            <li><code>backend/src/controllers/heatController.js</code>: Runs cooling math:
+              <code>Cooling ΔT = -α · ln(1 + treeCount / 5000) · speciesFactor</code>.</li>
+            <li>Calculates ward heat vulnerability levels: Low (Green), Moderate (Yellow), High (Orange), Severe (Red).
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Ward Master Data:</strong> Ward coordinates, baseline temperatures, and green vegetation index
+              (NDVI) stored in <code>heatController.js</code>.</li>
+            <li><strong>System Telemetry:</strong> Cached cooling observations recorded in MongoDB Atlas
+              <code>systemmetrics</code>.</li>
+            <li><strong>Browser State:</strong> Active ward selection and simulated temperature kept in React component
+              state.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/HeatMap.jsx</code>: Ward selector, tree count slider, temperature dial, and
+              cooling delta badge.</li>
+            <li><code>frontend/src/components/UrbanHeat2DMap.jsx</code>: Interactive Leaflet map displaying color-coded
+              temperature polygons over Vadodara.</li>
+            <li><code>frontend/src/components/TreeCanopy3D.jsx</code>: WebGL 3D view using Three.js rendering trees,
+              animated sun rays, and cooling air currents.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>User selects "Makarpura Industrial Area" (hot
+          baseline of 41.2°C) on <code>HeatMap.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>User slides the tree control to simulate
+          planting 12,500 Neem trees.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span><code>heatController.js</code> calculates a
+          -2.4°C cooling benefit, dropping the estimated surface temperature to 38.8°C.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>The 2D Leaflet map shifts the ward boundary
+          color from bright red to warm amber-orange.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>The 3D canvas populates lush green trees and
+          casts animated shadows over the neighborhood model.</span></div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- MODULE 3 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">📈 Module 3: Real-Time APMC Mandi Market Price Engine</div>
+      <span class="module-tag">Agricultural Market Price Intelligence</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      Displays today's live crop prices (Cotton, Castor, Pigeon Pea/Tuver, Wheat, Tomato, Potato) across 5 major
+      wholesale market yards (Mandis) in Vadodara: Sayajigunj, Padra, Karjan, Dabhoi, and Savli. Farmers can compare
+      minimum, maximum, and average modal rates in standard metric (₹/Quintal) and traditional Gujarati units (₹/20kg
+      Man), check 24-hour price trends (Up/Down/Stable), and sell their crops where profits are highest.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Official Mandi Portals:</strong> Price bulletins from Government Mandi data (e-NAM and
+              Agmarknet).</li>
+            <li><strong>Market Yard Trade Slips:</strong> Daily trading price averages reported from Vadodara APMC
+              secretaries.</li>
+            <li><strong>Admin Overrides:</strong> District administrators can update daily rates in real time via
+              <code>adminRoutes.js</code>.</li>
+            <li><strong>Seeded Benchmark Data:</strong> <code>backend/src/utils/mandiData.js</code> guarantees offline
+              price availability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/mandiRoutes.js</code>: Handles <code>GET /api/mandi</code>,
+              <code>GET /api/mandi/trends</code>, and <code>POST /api/mandi/update</code>.</li>
+            <li><code>backend/src/controllers/mandiController.js</code>: Filters rates by selected market yard, computes
+              district averages, and calculates 24-hour price trend percentage.</li>
+            <li><code>backend/src/utils/seedMandiData.js</code>: Automatically seeds fresh daily commodity rates into
+              MongoDB on server startup.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collection:</strong> <code>mandiprices</code></li>
+            <li><strong>Mongoose Model:</strong> <code>backend/src/models/MandiPrice.js</code></li>
+            <li><strong>Stored Schema Fields:</strong> <code>market</code> (Sayajigunj, Padra, etc.),
+              <code>commodity</code>, <code>variety</code>, <code>minPrice</code>, <code>maxPrice</code>,
+              <code>modalPrice</code>, <code>arrivalsTonnes</code>, <code>tradeDate</code>, <code>trend</code> ('up' |
+              'down' | 'stable').</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/MandiPrices.jsx</code>: Scrolling live price ticker, market yard tabs, search
+              filter, rate cards with clear trend badges (e.g. green <code>+₹120</code>).</li>
+            <li><code>frontend/src/services/mandiService.js</code>: Fetches data with automatic fallback to local
+              benchmark rates.</li>
+            <li>Bilingual Rate Display: English (₹/Quintal) and Gujarati (રૂ./મણ - ૨૦ કિલો).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer visits <code>MandiPrices.jsx</code> and
+          taps the "Padra APMC" tab.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span><code>mandiService.js</code> makes a GET request
+          to <code>/api/mandi?market=Padra</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span><code>mandiController.js</code> queries MongoDB
+          Atlas <code>mandiprices</code> for Padra yard records.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>Today's prices (e.g. Cotton ₹7,450/Qtl, Tomato
+          ₹1,850/Qtl) and arrival volumes are returned.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>UI shows high-contrast cards with green upward
+          trend badges and Gujarati commodity names (કપાસ, ટામેટા).</span></div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">💧 Module 4: Smart Irrigation Timer & MGVCL Power Roster</div>
+      <span class="module-tag">Water Conservation & Electricity Timing</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      Calculates the exact number of water liters a field needs and how many minutes to run the water pump. It bases
+      this on the crop type (Cotton, Banana, Tomato, Tuver), the local soil type (Goradu Sandy Loam vs Black Cotton
+      Soil), and farm size. It also syncs directly with the <strong>MGVCL 8-hour 3-phase agricultural power
+        schedule</strong> (Day vs Night Shift) and rings a clear sound alarm when watering is finished so no water or
+      power is wasted.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Crop Water Factors ($K_c$):</strong> Standard crop water consumption rates (Cotton 0.85, Banana
+              1.10, Pigeon Pea 0.70, Tomato 0.95).</li>
+            <li><strong>Soil Water Capacity:</strong> Goradu Sandy Loam (drains quickly) vs Black Cotton Soil (holds
+              moisture longer).</li>
+            <li><strong>MGVCL Power Roster:</strong> Vadodara rural 3-phase power shift schedule (Day: 08:00 - 16:00,
+              Night: 22:00 - 06:00).</li>
+            <li><strong>Farmer Inputs:</strong> Field acreage (e.g. 3.5 Acres) and irrigation method (Drip, Sprinkler,
+              or Flood).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/irrigationRoutes.js</code>: Exposes <code>POST /api/irrigation/calculate</code>
+              and <code>POST /api/irrigation/log</code>.</li>
+            <li><code>backend/src/models/IrrigationLog.js</code>: Stores irrigation history records in the database.
+            </li>
+            <li>Water Math:
+              <code>Liters = Acreage × 4046.86 m² × ET₀ (4.5mm) × Kc × (1 - SoilFactor) × Efficiency</code>.</li>
+            <li>Pump Runtime: <code>Minutes = Total Liters / (Pump Motor Output Liters/Minute)</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collection:</strong> <code>irrigationlogs</code></li>
+            <li><strong>Mongoose Model:</strong> <code>backend/src/models/IrrigationLog.js</code></li>
+            <li><strong>Stored Schema Fields:</strong> <code>crop</code>, <code>soilType</code>, <code>acreage</code>,
+              <code>waterRequiredLiters</code>, <code>recommendedMinutes</code>, <code>method</code>,
+              <code>powerShift</code>, <code>completedAt</code>, <code>litersSaved</code>.</li>
+            <li><strong>Live Timer State:</strong> Active ticking countdown clock stored in browser state.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/IrrigationTimer.jsx</code>: Dropdowns for crop and soil, large circular
+              countdown clock, Start/Pause controls, and MGVCL power shift indicator.</li>
+            <li>Web Audio Chime: Sounds an audible bell alarm through the speaker when the timer hits zero so the farmer
+              shuts off the pump motor.</li>
+            <li>Water Saved Counter: Displays cumulative liters preserved compared to unmanaged flood irrigation.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer enters farm details: 3.5 Acres of Cotton
+          in Goradu Sandy Loam soil on <code>IrrigationTimer.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>The system calculates: 28,500 Liters needed,
+          taking 48 Minutes on a standard 5HP borewell pump.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span>Farmer taps "Start Irrigation" — the circular
+          timer starts counting down and verifies current MGVCL power availability.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>When the timer reaches 00:00, the pump shutdown
+          chime sounds to prevent over-watering.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>The watering session and estimated liters saved
+          are saved to MongoDB Atlas collection <code>irrigationlogs</code>.</span></div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- MODULE 5 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">⛅ Module 5: Agro-Weather Observatory & IMD Alerts</div>
+      <span class="module-tag">Weather Intelligence & Early Warning</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      Provides localized weather forecasts for Vadodara District (temperature, rainfall likelihood, humidity, wind
+      speed) and broadcasts emergency weather bulletins from the <strong>IMD (India Meteorological Department)
+        Ahmedabad</strong>. It warns farmers about upcoming summer heatwaves (लू), unseasonal winter rains (માવઠું), and
+      tells them whether today's wind speed is calm enough to safely spray pest remedies without chemical drift.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Open-Meteo Weather API:</strong> Live hourly and 7-day weather forecasts for Vadodara
+              coordinates (22.3072°N, 73.1812°E).</li>
+            <li><strong>IMD Ahmedabad Bulletins:</strong> Official meteorological warnings regarding heatwaves,
+              unseasonal rain (Mavthu), and storms.</li>
+            <li><strong>Admin Emergency Broadcasts:</strong> Urgent warnings pushed in real time via the Operations
+              Console.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/weatherRoutes.js</code>: Handles <code>GET /api/weather/current</code> and
+              <code>GET /api/weather/alerts</code>.</li>
+            <li><code>backend/src/models/WeatherAlert.js</code>: Filters active warnings and verifies expiration
+              timestamps.</li>
+            <li>Spraying Advisory Logic: Checks if wind speed is under 15 km/h (safe to spray) or too gusty (wastes
+              pesticide spray).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collection:</strong> <code>weatheralerts</code></li>
+            <li><strong>Mongoose Model:</strong> <code>backend/src/models/WeatherAlert.js</code></li>
+            <li><strong>Stored Schema Fields:</strong> <code>severity</code> ('info' | 'warning' | 'severe'),
+              <code>title</code>, <code>titleGu</code>, <code>message</code>, <code>messageGu</code>,
+              <code>source</code>, <code>validUntil</code>, <code>isActive</code>.</li>
+            <li><strong>Offline Fallback:</strong> Pre-loaded IMD heat advisory loads if internet is temporarily lost.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/Weather.jsx</code>: Atmospheric dials (Temperature, Humidity, Wind, UV Index,
+              Heatwave risk gauge, 7-day hourly forecast).</li>
+            <li><code>frontend/src/components/AlertCard.jsx</code>: High-visibility warning banner across Home and
+              Weather pages.</li>
+            <li>Bilingual Display: Gujarati weather terminology (ગરમીની ચેતવણી - Heat Alert, ભેજ - Humidity, પવનની ઝડપ -
+              Wind Speed).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer opens <code>Weather.jsx</code>; the page
+          calls Open-Meteo for live Vadodara temperature and wind speed.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>The frontend also queries
+          <code>/api/weather/alerts</code> to retrieve active emergency bulletins.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span>Backend checks MongoDB Atlas
+          <code>weatheralerts</code> for non-expired alerts (<code>validUntil &gt; now</code>).</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>The 7-day forecast curve renders alongside a
+          spraying advisory badge ("Safe to spray: wind is 8 km/h").</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>If an active heat advisory exists, an alert
+          banner is displayed at the top of the screen in English and Gujarati.</span></div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">🚜 Module 6: Krishi Tools & Equipment Marketplace (i-Khedut Subsidies)</div>
+      <span class="module-tag">Farm Tool Sharing & Government Subsidies</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      An equipment rental portal connecting small farmers in Vadodara with <strong>Custom Hiring Centers (CHCs)</strong>
+      across all 7 talukas. It automatically calculates <strong>Gujarat State i-Khedut Portal Subsidies (40% to
+        60%)</strong> for modern farm machinery (such as crop spray drones, rotavators, laser land levelers, and solar
+      pumps), so the farmer only pays their subsidized portion and gets an instant booking confirmation.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>CHC Machinery Catalog:</strong> Machine specifications, daily rental rates, and hub locations
+              across Padra, Karjan, Dabhoi, Savli, Waghodia, Shinor, and Vadodara.</li>
+            <li><strong>Gujarat i-Khedut Rules:</strong> Government subsidy slabs (40% standard farmer subsidy, 50-60%
+              small/marginal farmer subsidy).</li>
+            <li><strong>Farmer Booking Form:</strong> Rental days, requested start date, farm size, and contact details.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/equipmentRoutes.js</code>: Handles <code>GET /api/equipment</code>,
+              <code>POST /api/equipment/book</code>, and <code>GET /api/equipment/bookings/:userId</code>.</li>
+            <li>Calculates total rental cost, deducts the i-Khedut government subsidy discount, and computes the net
+              payable amount.</li>
+            <li>Generates a unique booking reference code (e.g. <code>HRT-EQ-2026-8492</code>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collections:</strong> <code>equipments</code> and <code>equipmentbookings</code>
+            </li>
+            <li><strong>Mongoose Models:</strong> <code>backend/src/models/Equipment.js</code> and
+              <code>backend/src/models/EquipmentBooking.js</code></li>
+            <li><strong>Stored Schema Fields:</strong> <code>farmerId</code>, <code>equipmentId</code>,
+              <code>startDate</code>, <code>durationDays</code>, <code>grossRent</code>, <code>subsidyApplied</code>,
+              <code>netPayable</code>, <code>bookingRef</code>, <code>status</code>.</li>
+            <li><strong>Auto-Seeding:</strong> 6 standard machines are automatically seeded on server launch.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/Marketplace.jsx</code>: 6 machinery catalog cards (Drone, Rotavator, Laser
+              Leveler, Solar Pump, Harvester, Drip Kit).</li>
+            <li>Interactive Booking Modal: Shows a transparent price breakdown (Gross Rent - 50% State Subsidy = Net
+              Farmer Cost).</li>
+            <li><code>frontend/src/services/equipmentService.js</code>: Sends booking request payload to backend.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer selects "Precision Agro Drone Sprayer"
+          (₹1,800/day) on <code>Marketplace.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>Modal computes: 3 days = ₹5,400 gross. Applied
+          i-Khedut 50% subsidy saves ₹2,700; Net farmer payable is only ₹2,700.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span>Farmer enters date and clicks "Confirm Booking";
+          <code>equipmentService.js</code> sends data to <code>POST /api/equipment/book</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>Backend saves the reservation in MongoDB Atlas
+          collection <code>equipmentbookings</code> and returns code <code>HRT-EQ-8492</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>A digital confirmation receipt appears on screen
+          with phone number and pickup directions for the Padra hiring center.</span></div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- MODULE 7 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">🛡️ Module 7: District Admin Operations Console & AI Telemetry Hub</div>
+      <span class="module-tag">Operations Telemetry & Gated Controls</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      A private control dashboard for district agricultural administrators. It lets officials monitor the system's live
+      health (MongoDB cloud database ping latency in milliseconds and Node.js server RAM memory), track cost savings
+      from using offline browser AI versus paid cloud AI, update mandi commodity prices in real time, and broadcast
+      instant weather advisories to all farmers.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Ping Telemetry:</strong> Live execution of
+              <code>mongoose.connection.db.admin().ping()</code> measuring cloud latency in milliseconds.</li>
+            <li><strong>Node.js Server Heap Telemetry:</strong> <code>process.memoryUsage()</code> capturing heapUsed,
+              heapTotal, and RSS.</li>
+            <li><strong>Dual-Engine AI Ledger:</strong> Tracks tokens consumed by Google Gemini Vision versus zero-cost
+              offline TensorFlow.js edge scans.</li>
+            <li><strong>Admin Command Inputs:</strong> Emergency alert broadcast text & APMC mandi rate adjustments.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/adminRoutes.js</code>: Handles <code>GET /api/admin/telemetry</code>,
+              <code>POST /api/admin/alerts/broadcast</code>, and <code>POST /api/admin/mandi/override</code>.</li>
+            <li>Calculates financial savings in rupees achieved by offloading diagnostics to edge TensorFlow.js models.
+            </li>
+            <li>Validates administrator permissions before committing database updates.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Backend Memory State:</strong> Live telemetry ring buffers maintained in
+              <code>adminRoutes.js</code> for fast chart streaming.</li>
+            <li><strong>MongoDB Collections:</strong> Emergency alerts persisted directly into
+              <code>weatheralerts</code>; mandi adjustments persisted to <code>mandiprices</code>.</li>
+            <li><strong>Role Authentication:</strong> Protected by JWT role verification
+              (<code>role === 'admin'</code>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/AdminPanel.jsx</code>: High-contrast dark green dashboard (`#1b4332`), live
+              Atlas latency ping card (e.g. 14ms), heap memory usage bars, AI inference ledger comparison, emergency
+              alert form.</li>
+            <li><code>frontend/src/services/adminService.js</code>: Polls telemetry endpoint and dispatches broadcast
+              commands.</li>
+            <li>Institutional Gating: Desk button in navbar dynamically transforms into "Admin Console" (એડમિન કન્સોલ)
+              only when logged in as admin.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Administrator signs in with <code>admin</code>
+          role and navigates to <code>AdminPanel.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span><code>adminService.js</code> queries
+          <code>GET /api/admin/telemetry</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span>Backend executes Mongoose admin ping (e.g.
+          14ms), reads server memory (112MB Heap), and tallies token ledger.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>Admin inputs a heatwave warning and clicks
+          "Broadcast Advisory"; backend writes alert to MongoDB <code>weatheralerts</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>All active farmer clients immediately receive
+          and display the new advisory banner.</span></div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">👥 Module 8: Multi-Role Auth, User Desks & Agrarian Query System</div>
+      <span class="module-tag">Identity Management & Extension Officer Workspace</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      Provides secure, role-based login for three different types of users: <strong>Farmers</strong>,
+      <strong>Agricultural Extension Officers</strong>, and <strong>District Admins</strong>. Farmers can register with
+      their farm size and crop details, view their past scan history, and send farming questions to government officers.
+      Extension officers have their own workspace to review pending questions from farmers and write official guidance.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Signup Form:</strong> 3-way Role Selector (👨‍🌾 Farmer, 🛡️ Admin, 🌾 Officer) with
+              role-specific credential inputs.</li>
+            <li><strong>1-Click Live Demo Switcher:</strong> Instant login with authentic personas (Ramesh Patel -
+              Farmer, Dr. Hitesh Trivedi - Officer, District Admin).</li>
+            <li><strong>Farmer Query Input:</strong> Crop inquiry subject, question body, and affected field location.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Backend Files</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>backend/src/routes/authRoutes.js</code>: <code>POST /api/auth/register</code>,
+              <code>/login</code>, <code>/demo-login</code>, <code>GET /me</code>.</li>
+            <li><code>backend/src/routes/queryRoutes.js</code>: <code>POST /api/queries</code>,
+              <code>GET /api/queries</code>, <code>PUT /api/queries/:id/respond</code>.</li>
+            <li><code>backend/src/middleware/authMiddleware.js</code>: Decodes JWT Bearer token and verifies user role.
+            </li>
+            <li><code>backend/src/utils/generateToken.js</code>: Signs JWT tokens containing user ID and role with
+              30-day expiration.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>MongoDB Atlas Collections:</strong> <code>users</code> and <code>queries</code></li>
+            <li><strong>Mongoose Models:</strong> <code>backend/src/models/User.js</code> &
+              <code>backend/src/models/Query.js</code></li>
+            <li><strong>User Schema:</strong> <code>name</code>, <code>email</code>, <code>password</code> (bcrypt
+              hashed), <code>role</code> enum ['farmer', 'officer', 'admin'], <code>district</code>,
+              <code>taluka</code>, <code>farmSizeAcres</code>, <code>primaryCrops</code>.</li>
+            <li><strong>Query Schema:</strong> <code>farmerId</code>, <code>farmerName</code>, <code>subject</code>,
+              <code>question</code>, <code>officerResponse</code>, <code>status</code> ('pending' | 'resolved').</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/pages/LoginPage.jsx</code>: Dual-tab (Sign In / Register) with 3-way role buttons and
+              instant 1-click demo switcher.</li>
+            <li><code>frontend/src/pages/UserProfile.jsx</code>: Shows a personalized desk depending on user role:
+              <ul>
+                <li><strong>Farmer Desk:</strong> Scan history, acreage, crop list, query submission box.</li>
+                <li><strong>Officer Desk:</strong> Pending farmer queries list, official reply editor, resolution badge.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer registers or logs in; JWT token is saved
+          to browser <code>localStorage('haritayan_auth_token')</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>Farmer submits query: "Whitefly infestation on
+          Bt cotton in Karjan" on <code>UserProfile.jsx</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span><code>queryService.js</code> posts to
+          <code>/api/queries</code>; stored in MongoDB Atlas <code>queries</code> as
+          <code>status: 'pending'</code>.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>Agricultural Officer Dr. Hitesh Trivedi logs in;
+          his Officer Desk loads pending queries list.</span></div>
+      <div class="flow-step"><span class="flow-step-num">5</span> <span>Officer submits response: "Apply Neem Seed
+          Kernel Extract (NSKE 5%)"; query is marked <code>status: 'resolved'</code> and farmer's desk updates
+          immediately.</span></div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- MODULE 9 DEEP DIVE -->
+  <div class="module-card avoid-break">
+    <div class="module-header">
+      <div class="module-title">💬 Module 9: HaritAyan Sahayak Bilingual Rule-Based Chatbot</div>
+      <span class="module-tag">Bilingual Conversational Assistant</span>
+    </div>
+    <div class="simple-summary-box">
+      <div class="simple-summary-title">🎯 What It Does (In Simple Words)</div>
+      A friendly, instant digital assistant available at the bottom-right corner of every page in HaritAyan. It
+      understands simple questions in both English and Gujarati about crop pests, today's mandi prices, irrigation
+      times, weather alerts, and government subsidies. It gives instant answers and displays clickable shortcut buttons
+      that take the user directly to the right page on the website. Because it runs directly in the browser, it works
+      100% offline with zero delay.
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-box-title">📥 Where Data Comes From</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Farmer Chat Input:</strong> Natural language queries entered via keyboard or quick prompt
+              recommendation chips.</li>
+            <li><strong>Agronomic Rule Base:</strong> Curated decision tree covering crop diseases, weather heatwave
+              advisories, APMC mandi trading hours, irrigation calculations, and i-Khedut subsidies.</li>
+            <li><strong>Gujarati Botanical Lexicon:</strong> Bilingual mapping for crops (કપાસ, દિવેલા, તુવેર), diseases
+              (પાનના ટપકા, સુકારો), and mandis (પાદરા, કરજણ).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">⚙️ How Processed & Architecture</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><code>frontend/src/components/Chatbot.jsx</code>: Implements regex and keyword token matching against
+              agricultural query patterns.</li>
+            <li>Computes intent score (Disease diagnosis, Mandi rates, Irrigation timer, Weather advisory, Equipment
+              rental, User help).</li>
+            <li>Synthesizes bilingual answer and attaches actionable page navigation buttons.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">💾 Where Data is Stored</div>
+        <div class="tech-box-content">
+          <ul>
+            <li><strong>Client Memory State:</strong> Active dialogue history array maintained in React component state.
+            </li>
+            <li><strong>Local Session Cache:</strong> Retains active conversation session across page navigations in
+              <code>sessionStorage</code>.</li>
+            <li><strong>Rule Knowledge Base:</strong> Bundled directly inside frontend client bundle for zero-latency,
+              100% offline reliability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-box-title">🖥️ How Displayed on Screen</div>
+        <div class="tech-box-content">
+          <ul>
+            <li>Floating trigger button with glowing leaf badge at bottom-right of viewport.</li>
+            <li>Expandable chat window with animated message bubbles, avatar indicators, quick query suggestions ("Show
+              cotton remedies", "કપાસના રોગો").</li>
+            <li>Action buttons that programmatically route the user directly to the relevant tool (e.g. "Open Disease
+              Scanner →", "View Mandi Rates →").</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">🔄 Step-by-Step Data Flow Pipeline</div>
+      <div class="flow-step"><span class="flow-step-num">1</span> <span>Farmer taps floating chatbot button and types:
+          "What is cotton price in Padra APMC?".</span></div>
+      <div class="flow-step"><span class="flow-step-num">2</span> <span>Rule engine matches tokens
+          <code>['cotton', 'price', 'padra']</code> to Mandi Intent.</span></div>
+      <div class="flow-step"><span class="flow-step-num">3</span> <span>Chatbot crafts instant response with today's
+          modal price band and appends a "Navigate to APMC Mandi" action pill.</span></div>
+      <div class="flow-step"><span class="flow-step-num">4</span> <span>Farmer clicks action button; application
+          instantly navigates to <code>MandiPrices.jsx</code> with Padra tab pre-selected.</span></div>
+    </div>
+  </div>
+
+  <!-- DATABASE SCHEMAS & CROSS REFERENCE -->
+  <div class="avoid-break">
+    <h2>3. MongoDB Atlas Schema & Collections Reference</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 14%;">Collection</th>
+          <th style="width: 18%;">Mongoose Model File</th>
+          <th style="width: 32%;">Primary Key & Essential Fields</th>
+          <th style="width: 36%;">Purpose & Plain-Language Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>users</code></td>
+          <td><code>models/User.js</code></td>
+          <td><code>_id</code>, <code>email</code> (unique), <code>password</code> (bcrypt hash), <code>role</code>
+            ('farmer'|'officer'|'admin'), <code>district</code>, <code>taluka</code>, <code>farmSizeAcres</code>,
+            <code>primaryCrops</code></td>
+          <td>Stores registered accounts, login credentials, farmer crop profiles, officer titles, and admin access
+            levels.</td>
+        </tr>
+        <tr>
+          <td><code>scans</code></td>
+          <td><code>models/Scan.js</code></td>
+          <td><code>_id</code>, <code>userId</code>, <code>crop</code>, <code>disease</code>, <code>confidence</code>,
+            <code>severity</code>, <code>symptoms[]</code>, <code>organicRemedies[]</code>, <code>imageUrl</code>,
+            <code>inferenceEngine</code></td>
+          <td>Keeps a history of plant leaf disease photos, AI diagnostic results, and recommended natural treatments.
+          </td>
+        </tr>
+        <tr>
+          <td><code>mandiprices</code></td>
+          <td><code>models/MandiPrice.js</code></td>
+          <td><code>_id</code>, <code>market</code>, <code>commodity</code>, <code>minPrice</code>,
+            <code>maxPrice</code>, <code>modalPrice</code>, <code>arrivalsTonnes</code>, <code>tradeDate</code>,
+            <code>trend</code></td>
+          <td>Holds daily wholesale crop price records across 5 Vadodara mandis for live tickers and price comparison
+            charts.</td>
+        </tr>
+        <tr>
+          <td><code>equipments</code></td>
+          <td><code>models/Equipment.js</code></td>
+          <td><code>_id</code>, <code>name</code>, <code>category</code>, <code>dailyRentalRate</code>,
+            <code>subsidyPercentage</code>, <code>location</code>, <code>specs</code></td>
+          <td>Catalog of farm tools (drones, rotavators, pumps) available for rent with Gujarat i-Khedut subsidy
+            discounts.</td>
+        </tr>
+        <tr>
+          <td><code>equipmentbookings</code></td>
+          <td><code>models/EquipmentBooking.js</code></td>
+          <td><code>_id</code>, <code>farmerId</code>, <code>equipmentId</code>, <code>startDate</code>,
+            <code>durationDays</code>, <code>grossRent</code>, <code>subsidyApplied</code>, <code>netPayable</code>,
+            <code>status</code></td>
+          <td>Tracks farmer equipment rental orders, calculated subsidy deductions, and center pickup contact details.
+          </td>
+        </tr>
+        <tr>
+          <td><code>queries</code></td>
+          <td><code>models/Query.js</code></td>
+          <td><code>_id</code>, <code>farmerId</code>, <code>farmerName</code>, <code>subject</code>,
+            <code>question</code>, <code>officerResponse</code>, <code>status</code> ('pending'|'resolved')</td>
+          <td>Stores farming questions submitted by farmers and the official advice written back by agricultural
+            extension officers.</td>
+        </tr>
+        <tr>
+          <td><code>irrigationlogs</code></td>
+          <td><code>models/IrrigationLog.js</code></td>
+          <td><code>_id</code>, <code>crop</code>, <code>soilType</code>, <code>acreage</code>,
+            <code>waterRequiredLiters</code>, <code>recommendedMinutes</code>, <code>completedAt</code>,
+            <code>litersSaved</code></td>
+          <td>Records completed water pump runtimes, water liters used, and water conservation savings.</td>
+        </tr>
+        <tr>
+          <td><code>weatheralerts</code></td>
+          <td><code>models/WeatherAlert.js</code></td>
+          <td><code>_id</code>, <code>severity</code>, <code>title</code>, <code>titleGu</code>, <code>message</code>,
+            <code>messageGu</code>, <code>source</code>, <code>validUntil</code>, <code>isActive</code></td>
+          <td>Stores active emergency alerts (heatwaves, unseasonal rain) from IMD Ahmedabad shown across the website.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- REST API MATRIX -->
+  <div class="avoid-break">
+    <h2>4. Complete REST API Route Specification</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 9%;">Method</th>
+          <th style="width: 25%;">API Endpoint</th>
+          <th style="width: 14%;">Auth / Role</th>
+          <th style="width: 22%;">Controller Handler</th>
+          <th style="width: 30%;">Action & Output Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/register</code></td>
+          <td>Public</td>
+          <td><code>authController.registerFarmer</code></td>
+          <td>Creates Farmer, Admin, or Officer account; returns JWT token & safe user profile.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/login</code></td>
+          <td>Public</td>
+          <td><code>authController.loginUser</code></td>
+          <td>Authenticates email/password using bcrypt hash; issues 30-day login session.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/demo-login</code></td>
+          <td>Public</td>
+          <td><code>authController.demoLogin</code></td>
+          <td>Instant 1-click persona switcher (Ramesh Patel, Dr. Hitesh Trivedi, Admin).</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/auth/me</code></td>
+          <td>Private</td>
+          <td><code>authController.getCurrentUser</code></td>
+          <td>Fetches currently logged-in user profile, crops grown, and assigned taluka.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/scan</code></td>
+          <td>Public / Token</td>
+          <td><code>scanController.analyzeLeafImage</code></td>
+          <td>Uploads leaf photo; Gemini 1.5 Pro analyzes and returns JSON organic remedies.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/scan/history</code></td>
+          <td>Private</td>
+          <td><code>scanController.getUserScanHistory</code></td>
+          <td>Retrieves farmer's chronological diagnostic scans from MongoDB.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/mandi</code></td>
+          <td>Public</td>
+          <td><code>mandiController.getMandiPrices</code></td>
+          <td>Returns daily commodity rates filtered by mandi yard and date.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/mandi/update</code></td>
+          <td>Admin</td>
+          <td><code>mandiController.updateMandiPrice</code></td>
+          <td>Allows administrators to override daily commodity prices in real time.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/weather/current</code></td>
+          <td>Public</td>
+          <td><code>weatherController.getCurrentWeather</code></td>
+          <td>Proxies Open-Meteo ambient observations for Vadodara coordinates.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/weather/alerts</code></td>
+          <td>Public</td>
+          <td><code>weatherController.getActiveAlerts</code></td>
+          <td>Retrieves non-expired IMD weather and heatwave advisories.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/heat/wards</code></td>
+          <td>Public</td>
+          <td><code>heatController.getWardHeatData</code></td>
+          <td>Returns baseline thermal readings and green index for all 8 Vadodara wards.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/heat/simulate</code></td>
+          <td>Public</td>
+          <td><code>heatController.simulateCanopyCooling</code></td>
+          <td>Computes microclimatic cooling delta based on tree species and count.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/irrigation/calculate</code></td>
+          <td>Public</td>
+          <td><code>irrigationController.calculate</code></td>
+          <td>Calculates root-zone moisture liters and pump runtime minutes.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/irrigation/log</code></td>
+          <td>Private</td>
+          <td><code>irrigationController.logSession</code></td>
+          <td>Logs completed watering runtime and cumulative liters saved.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/equipment</code></td>
+          <td>Public</td>
+          <td><code>equipmentController.getCatalog</code></td>
+          <td>Returns 6 machinery listings with i-Khedut subsidy percentages.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/equipment/book</code></td>
+          <td>Private</td>
+          <td><code>equipmentController.createBooking</code></td>
+          <td>Applies 40-60% state subsidy; issues confirmed booking reference.</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/admin/telemetry</code></td>
+          <td>Admin</td>
+          <td><code>adminController.getTelemetry</code></td>
+          <td>Executes Atlas shard ping (ms), reads memory heap, and counts AI token ledger.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/admin/alerts/broadcast</code></td>
+          <td>Admin</td>
+          <td><code>adminController.broadcastAlert</code></td>
+          <td>Dispatches emergency weather advisory directly to all client banners.</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/queries</code></td>
+          <td>Farmer</td>
+          <td><code>queryController.submitQuery</code></td>
+          <td>Submits agronomic question to agricultural extension officers.</td>
+        </tr>
+        <tr>
+          <td><code>PUT</code></td>
+          <td><code>/api/queries/:id/respond</code></td>
+          <td>Officer</td>
+          <td><code>queryController.respondToQuery</code></td>
+          <td>Agri Officer submits official diagnosis and treatment to resolve query.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-stamp">
+    HaritAyan • Advanced Web Technologies (AWT) & Software Engineering Project • Vadodara District, Gujarat • © 2026 All
+    Rights Reserved
+  </div>
+
+</body>
+
+</html>
